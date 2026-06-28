@@ -3,6 +3,8 @@
 //   段一 Gather+Stories(轻审收敛) → 返回 user-stories.md 给用户 approved；
 //   段二 Produce+Review → 返回整套给用户收尾确认。本模板写在一起、用注释标确认门。
 // 输入 args = { id:'<prd-id>', brief:'<采集到的原始材料/对话摘要>', needResearch:bool, needPrototype:bool }
+// 注：本文件由 Workflow 工具跑——`export const meta` + 顶层 await/return 是 Workflow 约定（运行时把脚本体包进 async 函数）。
+//     拿 node 当裸 ESM 模块 `--check` 会报"顶层 return 非法"=误报，非真语法错（包成 async 函数即过）。
 
 export const meta = {
   name: 'prd-orchestration',
@@ -41,10 +43,11 @@ const reqs = await agent(
   '你是需求采集员。把下面原始材料理成结构化需求摘要(JTBD/页面/数据/四态/边界/验收/非目标)+待确认清单。不静默假设。\n材料：' + ((args && args.brief) || ''),
   { agentType: 'requirements-gatherer', label: 'gather' })
 
-// ── 可选·权重低：外部调研(用户要查 / 有市场 SOP 且摸不透才跑;复用 deep-research) ──
+// ── 可选·权重低：外部调研(用户要查 / 有市场 SOP 且摸不透才跑) ──
+//    走 deep-research skill(可用的 research skill)：通用 subagent 用 Skill 工具调它，不另建专属 worker。
 let research = ''
 if (args && args.needResearch) {
-  research = await agent('对这个需求做外部调研(市场 SOP/事实)，过 rule-0008 验收后给带来源的要点。需求：' + reqs,
+  research = await agent('你做外部调研：用 deep-research skill(Skill 工具)查市场 SOP/事实，过 rule-0008 验收后给带来源的要点。需求：' + reqs,
     { label: 'external-research' })
 }
 
@@ -78,21 +81,28 @@ const produced = await parallel([
     { agentType: 'prototype-builder', label: 'prototype' })] : []),
 ])
 
-// ── 必选：PRD 审稿重审 loop(框住并行产出；loop-until-dry；只重跑被审出问题的 worker) ──
+// ── 必选：PRD 审稿重审 loop(框住并行产出；只重跑被审出问题的 worker；有轮数上限) ──
 phase('Review')
+// 本轮真跑过的 worker(用户跳过原型则不含 prototype-builder)——审稿提示与重跑都只认这些，兑现"已留痕跳过不算缺口"
+const ran = new Set(['user-story-writer', 'prd-writer', 'feature-point-writer'])
+if (args && args.needPrototype) ran.add('prototype-builder')
+const protoNote = (args && args.needPrototype) ? '含原型(查可点/四态)' : '本次用户未要原型，勿把"缺原型"当缺口'
 let dry = 0
-while (dry < 1) {                       // 连续 1 轮干净即停(要更严可加大)
+const MAX_ROUNDS = 4                     // 防审稿员持续挑刺不收敛：到顶即停并提示总监人工裁
+for (let r = 0; r < MAX_ROUNDS && dry < 1; r++) {
   const rv = await agent(
-    '你是 PRD 审稿员【重审下游模式】。审整套(' + dir + ' 的 stories+prd+功能点+原型)：PRD 合故事/FP 映射齐/原型可点/四态/范围闭合。clean=true 表示无问题。',
-    { agentType: 'prd-reviewer', label: 'heavy-review', schema: REVIEW })
+    '你是 PRD 审稿员【重审下游模式】。审整套(' + dir + ' 的 stories+prd+功能点' + ((args && args.needPrototype) ? '+原型' : '') + ')：PRD 合故事/FP 映射齐/四态/范围闭合；' + protoNote + '。clean=true 表示无问题。',
+    { agentType: 'prd-reviewer', label: 'heavy-review:' + r, schema: REVIEW })
   if (rv.clean || !rv.findings.length) { dry++; continue }
   dry = 0
   const byWorker = {}
-  for (const f of rv.findings) { (byWorker[f.worker] = byWorker[f.worker] || []).push(f) }
-  await parallel(Object.keys(byWorker).map(w => () =>     // 回原 worker 角色重跑，只跑有问题的
+  for (const f of rv.findings) { if (ran.has(f.worker)) { (byWorker[f.worker] = byWorker[f.worker] || []).push(f) } }  // 只重跑真跑过的 worker
+  if (!Object.keys(byWorker).length) { dry++; continue }   // 发现全落在没跑的 worker(如被跳过的原型)→ 视作无效、收敛
+  await parallel(Object.keys(byWorker).map(w => () =>       // 回原 worker 角色重跑，只跑有问题的
     agent('你是 ' + w + '。按审稿发现修你产出的部分(' + dir + ')：\n' + JSON.stringify(byWorker[w]),
       { agentType: w, label: 'fix:' + w })))
 }
+if (!dry) { log('⚠ 重审到 ' + MAX_ROUNDS + ' 轮仍未收敛 → 交总监人工裁') }
 log('整套 PRD 重审收敛 → 收尾确认：总监把整套交用户最终确认')
 
 // ════ 收尾确认(人在环)：总监把整套交用户最终确认。 ════

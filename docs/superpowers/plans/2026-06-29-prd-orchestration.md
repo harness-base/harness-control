@@ -4,7 +4,7 @@
 
 **Goal:** 把 `prd-elicitation` 从线性交互 skill 重构成编排式——产品总监（编排逻辑，主 agent 当总监）调度一队专职 worker subagent，带 必选/可选·权重 + 确认门 + 并行产出 + review loop。
 
-**Architecture:** SKILL.md 是「总谱」（描述 worker、权重模型、时序、两 review 点）；6 个 worker 各是一个 subagent 文件（双栈 `.claude/agents/*.md` + `.codex/agents/*.toml` + `config.toml` 注册）；一个 Workflow 模板（reference `.js`）把它们按总谱编排起来（主 agent 当总监跑）。外部调研复用现成 `deep-research`。常驻自主总监押后。
+**Architecture:** SKILL.md 是「总谱」（描述 worker、权重模型、时序、两 review 点）；6 个 worker 各是一个 subagent 文件（双栈 `.claude/agents/*.md` + `.codex/agents/*.toml` + `config.toml` 注册）；一个 Workflow 模板（reference `.js`）把它们按总谱编排起来（主 agent 当总监跑）。外部调研走现成 `deep-research` skill（通用 subagent 调 Skill 工具跑，不另建 subagent）。常驻自主总监押后。
 
 **Tech Stack:** markdown skills + subagent persona files（双栈 Claude/Codex）+ Claude Code Workflow 编排（`parallel`/`pipeline`/loop）+ harness 既有护栏（`make verify` / `skills-index` / `dir-index .claude/agents` / `docs-audit` / eval 子 agent / 对抗挑刺）。
 

@@ -26,7 +26,7 @@ last_reviewed: 2026-06-29
 | worker | 干啥 | 标 | 触发 / 形态 |
 |---|---|---|---|
 | 需求采集员 | 多轮引导对话收需求（JTBD / 页面 / 数据 / 四态 / 边界 / 验收 / 非目标） | 必选 | 交互 · 人在环 |
-| 外部调研员 | 查外部 SOP / 事实（过 rule-0008 验收再喂入） | 可选 · 权重低 | 用户要查 / 有市场 SOP 且摸不透；**复用 `deep-research`** |
+| 外部调研员 | 查外部 SOP / 事实（过 rule-0008 验收再喂入） | 可选 · 权重低 | 用户要查 / 有市场 SOP 且摸不透；**走 `deep-research` skill**（可用的 research skill，由通用 subagent 调 Skill 工具跑，不另建专属 subagent） |
 | 用户故事+AC 员 | 写 `docs/prds/<id>/user-stories.md`（`US-NN` + 可观测 `AC`） | 必选 | 轻审 → 确认门 |
 | PRD 本体员 | 写 `prd.md`（合已确认故事，套 `templates/prd.md`） | 必选 | 并行 |
 | 功能点清单员 | 写功能点 + `US↔FP↔正文` 三级双向映射 | 必选 | 并行 |

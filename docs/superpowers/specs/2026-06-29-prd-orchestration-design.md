@@ -37,7 +37,7 @@ related_docs:
 | worker | 干啥 | 标 | 形态 | 落地 |
 |---|---|---|---|---|
 | 需求采集员 | 多轮对话收原始需求（JTBD / 页面 / 数据 / 四态 / 边界） | 必选 | 交互 · 人在环 | subagent 文件（双栈） |
-| 外部调研员 | 查外部 SOP / 事实，**过 rule-0008 验收**再喂入 | 可选 · 权重低 | 用户要查 / 有市场 SOP 且摸不透才跑 | **复用 `deep-research`** |
+| 外部调研员 | 查外部 SOP / 事实，**过 rule-0008 验收**再喂入 | 可选 · 权重低 | 用户要查 / 有市场 SOP 且摸不透才跑 | **走 `deep-research` skill**（可用的 research skill，通用 subagent 调 Skill 工具跑，不另建 subagent） |
 | 用户故事 + AC 员 | 写 `user-stories.md`（US-NN / AC） | 必选 | 轻审 → 确认门 | subagent 文件（双栈） |
 | PRD 本体员 | 写 `prd.md`（合已确认故事） | 必选 | 并行 | subagent 文件（双栈） |
 | 功能点清单员 | 写功能点 + `US↔FP↔正文` 映射 | 必选 | 并行 | subagent 文件（双栈） |
@@ -68,7 +68,7 @@ related_docs:
 ## 建什么
 
 - **重写** `.agents/skills/prd-elicitation/SKILL.md` 成编排总谱：workers 表（必选 / 可选 · 权重 + 触发判据）+ 时序 + 两 review 点 + 用户指令覆盖 / 跳过留痕 规矩。
-- **新建 worker subagent 双栈**（`.claude/agents/<name>.md` + `.codex/agents/<name>.toml` + `.codex/config.toml` 注册）：需求采集员 / 用户故事AC员 / PRD本体员 / 功能点清单员 / 原型员 / **PRD 审稿员**（共 6 个）；外部调研复用 `deep-research`，不另造。
+- **新建 worker subagent 双栈**（`.claude/agents/<name>.md` + `.codex/agents/<name>.toml` + `.codex/config.toml` 注册）：需求采集员 / 用户故事AC员 / PRD本体员 / 功能点清单员 / 原型员 / **PRD 审稿员**（共 6 个）；外部调研**走 `deep-research` skill**（可用的 research skill，通用 subagent 调 Skill 工具跑），不另建 worker subagent。
 - **Workflow 编排模板**（主 agent 当总监）：`parallel` 并行产出、确认门穿插、review 用 loop、可选 worker 条件触发、每个 worker 调 `agent(prompt, {model, ...})` 配各自模型 / 提示词。
 - **收口**：写 ADR（编排式重构决策 + 受影响 skill 栏）；改 ADR-0007 / 0003 衔接（prd-elicitation 升级为编排式）；视情况调 `templates/prd.md` / `user-story.md` / `prds-audit`；`make verify` + 收尾 eval。
 
