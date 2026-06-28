@@ -25,7 +25,7 @@
 - **改架构 / 接口须回顾相关 skill**：大改（写了 ADR 或立了 feature）必须回顾 `.agents/skills/`，更新或写明无需更新。 <!-- rule: rule-0007 | sev: warn | eval: 011 -->
 - **外部材料不自动采信**：事实源 = 正式文档 + 工程当前代码；外部 / 粘贴材料要先整理验收才算数。 <!-- rule: rule-0008 | sev: blocker -->
 - **验收断言必须锚定唯一、真实、产出方的证据**：断言绑到唯一真实信号（防共因污染 / 防超时竞态掩盖）；声称的保证必须有**守护测试**；测试不许为通过而牵强、注释不许撒谎。 <!-- rule: rule-0009 | sev: blocker | eval: 012 -->
-- **PRD 产出标准**：产出 PRD 时——验收可观测、范围 in+out 闭合、每页四态、原型可点通、假设显式确认、可追溯、登记不漂移（仅在产出 PRD 时适用，不强制 PRD 必须存在）。 <!-- rule: rule-0010 | sev: blocker | eval: 013 -->
+- **PRD 产出标准**：产出 PRD 时——先有 approved 用户故事（独立 `user-stories.md` 为上游、PRD 与之对齐）、验收可观测、范围 in+out 闭合、每页四态、（若产出）原型可点通、假设显式确认、可追溯、登记不漂移（仅在产出 PRD 时适用，不强制 PRD 必须存在）。 <!-- rule: rule-0010 | sev: blocker | eval: 013 -->
 - **决策与知识必须当轮落文档，落文档提醒兜住遗漏**：改了产物或做了关键决策，知识要就近写进 `AGENTS.md`/`lessons`/规则/ADR/memory；**用户纠正也算**（用户说"不是这样 / 你理解错了 / 撤回 / 你搞混了"时，当轮记一条 `tasks/lessons.md` 三段式：错在哪 / 怎么防 / 怎么更早发现）；Stop hook 机械触发（K 轮 / commit / 变更增量）的 Haiku **落文档提醒**（`scripts/turn-backstop.sh`，=①，非自进化审查）会复查遗漏并写 `tasks/optimization-log.md`，捞到的须落到对应文档、不许烂在 log 里。 <!-- rule: rule-0011 | sev: warn -->
 - **状态/索引文档不硬编码可自动生成的枚举**：凡已有 `*-index` 自动生成权威清单的（skill→`.agents/skills/README.md`、规则→`docs/rules/index.yaml` 等），`CURRENT_STATUS` 等状态文档只写"以该自动生成索引为准"的指针，**不复刻计数/清单**——硬编码枚举无 `--check` 守、每次新增就漂（本仓 CURRENT_STATUS 的 skill 清单已三次漂移）。举 1–2 例可以，整列枚举不行。 <!-- rule: rule-0012 | sev: warn | eval: 014 -->
 - **非琐碎任务维护 `tasks/todo.md`（标 `level` + 收尾 Review）**：多步 / 动业务码 / L2+ 的任务，动手即在 `tasks/todo.md` 立当前任务并标 `level: L? ｜ task: <名>`（收尾闸据此判要不要 eval，见 rule-0005、档位见 rule-0004）；范围变即更新、收尾前补 Review 段；保持轻——旧块滚进 `tasks/archive/`，不长成流水账。 <!-- rule: rule-0013 | sev: warn -->

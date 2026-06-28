@@ -31,3 +31,8 @@ decisions:
     status: accepted
     date: 2026-06-27
     file: 0006-drop-drift-area.md
+  - id: ADR-0007
+    title: 产出需求流程重做——分阶段确认门 + 真相/需求源优先级 + 功能点覆盖
+    status: accepted
+    date: 2026-06-27
+    file: 0007-prd-workflow-redesign.md

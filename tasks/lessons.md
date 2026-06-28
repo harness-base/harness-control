@@ -15,6 +15,26 @@
 
 ---
 
+## 2026-06-28：讲 Claude Code 操作默认成 CLI、给了终端命令，用户其实用 app
+- Mistake：用户问"怎么进目录续任务"，我默认是 CLI，给了 `cd` + `claude --continue` 终端命令；实际用户用的是**桌面 / 网页 app**。被纠正"不是 cli，是 app"。
+- Prevention：讲"怎么操作 Claude Code"前，先确认客户端类型（CLI / 桌面 app / 网页 / IDE 插件）——各自操作完全不同；不确定就先问、或分客户端给，别默认 CLI。
+- Earlier signal：给 `cd` / 命令行步骤前，没确认对方在不在用终端。
+
+## 2026-06-28：把用户的"通用/行业流程"提问误当成"问 harness 现状"，跑去翻本地文件
+- Mistake：用户问"通常需求评审后是不是该进研发 + 测试用例生产"——是个**行业通用流程**的确认性提问（"通常"），我却当成"问 harness 怎么做"，去读 feature-delivery SKILL + 模板。被纠正"不是本地情况，是行业流程"。
+- Prevention：答前先分清问题是**通用知识**还是**本仓现状**——信号词"通常 / 一般 / 行业 / 是不是应该"=通用，直接答通用知识；"我们这 / 现在 / 这个 skill / 本仓"=现状，才去核本地文件。别一见问题就翻代码。
+- Earlier signal："通常/一般"这类泛化词在问句里，我却在 grep/read 本地文件。
+
+## 2026-06-28：单轮 green eval 漏掉 blocker+7major，对抗式多轮（换视角+复查自身）才照出
+- Mistake：prd-workflow 重做收尾，单个 eval 子 agent 判 **green**（010/011 pass）。用户要求"对抗评审"后，10 视角 ×2 轮 + 逐条独立证伪挖出 **16 真问题**：1 blocker（我设计的"用户故事先于 PRD"中间态——只有 `user-stories.md` 无 `prd.md`——直接挂 `prds-audit` → `make verify` 红）、我的 stop-check B 修复其实**回归**（全文件 grep `## Review` 命中暂挂/归档块旧 Review，mid-task 又误拦）、守护测试**存活变异**（`-ge 2→-ge 3` 边界、正则弱化成裸 Review 都全绿）、一片文档/护栏漂移（rule-0010、prds README、`dir:` 字段、原型措辞 vs ADR-0003）。green eval 盲区：只在空账本态验过、过度声称"五层一致 / load-bearing"。
+- Prevention：(a) L2+/高价值改动收尾，**单轮 eval green ≠ 收敛**；该上对抗式多轮（换没用过的视角 + 专设"复查自己刚做的修复"视角）——这次正是后者抓到 B 回归（呼应 2026-06-24"单轮零=假收敛"）。(b) 守护测试必须变异闸门的**边界**（测 L2 不只 L3）和**锚点语义**（`## 标题` 不只字面），单次变异通过 ≠ 钉死契约（rule-0009）。(c) 新流程引入"中间态/新产物"时，立刻问"它会不会挂现有机器闸（make verify）"。
+- Earlier signal：eval/自评说"green / 一致 / load-bearing"，却只在一种状态下验过、关键变异只试过一次。
+
+## 2026-06-27：eval 闸 mid-task 误触发——rule-0013"开局标 level"撞上 stop-check"每轮拦"
+- Mistake：按 rule-0013 在 todo 开局标 `level: L3`，stop-check 立刻每个 turn-end 都拦"L3 无 eval 评审"；但任务才做到 ADR、实现没动，无从 eval。两规则在多轮任务上冲突：rule-0013 要"开局声明档位"，stop-check 把每个 turn-end 当"收尾"——分不清"进行中"与"要收尾"。
+- Prevention：eval 闸应只在"任务真要收尾/声明完成"时触发，而非每 turn-end。最小修法：stop-check 多看一个**完成信号**（todo 该任务有 `## Review` 段——rule-0013 本就要求"收尾前补 Review"）才要求 eval。**绝不靠降 level 到 L1 绕**（rule-0013/0005 明令反对的低报）。
+- Earlier signal：todo 标 L2+ 后第一个 turn-end 就被拦，而任务实际刚起步。
+
 ## 2026-06-27：讲实现找不准"高度"——先堆术语被嫌"名词多"，改大白话又被嫌"不专业、没实现路径" <!-- opt: seen -->
 - Mistake：讲 step 4，先一口气抛术语 / 自造标记名（中转站 / opt / parked / done / domain…）被嫌"名词有点多"；我矫枉过正改成纯大白话（打勾 / 数数 / 提醒），又被嫌"太不专业、没实现路径、不知道怎么实现"。两头都没踩准。本会话已多次因表达失准被打断（"没懂""太长了"）。
 - Prevention：讲实现的正确高度 = **具体（点名文件 + 每个干啥 + 标记长什么样）+ 说人话（不堆自造名词、一次一个概念）**。不是二选一：要可落地的细节，但用平实的话讲；别在"术语墙"和"空泛"之间来回荡。
