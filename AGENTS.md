@@ -51,7 +51,7 @@ make hooks         # 安装 git hooks
 
 - 复杂、可并行、或重上下文的任务，**默认拆给子代理（subagent）**做——并行更快，也让主 agent 上下文保持干净。
 - 琐碎改动直接做，别为它 spawn 子代理（纯开销）。
-- 已有子代理：eval（收尾评分）。
+- 已有子代理：见自动索引 `.claude/agents/README.md`（如 eval 收尾评分、code-reviewer 给 dev 挑刺）。
 
 ## 沟通方式
 

@@ -15,6 +15,11 @@
 
 ---
 
+## 2026-06-28：删 skill 连带漂移又复发——活引用没扫全，枚举清单无 --check 必漂
+- Mistake：删 feature-delivery/bugfix、建 dev 后，第二轮挑刺又揪出一片"删旧建新连带漂移"：`AGENTS.md`「已有子代理」清单漏 code-reviewer（且 self-optimize 早就漏）、`self-evolution/SKILL.md` 仍把 bugfix 列为"缺口/待补 playbook"、`references/docs.md` 案例还提已删的 bugfix。我只改了 ADR-0009 点名的几处（process-coverage/subagents），漏了同体系其它文件。这是上轮 eval（20260626）已点名、subagents.md 自家判据也写明的**同型问题第 N 次复发**。
+- Prevention：删/改一个 skill 时，**全仓 grep 该 skill 名 + 它代表的"缺口/样板"语义**，逐一判活引用（改）vs 历史记录（不动），别只改 ADR 受影响栏点名的文件；ADR 受影响栏自己也要把"连带要扫哪些"列全。**根治**：枚举型清单（AGENTS.md 子代理行、SKILL 里"缺口如 X"措辞）无 `--check` 必随增删漂——能指针化的指向自动索引（rule-0012），本次把 AGENTS.md 子代理行改为指向 `.claude/agents/README.md`。
+- Earlier signal：删了个 skill 只改了 ADR 点名的 2-3 个文件就收手；全仓 grep 该 skill 名仍有命中、且不全是历史记录。
+
 ## 2026-06-28：用户问"我刚说的 code-reviewer 子 agent"，我答成了平台自带的 /code-review
 - Mistake：用户问"你提的 code-reviewer 子 agent，Claude Code 自带 workflow 了、还要不要配"，我把"自带的"理解成内置 `/code-review` skill，大篇幅讲 /code-review 分档 / ultra——答错了对象。用户纠"我问的不是 /code-review，是你刚说的 code-reviewer"。
 - Prevention：用户用"你刚说的 / 我们提的 X"指代时，**锚回我自己对话里说过的那个 X**，别因为平台有个名字相近的功能（`/code-review` vs `code-reviewer` 子 agent）就偷换成它；名字相近 ≠ 同一个东西，先确认指代再答。

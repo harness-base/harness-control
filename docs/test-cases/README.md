@@ -13,7 +13,7 @@ related_docs:
 
 # 测试用例账本
 
-由 `test-case` skill 产出的测试用例集在此登记。它管"**产出用例 + 用例对需求（验收点 AC + 功能点 FP）的覆盖**"，**不碰"过没过"**（执行结果是后面单独一段机制）。**独立**：AC/FP 当通用输入，与上游 `prd-elicitation` / 下游 `feature-delivery` 的衔接后定。决策见 `../decisions/0008-test-case-skill.md`。
+由 `test-case` skill 产出的测试用例集在此登记。它管"**产出用例 + 用例对需求（验收点 AC + 功能点 FP）的覆盖**"，**不碰"过没过"**（执行结果是后面单独一段机制）。**独立**：AC/FP 当通用输入，与上游 `prd-elicitation` / 下游 `dev` 的衔接后定。决策见 `../decisions/0008-test-case-skill.md`。
 
 - 模板：`templates/test-case.md`
 - 账本：`index.yaml`（每个用例集一条：`id` / `dir`（目录名，`test-cases-audit` 按此键校验）/ `title` / `status`（draft|reviewed）/ `source`）

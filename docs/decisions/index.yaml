@@ -41,3 +41,8 @@ decisions:
     status: accepted
     date: 2026-06-28
     file: 0008-test-case-skill.md
+  - id: ADR-0009
+    title: dev skill——写代码统一入口（两级 + 挑刺 + 共享 code-reviewer 双栈），替代 feature-delivery / bugfix
+    status: accepted
+    date: 2026-06-28
+    file: 0009-dev-skill.md

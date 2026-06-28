@@ -26,8 +26,8 @@ related_docs:
 | `scripts/` | done | verify / docs-audit / run-eval / verify-eval / install-hooks / hook-policy(+test) / skills-index / **rules-index / dir-index / index-audit / prds-audit / test-cases-audit(+test)** / stop-check / **turn-backstop(+test)** |
 | `.githooks/` + `.github/workflows/` | done | 带测试的 hook policy + CI |
 | `.agents/skills/` | done | 技能集**以 `.agents/skills/README.md` 为准**（`skills-index` 从各 `SKILL.md` 自动生成、`--check` 进 `make verify` 防漂移，故此处不再硬编码枚举）；含 self-evolution（带 references 审查手册）、doc-sync 等 |
-| `.claude/` | done | settings（PreToolUse + Stop hook）+ agents/eval + skills 软链 |
-| `.codex/` | done(部分) | eval + self-optimize 子 agent + config（与 Claude Code 行为一致）；其余按需 |
+| `.claude/` | done | settings（PreToolUse + Stop hook）+ 子 agent（**以 `.claude/agents/README.md` 为准**，自动索引；如 eval / code-reviewer）+ skills 软链 |
+| `.codex/` | done(部分) | 子 agent 与 `.claude/agents/` **一一双栈对齐**（各有 `.toml` + `config.toml` 注册，行为一致）+ config；其余按需 |
 | `docs/features/` | done | F-0001~0006（kratos-base 6 个需求包） |
 | `workspace/verification.yaml` | done | kratos-base 路由已填全（verify/unit/e2e/sandbox + 20 AC 弹性矩阵），含示例模板 |
 | `projects/` | done | 挂载点，已挂 kratos-base（详见被管工程表） |

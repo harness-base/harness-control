@@ -21,3 +21,7 @@ config_file = "agents/eval.toml"
 [agents.self-optimize]
 description = "self-evolution 规范检查层的深审执行器：按维度 reference 深审、链路诊断定位断环、写 optimization-log。免 API key（用会话模型）。"
 config_file = "agents/self-optimize.toml"
+
+[agents.code-reviewer]
+description = "独立 code reviewer（挑刺）：读变更，对抗式找 correctness bug / 技术债 / 缺测试 / 安全问题，回结构化清单。dev skill 的 review 步派它。免 API key（用会话模型）。"
+config_file = "agents/code-reviewer.toml"
