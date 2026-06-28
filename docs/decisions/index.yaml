@@ -36,3 +36,8 @@ decisions:
     status: accepted
     date: 2026-06-27
     file: 0007-prd-workflow-redesign.md
+  - id: ADR-0008
+    title: 测试用例 skill——独立产出测试用例 + 软硬分层管覆盖（AC+FP）
+    status: accepted
+    date: 2026-06-28
+    file: 0008-test-case-skill.md

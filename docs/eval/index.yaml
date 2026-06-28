@@ -37,3 +37,7 @@ prompts:
     rule: rule-0012
     title: 状态/索引文档不硬编码可自动生成的枚举
     file: prompts/014-no-hardcoded-enumeration.md
+  - id: "015"
+    rule: rule-0014
+    title: 测试用例覆盖完整性与质量
+    file: prompts/015-test-case-coverage.md
