@@ -25,7 +25,7 @@ related_docs:
 | `docs/harness/` | done | 验证路由 / CI / hooks（含 Stop hook）说明 |
 | `scripts/` | done | verify / docs-audit / run-eval / verify-eval / install-hooks / hook-policy(+test) / skills-index / **rules-index / dir-index / index-audit / prds-audit / test-cases-audit(+test)** / stop-check / **turn-backstop(+test)** |
 | `.githooks/` + `.github/workflows/` | done | 带测试的 hook policy + CI |
-| `.agents/skills/` | done | 技能集**以 `.agents/skills/README.md` 为准**（`skills-index` 从各 `SKILL.md` 自动生成、`--check` 进 `make verify` 防漂移，故此处不再硬编码枚举）；含 self-evolution（带 references 审查手册）、doc-sync 等 |
+| `.agents/skills/` | done | 技能集**以 `.agents/skills/README.md` 为准**（`skills-index` 从各 `SKILL.md` 自动生成、`--check` 进 `make verify` 防漂移，故此处不再硬编码枚举）；含 prd-elicitation（编排式，ADR-0010：产品总监 + 7 worker）、self-evolution（带 references 审查手册）等 |
 | `.claude/` | done | settings（PreToolUse + Stop hook）+ 子 agent（**以 `.claude/agents/README.md` 为准**，自动索引；如 eval / code-reviewer）+ skills 软链 |
 | `.codex/` | done(部分) | 子 agent 与 `.claude/agents/` **一一双栈对齐**（各有 `.toml` + `config.toml` 注册，行为一致）+ config；其余按需 |
 | `docs/features/` | done | F-0001~0006（kratos-base 6 个需求包） |
