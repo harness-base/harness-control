@@ -22,7 +22,7 @@
 ## 已落地
 
 - **被管工程 `kratos-base`**：Go / Kratos 微服务地基（脚手架 + 配置中心 + 服务发现 + PG / Redis / MQ + 可观测 + 运行期弹性），验收点经多轮对抗评审硬化、全 PASS——详见 [`docs/context/CURRENT_STATUS.md`](docs/context/CURRENT_STATUS.md)。
-- **技能集**：`dev`（写代码统一入口）、`test-case`（测试用例 + 覆盖硬闸）、`prd-elicitation`（编排式产需求）、`doc-sync`、`self-evolution` 等——清单以 [`.agents/skills/README.md`](.agents/skills/README.md) 自动索引为准。
+- **技能集**：`dev`（写代码统一入口）、`test-case`（测试用例 + 覆盖硬闸）、`prd-elicitation`（编排式产需求）、`self-evolution` 等——清单以 [`.agents/skills/README.md`](.agents/skills/README.md) 自动索引为准。
 - **子 agent**：`eval`（评委）、`code-reviewer` / `prd-reviewer`（挑刺）、prd 编排 worker 等，双运行时——以 [`.claude/agents/README.md`](.claude/agents/README.md) 自动索引为准。
 - **决策记录**：ADR 见 [`docs/decisions/`](docs/decisions/)（清单以 `index.yaml` 为准）。
 

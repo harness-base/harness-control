@@ -1,24 +1,24 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：level: L3 ｜ task: demote-context-loading
+> 元：level: L3 ｜ task: doc-sync-redesign
 
-## 当前：context-loading 降级 skill → 政策（ADR-0011；收尾）
-该 skill 是 advisory 壳（无触发 / 产物 / 闸、几乎不被 invoke），价值已由 `AGENTS.md` 启动序 + rule-0004 + `CONTEXT_LOADING.md` 承载。删壳、入口落 `AGENTS.md`（永远加载，比 skill 硬）。
-- [x] ADR-0011 + 登记 index
-- [x] AGENTS.md：rule-0004 去"该 skill"、启动序第 2 条强化入口（顺手修第 3 行"以后挂进"同款漂移）
-- [x] rewire 活引用：根 README 技能例、`process-coverage.md` 候选行
-- [x] 删 `.agents/skills/context-loading/` + regen skills-index（无残留）
-- [x] 修 `CONTEXT_LOADING.md` L4 引不存在的 `docs/architecture/`
-- [x] make verify + docs-audit + 对抗验证（2 agent clean）+ 收尾 eval green
+## 当前：doc-sync 重构（skill → 数据清单 + reviewer + 钩子反馈闭环；收尾）
+- [x] 出 spec + plan（docs/superpowers/），与用户逐条敲定
+- [x] T1 删 skill + 表降数据文件 `docs/harness/doc-sync-checklist.md`
+- [x] T2 `doc-sync-reviewer` 子 agent 双栈（haiku、只读）
+- [x] T3 钩子改 log+状态(`- [ ]`)+反馈(correction-nudge 注入)；turn-backstop/correction-nudge 测试
+- [x] T4 rewire 关联项（README/HOOKS/CURRENT_STATUS/docs-README + self-evolution 5 处 refs）
+- [x] T5 ADR-0012 + 登记
+- [x] T6 dogfood（reviewer 真抓到种下的漂移）+ verify + eval green + 提交
 
 ## Review
-- **任务**：`context-loading` 从 skill 降级为政策（L3，ADR-0011）——它是 advisory 壳（无触发/产物/闸、几乎不被 invoke），删壳、入口落到永远自动加载的 `AGENTS.md`（启动序第 2 条 + rule-0004 → `CONTEXT_LOADING.md`）。同时确立"什么配当 skill"判据（触发 + 产物/闸）。
-- **产物**：ADR-0011 + 登记；删 `.agents/skills/context-loading/` + regen 索引；AGENTS.md 入口强化 + rule-0004 去 skill（+ 修第 3 行漂移）；rewire 根 README 技能例、self-evolution/process-coverage 候选行；CONTEXT_LOADING L4 修漂。
-- **关联项（重点）**：全仓 grep 分类——活引用全 rewire（README / rule-0004 / process-coverage）、历史保留（旧 ADR 受影响栏 / eval task-reviews / features / *-plan / self-evolution 讲过去案例）；2 个独立 agent 对抗复扫（含语义级"把 L0-L6 当 skill"）均 **clean、0 漏网**。
-- **验证**：`make verify` + `make docs-audit`（32 篇）绿；skills-index 无 context-loading。**收尾 eval green**（考题 011/014/004/010 全 pass，正面避开 ADR-0004 漏声明 skill 的旧坑）：`docs/eval/task-reviews/20260629T034158Z-demote-context-loading/`。
-- **下一步（用户"继续优化 skills"）**：按 ADR-0011 判据体检其余 skill（`doc-sync` / `add-rule` / `git-workflow` 等是否也偏政策而非技能），逐个判留/降/并。
+- **任务**：`doc-sync` 从 skill 重构为「数据文件 `docs/harness/doc-sync-checklist.md` + `doc-sync-reviewer` 子 agent + 钩子闭环」（L3，ADR-0012）。原 skill 是 advisory 死穴（不被 invoke）、钩子发现写 log 用 exit-0 stderr 送达（没人看见→漂移烂着，根 README 漂移为证）。
+- **设计（与用户逐条敲定）**：删 skill；表降数据；reviewer（haiku、只读）做检查；钩子发现 → 写 log 带 `- [ ]` 状态 + `correction-nudge` 下一轮注入"有 N 条待处理"（可靠通道，非 exit-2 强拦）+ 处理标 `- [x]`；预防层取消、只留检测+反馈；**明确不做** dev/git-workflow、AGENTS.md 通用规矩。
+- **质量**：① **dogfood** 派 doc-sync-reviewer——精准抓到种下的 `scripts/zzz-dogfood.sh→scripts/README` 漂移、且不误报真改动（ADR→index、agent→toml 已跟改它都认出），证检测真生效非橡皮图章；② 守护测试 mutation 自证（correction-nudge case 6/7、turn-backstop case4 接通闸）。
+- **关联项（self-evolution 维度审查枚举，非手记）**：全 rewire（README/HOOKS/CURRENT_STATUS/docs-README/self-evolution 5 refs/ADR 衔接 0006），`git grep` 0 个活引用指向已删 skill；历史不改写。
+- **验证**：`make verify` + `docs-audit`(36) 全绿；**收尾 eval green**（考题 011/014/010 全 pass，**self-evolution=是 名实相符、老坑未复现**）：`docs/eval/task-reviews/20260629T081537Z-doc-sync-redesign/`。
+- **押后 backlog**：self-optimize(②) 闭环、log 全局 drain、**① capture 通道实测 0 产出根因**、`.codex/agents/` 无索引、lessons 46 条 seen 没裁决、optimization-log 旧 `⏳` 收敛进 checkbox。
 
 ## 已闭（已提交，下次清理滚 archive）
-- prd-orchestration（L4，PR #3/#5，eval green）：prd-elicitation 编排式重构 + 两轮 dogfood 复验。
-- dev-skill（L4，7b6576d，eval green）；test-case-skill（L3，c0c94f6，eval green）；prd-workflow-redesign（L3，cbfbc7b）。
+- demote-context-loading（L3，PR #6，eval green）；prd-orchestration（L4，PR #3/#5）；dev-skill（L4，7b6576d）；test-case-skill（L3，c0c94f6）。

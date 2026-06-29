@@ -32,7 +32,7 @@ bash scripts/dir-index.sh .claude/agents --check
 grep -n "claude -p\|MODEL\|HARNESS_TRIAGE" scripts/turn-backstop.sh
 ```
 
-事实锚点（核对过）：现有三个 `.claude/agents/`：`eval.md`（rule-0005 收尾评委）、`self-optimize.md`（self-evolution 的 ② 深审执行器）、`code-reviewer.md`（`dev` skill 的挑刺引擎，对抗式 review；ADR-0009）；前二者 `tools: Read, Glob, Grep, Write, Bash`，`code-reviewer` 是 `tools: Read, Glob, Grep, Bash`（**无 Write，只评不改**）；均免 key。每轮兜底 `scripts/turn-backstop.sh` 跑的是 **headless Haiku**（`claude -p --model`），**不是** spawn 子 agent——重判断子 agent 由主 agent / `self-evolution` / `dev` skill 按需 spawn（`dev` 在 workflow 里 `agentType:'code-reviewer'`）。
+事实锚点：子 agent **以 `.claude/agents/README.md` 自动索引为准**（不硬编计数，rule-0012；含 `eval` 收尾评委、`self-optimize` ② 深审执行器、`code-reviewer` dev 挑刺、`prd-*` 编排 worker、`doc-sync-reviewer` 文档漂移检查 等）；`code-reviewer` / `doc-sync-reviewer` 等 **无 Write、只评不改**；均免 key。每轮兜底 `scripts/turn-backstop.sh` 跑的是 **headless Haiku**（`claude -p --model`），**不是** spawn 子 agent——子 agent 由主 agent / skill / workflow 按需派。
 
 ## 怎么判（逐条可判定）
 

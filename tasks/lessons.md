@@ -15,27 +15,77 @@
 
 ---
 
-## 2026-06-29：往 README 加内容时只顾加自己那段，没顺手核对既有内容已漂移
+## 2026-06-29："执行吧"后没有决策点，我却造了个 checkpoint 停下来问"继续还是暂停"
+- Mistake：用户说"执行吧"、设计已逐条敲定（无悬而未决的决策点），我做了 T1/T2 + T3 一部分后，出于自己的谨慎 / 怕出错，manufactured 一个"自然停点"停下问"现在做完还是改天"。用户："谁让你停的？没决策点为什么停下来问？"——这不是真 checkpoint，是我替用户做了"要不要继续"的决定，而那本不该问。
+- Prevention：拿到"执行 / 做吧"且设计已定，就**一路做到完成或撞上真正的 blocker / 决策点**（信息不足、要用户拍的岔路、不可逆操作前）为止。"工作量大 / 晚了 / 想稳"都不是停下来问的理由——那是我的活，不是用户的决策。要稳就自己稳着做，别把"我累 / 我怕错"包装成"给你个停点"。
+- Earlier signal：写出"要我接着做完，还是先到这？"而手上既没缺信息、也没岔路要用户选——就是在拿假 checkpoint 推卸该自己干的活。
+
+## 2026-06-29：改 harness（doc-sync 重构）却没走 self-evolution 自检 skill，freehand 写方案 → 漏关联项
+- Mistake：doc-sync 重构是典型"改 harness 本身"，rule-0007 + `self-evolution` skill 都要求这时**先走 self-evolution**（规范检查层，"不靠记忆、按 harness 结构逐维度审、防漏项"）。我却直接 freehand 写 spec/plan、没 invoke 它——结果关联项（README/HOOKS/self-evolution refs）全靠用户一遍遍提醒才补齐。本末倒置：我在设计"怎么防漏项"，自己却跳过了那个防漏项的现成 skill。
+- Prevention：动 harness（改/删 skill、改 hook、改规则机制）时，**开头第一步就 invoke `self-evolution` skill**、按它的维度走完再动手写方案；别 freehand。这就是 rule-0007"改架构须回顾相关 skill"的直接落地。
+- Earlier signal：在写一个 harness 改动的 spec/plan，却没在开头说"用 self-evolution"——入口就漏了。
+
+## 2026-06-29：反复给"单场景补丁"，用户要的是"为什么 agent 根本没意识到要改关联项"的根
+- Mistake：关联项反复漏。我先加 lesson（没用），再提个"删 skill 悬空引用 audit"——又只盖一个场景（删 skill），连 README 都没真覆盖。用户点破：真问题是**我改任何东西（不只 skill）都意识不到"还有索引 / README 要跟改"，上下文里没有任何提示告诉我关联项在哪、也没强制我自己去找**。我一直在补"最近踩的那一种"，没去治"没意识"这个根。
+- Prevention：遇**反复**犯的错，先问"为什么每次都想不到"（根多半 = 上下文没给提示 / 没强制 trace），奔那个根去——别给最近这个实例打补丁（补丁只盖一个场景）。治"改 X 忘改关联 Y"的根：要么把"改 X→查 Y"的地图**主动喂进上下文**（收尾前对着 diff 弹给我），要么在常驻入口（`AGENTS.md`）放一条**强制 trace** 的短指令。
+- Earlier signal：方案只覆盖"我刚踩的那一种"、不覆盖同类其它（改脚本→scripts/README、加目录→根 README、改子 agent→codex 镜像 都是同一类漏）——这就是补点不是治根。
+
+## 2026-06-29：stop-check 的 review 正则匹配了 "reviewer" 子串，任务标题带 reviewer 就被误判收尾 <!-- opt: seen -->
+- Mistake：stop-check `finishing_now` 用 `grep -iE '^##.*(review|评审|复盘)'` 判收尾段——`review` 是 `reviewer` 的子串，我 todo 当前任务标题"doc-sync reviewer"被当成 `## Review` 收尾段 → L3 +"收尾"+ 无 eval → **mid-task 误拦**。（顺带：归档边界只认 暂挂/归档/Archive，不认本仓常用的"已闭"，latent。）
+- Prevention：写"识别某节类型"的正则要**锚定整词**（`^##\s+(review|…)([^[:alpha:]]|$)` + 词首），别用裸 `.*关键词`——尤其关键词是别的常用词的前缀时（review ⊂ reviewer）。改 hook 判定逻辑必加 **mutation 自证**（本次补 case 9/10，退回旧正则即转红）。
+- Earlier signal：一个"匹配标题类型"的正则写成 `.*某词` 而非锚定整词——该词若是别的词的子串就假阳。
+
+## 2026-06-29：把 turn-backstop（①capture）混进"self-evolution（②审查）"层，一词两义把人绕了 <!-- opt: seen -->
+- Mistake：设计时我画了张表，把 turn-backstop 钩子列进"self-evolution 这一层"。但架构是 **①落文档提醒（turn-backstop 钩子）** 与 **②自进化审查（self-evolution skill + self-optimize 子 agent）** 是**兄弟**——都喂 `optimization-log`、不是父子；rule-0011 与 `optimization-log` 头都白纸黑字标了"turn-backstop =①、非自进化审查"。我用 "self-evolution" 一词**既指广义闭环（ADR-0005，含①②）又指狭义 skill（只②）**，自己绕进去、把用户也绕了。
+- Prevention：说"X 属于 Y 层"前先确认 Y 是**广义系统**还是**狭义部件**，别让同名词在两个粒度间漂；尤其文档已显式标了 ①/② 区分时，照它的划分说、别自创层级。
+- Earlier signal：画"层/部件"表时，把一个文档明说"非②"的东西塞进②的表——画归属表就该回去核每个部件的定义归属。
+
+## 2026-06-29：把 turn-backstop 的三条触发压成"计数器"，还在这个错简称上做设计 <!-- opt: seen -->
+- Mistake：turn-backstop 是**三条 OR 触发**（K 轮 / commit 边界 / 变更文件数增量，`turn-backstop.sh:47-51`）。我第一次解释时说对了，但后两轮顺嘴压成"计数器闸"，还拿这个 lossy 简称当设计依据（论证"只用钩子"）。用户纠正"不止计数器、还有别的触发"。
+- Prevention：在某机制上做设计前，**回去读它真实的触发/判定逻辑**，别用一个轮次前记住的简称代替；尤其**多条件触发别坍缩成单条件**——丢掉的那条（如 commit 边界）往往正是设计最该用的点（文档漂移恰好集中在 commit 后）。
+- Earlier signal：反复用同一个简称指一个自己其实知道更复杂的东西 = 在用记忆缓存代替事实，该回去核。
+
+## 2026-06-29：已有计数器钩子兜底，我还要"收尾也每次主动跑"，多此一举 <!-- opt: seen -->
+- Mistake：给 doc-sync-reviewer 选触发口径，我建议"收尾主动派 + 钩子机械派、两个都要"。用户纠正："怎么 2 个都要，本来用钩子就是防止每次都跑 subagent。" 钩子（turn-backstop）是**计数器闸、专为'别每轮都跑'而设**；我再叠一个"收尾每次主动"正好抵消它的意义——"more is safer"的惯性。
+- Prevention：给机制选触发口径前，先看**有没有现成的闸控、它存在的目的是什么**；别在一个"专门为省着跑"的闸上再叠"每次都跑"。要兜底就用那个闸，别又加主动全量。
+- Earlier signal：嘴里说"两个都要 / 都加上"时停一下——这俩是不是在解决同一件事？其中一个的存在本就是为了避免另一个？
+
+## 2026-06-29：把"夹带的数据被机器读"当成"该是 skill"的理由，给 doc-sync 判了软 keep <!-- opt: seen -->
+- Mistake：我判 doc-sync "borderline keep"，理由是"它那张 checklist 被 turn-backstop 钩子读、load-bearing"。用户反驳：如果有用的只是那张表（数据），就**不该是 skill**——数据该独立成数据、检查该写个 subagent 干。我把"文件里夹带了一段被机器读的数据"错当成"配当 skill"的理由；而 skill 该挣的是"具体触发 + 主动走的流程 + 产物/闸"，不是"我夹带了一段有用数据"。还顺带漏看了 optimization-log 闭环根本没在跑（真踩的 README 漂移从没被捞到）。
+- Prevention：判一个东西配不配当 skill，只看它**作为流程/技能**那一面挣不挣得到；若真正 load-bearing 的只是**夹带的数据/配置**，那数据该独立成数据文件、由更合适的执行体（subagent / hook / 脚本）消费，壳不许赖在 skill 名下。"被机器读" ≠ "配当 skill"。另：说某兜底机制"有效"前，先看它**实际产出/闭环跑过没有**（查 log 有没有真条目、漏的有没有真修），别拿"设计上会兜"当"实际兜住了"。
+- Earlier signal：替一个 skill 辩护时，理由落在"它文件里某段数据有用"而不是"这流程有人会主动走、产出了什么"——就是在替壳找借口。
+
+## 2026-06-29：用户说"我忘了 X"之后，我还用简称（"那张表"）指 X 的内部，把人绕晕 <!-- opt: seen -->
+- Mistake：用户说"doc-sync 干啥我都忘了"，我讲完后接着反复说"doc-sync 的**那张表**"，默认对方记得"表 = skill 文件里的一段 checklist"。用户懵："doc-sync 不是 skill 吗、怎么成表了？"——我把"skill 文件"和"文件里的一段表格"混着指、没说清是包含关系。
+- Prevention：用户一旦表示"忘了 / 没懂"某东西，后面每次提它的内部部件都要**重新锚定**（这是什么、在哪、什么关系），别用简称硬指；尤其别让"X"和"X 里的一部分"用词混用——先给一句"X 是个文件、里头有段是表"的归属，再聊那段。
+- Earlier signal：同一轮里用户连着问"fan-out 是什么""怎么成表了"——连续追问我的用词，就是我在甩没锚定的简称、对方已跟不上。
+
+## 2026-06-29：按名字把 skill 预归类成"降级候选"，没读就下判断 <!-- opt: seen -->
+- Mistake：降级 `context-loading` 后，我顺口把 `doc-sync` / `add-rule` / `git-workflow` 一起归成"像政策 / 清单、最可能下一批降级"。用户看 `add-rule` 时纠正："这个适合做 skill"。一读 `add-rule` 才发现它**三要素全占**（具体触发 + 多段产物[规则入位 + 登记 + 挂执行] + 机检闸[`rules-index --check` / `hook-policy.test`]），是比 context-loading 强得多的硬 skill——我之前纯按"名字像政策"瞎归类、没读内容。
+- Prevention：判一个 skill 留 / 降 / 并，**必须先读它的 `SKILL.md`、拿判据（触发 + 产物/闸）逐条对**，别按名字 / 表面相似度成批预判（与 rule-0004"不按关键词判档"同根）。要给批量结论先说"待逐个核"，别先抛"最可能降级 X/Y/Z"的名单。
+- Earlier signal：嘴里蹦出"X/Y/Z 最可能降级"却没读过它们的 `SKILL.md`——这就是没证据的预判，该先读再说。
+
+## 2026-06-29：往 README 加内容时只顾加自己那段，没顺手核对既有内容已漂移 <!-- opt: seen -->
 - Mistake：这轮往根 README 加 license / 参与贡献节，我**通读了整个 README** 却没发现 / 没提它一堆已过时（kratos 早挂了却仍写"以后挂进 `projects/`"、起步不全、接入流程用户准备重构）。用户替我点出"这好像是文档漂移了"。我把视野缩在"加我这段"，没把"这文件整体还准不准"纳进来——尤其它**刚转公开、是门面**。
 - Prevention：编辑任何文档（尤其门面 / 公开级）时，顺手对**既有内容**做一次漂移扫（对照 `CURRENT_STATUS` / 实际目录 / 实际 `make` 目标 / 实际机制），过时的当场标出或提醒，别只往陈旧文档上叠新内容。`doc-sync` 不只是"我改的代码要同步文档"，也含"我正在编辑的这篇本身准不准"。
 - Earlier signal：通读一篇文档做局部编辑时，若对其中某条断言"现在还成立吗"答不上来，就该停下核对，而不是跳过、只改自己那段。
 
-## 2026-06-29：并行的两个 worker 共享一套可变命名空间（都造 FP 号）→ 必撞号
+## 2026-06-29：并行的两个 worker 共享一套可变命名空间（都造 FP 号）→ 必撞号 <!-- opt: seen -->
 - Mistake：prd 编排把 PRD本体员 + 功能点员 + 原型员 设成**纯并行**，而 PRD本体员和功能点员**都会造 `FP-NN` 编号**。并行时俩看不到对方、各编各的 → 同号指不同物（`FP-08` 一份是"桌面通知"、另一份是"权限降级"）、跨文档追溯断裂。**end-to-end dogfood 才暴露**——`make verify` 的结构检查查不出这种语义级撞号。
 - Prevention：拆并行 worker 前先看**有没有共享的可变产物 / 命名空间**（ID 空间、同一份清单、同一个文件）。共享可变的**不能多头写**——要么定**单一权威**（只一个 worker 造，其余引用）、要么按**依赖图串起来**（下游读上游成品再并行真正无依赖的）。"几个步骤概念上独立" ≠ "可并行"；真判据是**数据依赖 + 是否共享可变态**。
 - Earlier signal：两个"并行"worker 的产物会**互相引用**（PRD 引 FP、FP 映射又引 PRD 正文）——互引即有依赖，纯并行必出"引用了还没生成 / 对方旧版本"的错位。
 
-## 2026-06-29：把"dogfood"用成了拿旧 code-reviewer 审代码，新建的 prd-reviewer 一次没跑过
+## 2026-06-29：把"dogfood"用成了拿旧 code-reviewer 审代码，新建的 prd-reviewer 一次没跑过 <!-- opt: seen -->
 - Mistake：prd 编排收尾我说"dogfood 挑刺"，实际派的是 **code-reviewer** 审 skill 的代码/配置/文档——而本任务新建的正是 **prd-reviewer + 6 worker + 编排 workflow，它们一次都没真跑过**，只做了结构验证（双栈齐、索引不漂）。审"代码/控制面产物"用 code-reviewer 本身没错（reviewer 按**产物类型**选、不按话题：skill 源码=code-reviewer，需求产出=prd-reviewer），但这恰恰暴露：新 prd-reviewer 的**功能从未被验证**，而我还把这轮叫"dogfood"。
 - Prevention：建了新执行体（subagent / skill / workflow），收尾要**真正运行它一遍**（端到端跑它该处理的产物）——"结构齐全 / 索引不漂" ≠ "功能可用"；"dogfood X" 必须是"让 X 实际跑一次干它的活"，不是拿别的东西审 X 的源码。验 reviewer 能不能用 → 让它真审一份产物；审 reviewer 的源码 → 那是 code-reviewer 的事，两码事。见 [[prd-reviewer-vs-code-reviewer]]。
 - Earlier signal：收尾说"dogfood 了 X"时回头查 X 的 agentType 本次有没有被真调用过——没有，就不是 dogfood，只是"审了 X 的代码"。
 
-## 2026-06-29：切任务时没清上一任务的 `## Review` 段，stop-check 拿旧 Review 误判新任务"在收尾"
+## 2026-06-29：切任务时没清上一任务的 `## Review` 段，stop-check 拿旧 Review 误判新任务"在收尾" <!-- opt: seen -->
 - Mistake：开 prd-orchestration 新任务时，我只改了 `todo.md` 顶部的"当前任务"头，**把上一任务（dev-skill）整段连同它的 `## Review` 留在了文件里**。stop-check（rule-0005 收尾闸）按"当前 `## Review` 存在 = 在收尾"判定，撞到那段旧 Review，就在我**任务中途**（T6 还在跑、eval 还没到）⛔ 拦截，要我先跑 eval。是 todo 卫生没跟上，不是闸的 bug。
 - Prevention：**切任务的当轮就把上一任务整块滚进 `archive/` 或压成一行"已闭"注脚**，绝不让旧 `## Review` 跟新任务并存；`todo.md` 任一时刻只该有"当前任务"那一个 `## Review`（且只在真收尾时才补）。见 [[stop-check-eval-gate-midtask]]（闸把 Review 当收尾信号的机制）。
 - Earlier signal：编辑 todo 头部时若下方还留着上一任务的 `- [x]` 清单 / `## Review`——就是没清干净，stop-check 下一次 turn-end 必误触。
 
-## 2026-06-29：每条消息结尾"认吗/认不认"问个不停，用户嫌"像审犯人认罪"
+## 2026-06-29：每条消息结尾"认吗/认不认"问个不停，用户嫌"像审犯人认罪" <!-- opt: seen -->
 - Mistake：brainstorming 的"逐段确认"被我做成**每条消息结尾都甩一句"认吗/认不认/对吗"**，一个 refinement 问一次。用户烦："跟认罪审犯人似的"。把"增量确认"做成了"反复逼供式索要批准"。
 - Prevention：(a) 别用闭合的"认不认"逼 yes/no——**陈述我要做什么 + 开放邀请"要改直说"**，或方向已明就**直接做**、让用户在产物上 review；(b) 用户已多次同意大方向时，**信任累积的共识、往前推**（写出来给他看），别每个微调都回头要批准；(c) 确认点**攒到一个自然节点**（如"写完 spec 给你过目"），不是每轮。
 - Earlier signal：连续几条消息都以"认吗?/对吗?/这样行吗?"收尾——这就是在反复逼供，该改成"我去写/我去做，完了你看"。

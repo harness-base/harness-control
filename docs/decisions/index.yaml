@@ -56,3 +56,8 @@ decisions:
     status: accepted
     date: 2026-06-29
     file: 0011-demote-context-loading.md
+  - id: ADR-0012
+    title: doc-sync 重构——skill 降为数据清单 + doc-sync-reviewer 子 agent + 钩子反馈闭环（log+状态+送达）
+    status: accepted
+    date: 2026-06-29
+    file: 0012-doc-sync-redesign.md

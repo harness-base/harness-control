@@ -3,6 +3,7 @@
 > 由 `scripts/dir-index.sh` 自动生成、禁手改。默认不加载；自检 / 自进化时当地图查。
 
 - `code-reviewer.md` — code-reviewer
+- `doc-sync-reviewer.md` — doc-sync-reviewer
 - `eval.md` — eval
 - `feature-point-writer.md` — feature-point-writer
 - `prd-reviewer.md` — prd-reviewer

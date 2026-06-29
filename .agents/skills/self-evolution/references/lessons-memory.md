@@ -48,7 +48,7 @@ bash "$ROOT/scripts/turn-backstop.test.sh"
 - **log 空转 / 污染——本仓刚踩过**：`tasks/lessons.md` 2026-06-26「兜底把超长 transcript 喂给 Haiku，"Prompt is too long" 被当发现记进 log」。`turn-backstop` 按**行**截 transcript，JSONL 单行含工具输出可能极大→prompt 超限→Haiku 回报错串→脚本没识别，当成发现追加进 `optimization-log` 还提交了一条。修法已固化：改按**字节**截（`TAIL_BYTES`，脚本 21/55 行），入库只认 `^\[`（脚本 73 行）。
 - **同型坑反复未晋升**：2026-06-12「池类依赖掩盖探活失败不重建」与多条 e2e/共因/超时竞态 lesson 同主题（断言锚错信号）反复出现——这类一旦 ≥2 次就该考虑晋升，对应已沉淀为 rule-0009（验收断言锚定唯一真实证据）。判 lessons 健康时，专盯"同主题第 2 次还在记 lesson、却没规则"。
 - **晋升断链被 eval 抓**：2026-06-26「rule-0007 改了 skill 却没在 ADR 记录 = 判失败」——做了没记 = 没履行（eval-011 判 blocker fail）。
-- **log 本应非空却空**：当前 `tasks/optimization-log.md` 只有表头说明、`兜底`/`judgment` 条目为 0 ⇒ 闭环还没真跑过，不是"健康的空"。审查时区分"没东西要记"与"机制没启动"。
+- **log 闭环要看真跑没跑**：`② judgment` 已有条目；`① capture`（turn-backstop）实测**仍 0 产出**（根因待查，ADR-0012 列 backlog）。doc-drift 现写 `- [ ]` 状态、经 `correction-nudge` 下一轮反馈，处理后标 `- [x]`。审查时区分"没东西要记"与"机制没启动"，并查 `- [ ]` 有没有堆积（待处理没人理）。
 
 ## 修复用哪个操作 skill / 脚本
 

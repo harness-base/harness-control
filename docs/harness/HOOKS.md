@@ -51,7 +51,9 @@ make hooks   # git config core.hooksPath .githooks
 `stop-check.sh` 在收尾闸门之后调 `scripts/turn-backstop.sh`，**机械触发**的廉价兜底（脚本管 WHEN、Haiku 管 WHAT）：
 
 - **触发**（脚本顶部常量可调）：`K` 轮到点（默认 8）/ commit 边界（HEAD 变）/ 变更文件数**增量** ≥ 阈值（默认 10，是"涨多少"非绝对值）。状态存 `tasks/.turn-count`、`tasks/.last-backstop`（gitignore）。
-- 触发后 **headless `claude -p --model haiku`** 复查最近 transcript，捞"做了决策 / 学了偏好 / 有知识却没写进文件"的遗漏；其中"改了文件没同步文档"一类，**对照 `.agents/skills/doc-sync/SKILL.md` 漂移对照表的 `🔴手` 行**判断（单一来源，不自抄子集；机器能兜的 `✅机检` 行交给 `make verify`），追加 `tasks/optimization-log.md` 并 stderr 提醒。
+- 触发后 **headless `claude -p --model haiku`** 复查最近 transcript，捞"做了决策 / 学了偏好 / 有知识却没写进文件"的遗漏；其中"改了文件没同步文档"一类，**对照 `docs/harness/doc-sync-checklist.md` 的 `🔴手` 行**判断（单一来源，不自抄子集；机器能兜的 `✅机检` 行交给 `make verify`；同判据由 `doc-sync-reviewer` 子 agent 承接，ADR-0012）。
+- **发现写 `tasks/optimization-log.md`、每条带 `- [ ]` 状态（待处理）**；**送达**靠 `UserPromptSubmit` 钩子（`correction-nudge.sh`）下一轮注入"有 N 条待处理"——替代不被注入、没人看见的 exit-0 stderr。处理完该行改 `- [x]`（暂缓 `- [~]`）。turn-backstop 仍 best-effort、永不阻断收尾。
+- **Codex 局限**：doc-drift 自动检测靠 Claude Code 的 Stop / UserPromptSubmit 钩子，**Codex 无等价自动触发**（靠 `make verify` 机检半 + 手动派 `doc-sync-reviewer`）。
 - **安全**：递归 guard（headless 调用带 `HARNESS_TRIAGE=1` + 从中性目录 `/tmp` 跑、不加载项目钩子）；本机无 `timeout`/`gtimeout`，用 perl `alarm` 包超时；budget 封顶；**best-effort——任何失败一律 exit 0，绝不阻断收尾**。安全性由 `scripts/turn-backstop.test.sh` 自测（不调 Haiku）。
 
 为什么不"每轮跑 eval"：纯讨论轮空转、烧 token / 拖慢。为什么触发机械而非 agent 判断：漏记的 agent 同样会忘记触发兜底——故触发必须独立于 agent。重判断（多维优化）走 `.claude/agents/self-optimize.md` 子 agent，按需 spawn。
