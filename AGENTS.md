@@ -1,13 +1,13 @@
 # Agent Harness 控制面
 
-本仓是一套通用的 agent 控制面（harness）：用「最小内核 + 可挂载模块」治理 AI agent 在被管工程上的开发。被管工程以后挂进 `projects/`。
+本仓是一套通用的 agent 控制面（harness）：用「最小内核 + 可挂载模块」治理 AI agent 在被管工程上的开发。被管工程挂进 `projects/`（已挂 `kratos-base`）。
 
 默认策略：**少读、按需读、渐进加载**。
 
 ## 启动顺序
 
 1. 读 `docs/context/CURRENT_STATUS.md`（当前真实状态）。
-2. 按 `docs/context/CONTEXT_LOADING.md` 判定本次任务读多少。
+2. 按 `docs/context/CONTEXT_LOADING.md` 判定本次任务读多少（默认少读、拿不准先低档起步、遇证据再升档）。
 3. 需要文档路由时，读 `docs/README.md`。
 4. 在某目录**读或改**代码前，加载该位置**向上最近的 `AGENTS.md`**（连同其同级 `CLAUDE.md`）——**就近规则随之生效**；按目录加载与档位叠加，详见 `docs/context/CONTEXT_LOADING.md`。
 5. 进入某目录想读 / 动其下文件前，若该目录有 `README.md`，**先读一下**——不必通读，目的是知道这里有什么、该挑哪个。README 不像 AGENTS.md 那样自动加载，靠这条规则触发。
@@ -19,7 +19,7 @@
 - **改业务代码前先立需求包**：用户可见的需求、行为或验收目标变化，必须先在 `docs/features/` 建需求包并就绪；未就绪 **MUST STOP**（纯控制面 / 文档 / 脚本改动不触发）。 <!-- rule: rule-0001 | sev: blocker | eval: 001 -->
 - **blocked / skipped ≠ pass**：验证没真跑通，不许声称通过。 <!-- rule: rule-0002 | sev: blocker | eval: 002 -->
 - **不许假完成**：没有真实运行证据，不得声称功能完成或验收通过。 <!-- rule: rule-0003 | sev: blocker | eval: 003 -->
-- **按产物/证据/目标文件判加载档，不按关键词**（context-loading，详见该 skill 与 `CONTEXT_LOADING.md`）。 <!-- rule: rule-0004 | sev: warn | eval: 004 -->
+- **按产物/证据/目标文件判加载档，不按关键词**（详见 `docs/context/CONTEXT_LOADING.md`；启动顺序第 2 条是入口）。 <!-- rule: rule-0004 | sev: warn | eval: 004 -->
 - **收尾前过 eval**：L2 以上任务、关键决策点，收尾前必须跑 task eval review（独立评委按 rubric 打分）。 <!-- rule: rule-0005 | sev: blocker | eval: 010 -->
 - **不碰密钥与危险命令**：不泄露密钥 / token；不执行 `git reset --hard`、`rm -rf /` 等高危命令（hook 会拦）。 <!-- rule: rule-0006 | sev: blocker -->
 - **改架构 / 接口须回顾相关 skill**：大改（写了 ADR 或立了 feature）必须回顾 `.agents/skills/`，更新或写明无需更新。 <!-- rule: rule-0007 | sev: warn | eval: 011 -->

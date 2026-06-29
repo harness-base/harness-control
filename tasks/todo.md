@@ -1,25 +1,24 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：level: L4 ｜ task: prd-orchestration
+> 元：level: L3 ｜ task: demote-context-loading
 
-## 当前：prd-elicitation 编排式重构（按 plan 执行；收尾）
-设计稿/计划 `docs/superpowers/{specs,plans}/2026-06-29-prd-orchestration*`（approved）。产品总监(主 agent)调度 7 worker（6 双栈 subagent + 外部调研走 deep-research skill），必选/可选·权重 + 确认门 + 并行 + review loop（框并行、回原 worker、只重跑有问题的）。
-- [x] T1 ADR-0010 + 重写 SKILL 总谱（5e22c2d）
-- [x] T2 prd-reviewer 子 agent 双栈（a33c349）
-- [x] T3 5 个产出 worker 子 agent 双栈（fe442c7）
-- [x] T4 Workflow 编排模板（7564fa7）
-- [x] T5 doc-sync + verify（7bbef49）
-- [x] T6 对抗挑刺(dogfood 11 agent) 修平 4 类（7630519）→ 收尾 eval green → 修 1 warn → 补 Review
+## 当前：context-loading 降级 skill → 政策（ADR-0011；收尾）
+该 skill 是 advisory 壳（无触发 / 产物 / 闸、几乎不被 invoke），价值已由 `AGENTS.md` 启动序 + rule-0004 + `CONTEXT_LOADING.md` 承载。删壳、入口落 `AGENTS.md`（永远加载，比 skill 硬）。
+- [x] ADR-0011 + 登记 index
+- [x] AGENTS.md：rule-0004 去"该 skill"、启动序第 2 条强化入口（顺手修第 3 行"以后挂进"同款漂移）
+- [x] rewire 活引用：根 README 技能例、`process-coverage.md` 候选行
+- [x] 删 `.agents/skills/context-loading/` + regen skills-index（无残留）
+- [x] 修 `CONTEXT_LOADING.md` L4 引不存在的 `docs/architecture/`
+- [x] make verify + docs-audit + 对抗验证（2 agent clean）+ 收尾 eval green
 
 ## Review
-- **任务**：把 `prd-elicitation` 从线性交互 skill 重构成**编排式**（L4，ADR-0010）：产品总监（编排逻辑·主 agent 当）调度 7 worker 角色，三层优先级（用户指令>必选>可选·权重）+ 确认门 + 并行产出 + 两段 review loop（轻审地基/重审下游、框并行、回原 worker、只重跑有问题的）。
-- **产物**：ADR-0010 + 登记；SKILL 重写成编排总谱（version 3）；6 worker 子 agent 双栈（prd-reviewer + 5 产出员，各 `.claude/.md`+`.codex/.toml`+config 注册）；外部调研走可用的 `deep-research` skill（不另建 subagent）；`references/orchestration-workflow.js` 编排模板；doc-sync（CURRENT_STATUS 指针化 + docs/README）。6 个 commit `5e22c2d..`。
-- **质量**：一轮对抗挑刺 dogfood code-reviewer（11 agent / 3 视角 / 每条独立证伪），确认 4 类真问题并修平——① deep-research「复用」措辞如实化（可用 plugin skill、非 repo 资产/非第7 subagent，走 Skill 工具调；六处对齐）② workflow 重审在用户跳过原型时不再误重跑 prototype-builder（`ran` 集合过滤 + 条件审稿提示）③ 重审 loop 加 `MAX_ROUNDS=4` 防不收敛 ④ 加注澄清 export+顶层 return 是 Workflow 约定（node 裸模块校验报错=误报）。1 条被驳。
-- **验证**：`make verify` 全绿（索引无漂、rule-0012 不硬编码、双栈对齐）、`make docs-audit` 30 篇绿、workflow 模板包 async 函数后 `node --check` 过。**收尾 eval green**（独立评委：考题 011/013/014 全 pass、010 综合 green）：`docs/eval/task-reviews/20260628T175152Z-prd-orchestration/`；eval 提的 1 warn（ADR/spec 加粗措辞）已修。
-- **未决（押后）**：常驻自主"产品总监 agent"、通用 loop-engineering 引擎、harness 自身 observability、外部 MCP（飞书/figma）。下一步：finishing-a-development-branch（是否推 + 后续）。
+- **任务**：`context-loading` 从 skill 降级为政策（L3，ADR-0011）——它是 advisory 壳（无触发/产物/闸、几乎不被 invoke），删壳、入口落到永远自动加载的 `AGENTS.md`（启动序第 2 条 + rule-0004 → `CONTEXT_LOADING.md`）。同时确立"什么配当 skill"判据（触发 + 产物/闸）。
+- **产物**：ADR-0011 + 登记；删 `.agents/skills/context-loading/` + regen 索引；AGENTS.md 入口强化 + rule-0004 去 skill（+ 修第 3 行漂移）；rewire 根 README 技能例、self-evolution/process-coverage 候选行；CONTEXT_LOADING L4 修漂。
+- **关联项（重点）**：全仓 grep 分类——活引用全 rewire（README / rule-0004 / process-coverage）、历史保留（旧 ADR 受影响栏 / eval task-reviews / features / *-plan / self-evolution 讲过去案例）；2 个独立 agent 对抗复扫（含语义级"把 L0-L6 当 skill"）均 **clean、0 漏网**。
+- **验证**：`make verify` + `make docs-audit`（32 篇）绿；skills-index 无 context-loading。**收尾 eval green**（考题 011/014/004/010 全 pass，正面避开 ADR-0004 漏声明 skill 的旧坑）：`docs/eval/task-reviews/20260629T034158Z-demote-context-loading/`。
+- **下一步（用户"继续优化 skills"）**：按 ADR-0011 判据体检其余 skill（`doc-sync` / `add-rule` / `git-workflow` 等是否也偏政策而非技能），逐个判留/降/并。
 
 ## 已闭（已提交，下次清理滚 archive）
-- dev-skill（L4，7b6576d，eval green）：写代码统一入口替代 feature-delivery/bugfix；两轮挑刺修 8 处。
-- test-case-skill（L3，c0c94f6，eval green）：产用例 + AC/FP 覆盖硬闸；4 轮挑刺修 25 处。
-- prd-workflow-redesign（L3，cbfbc7b）：产出需求流程重做（ADR-0007）。
+- prd-orchestration（L4，PR #3/#5，eval green）：prd-elicitation 编排式重构 + 两轮 dogfood 复验。
+- dev-skill（L4，7b6576d，eval green）；test-case-skill（L3，c0c94f6，eval green）；prd-workflow-redesign（L3，cbfbc7b）。

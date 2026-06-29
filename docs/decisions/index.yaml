@@ -51,3 +51,8 @@ decisions:
     status: accepted
     date: 2026-06-29
     file: 0010-prd-orchestration.md
+  - id: ADR-0011
+    title: context-loading 降级 skill → 政策（删 skill 壳，入口落 AGENTS.md）
+    status: accepted
+    date: 2026-06-29
+    file: 0011-demote-context-loading.md
