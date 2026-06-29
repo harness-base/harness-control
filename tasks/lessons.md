@@ -15,6 +15,16 @@
 
 ---
 
+## 2026-06-29：并行的两个 worker 共享一套可变命名空间（都造 FP 号）→ 必撞号
+- Mistake：prd 编排把 PRD本体员 + 功能点员 + 原型员 设成**纯并行**，而 PRD本体员和功能点员**都会造 `FP-NN` 编号**。并行时俩看不到对方、各编各的 → 同号指不同物（`FP-08` 一份是"桌面通知"、另一份是"权限降级"）、跨文档追溯断裂。**end-to-end dogfood 才暴露**——`make verify` 的结构检查查不出这种语义级撞号。
+- Prevention：拆并行 worker 前先看**有没有共享的可变产物 / 命名空间**（ID 空间、同一份清单、同一个文件）。共享可变的**不能多头写**——要么定**单一权威**（只一个 worker 造，其余引用）、要么按**依赖图串起来**（下游读上游成品再并行真正无依赖的）。"几个步骤概念上独立" ≠ "可并行"；真判据是**数据依赖 + 是否共享可变态**。
+- Earlier signal：两个"并行"worker 的产物会**互相引用**（PRD 引 FP、FP 映射又引 PRD 正文）——互引即有依赖，纯并行必出"引用了还没生成 / 对方旧版本"的错位。
+
+## 2026-06-29：把"dogfood"用成了拿旧 code-reviewer 审代码，新建的 prd-reviewer 一次没跑过
+- Mistake：prd 编排收尾我说"dogfood 挑刺"，实际派的是 **code-reviewer** 审 skill 的代码/配置/文档——而本任务新建的正是 **prd-reviewer + 6 worker + 编排 workflow，它们一次都没真跑过**，只做了结构验证（双栈齐、索引不漂）。审"代码/控制面产物"用 code-reviewer 本身没错（reviewer 按**产物类型**选、不按话题：skill 源码=code-reviewer，需求产出=prd-reviewer），但这恰恰暴露：新 prd-reviewer 的**功能从未被验证**，而我还把这轮叫"dogfood"。
+- Prevention：建了新执行体（subagent / skill / workflow），收尾要**真正运行它一遍**（端到端跑它该处理的产物）——"结构齐全 / 索引不漂" ≠ "功能可用"；"dogfood X" 必须是"让 X 实际跑一次干它的活"，不是拿别的东西审 X 的源码。验 reviewer 能不能用 → 让它真审一份产物；审 reviewer 的源码 → 那是 code-reviewer 的事，两码事。见 [[prd-reviewer-vs-code-reviewer]]。
+- Earlier signal：收尾说"dogfood 了 X"时回头查 X 的 agentType 本次有没有被真调用过——没有，就不是 dogfood，只是"审了 X 的代码"。
+
 ## 2026-06-29：切任务时没清上一任务的 `## Review` 段，stop-check 拿旧 Review 误判新任务"在收尾"
 - Mistake：开 prd-orchestration 新任务时，我只改了 `todo.md` 顶部的"当前任务"头，**把上一任务（dev-skill）整段连同它的 `## Review` 留在了文件里**。stop-check（rule-0005 收尾闸）按"当前 `## Review` 存在 = 在收尾"判定，撞到那段旧 Review，就在我**任务中途**（T6 还在跑、eval 还没到）⛔ 拦截，要我先跑 eval。是 todo 卫生没跟上，不是闸的 bug。
 - Prevention：**切任务的当轮就把上一任务整块滚进 `archive/` 或压成一行"已闭"注脚**，绝不让旧 `## Review` 跟新任务并存；`todo.md` 任一时刻只该有"当前任务"那一个 `## Review`（且只在真收尾时才补）。见 [[stop-check-eval-gate-midtask]]（闸把 Review 当收尾信号的机制）。
