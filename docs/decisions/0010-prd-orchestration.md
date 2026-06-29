@@ -49,5 +49,5 @@ related_docs:
 - 新增 6 个 worker 子 agent（双栈）+ 一个 Workflow 编排模板（`prd-elicitation/references/`）。
 - 护栏对齐：rule-0010 / eval 013（PRD 标准）、`prds-audit`（结构机检）随实现保持；用户覆盖必选/留痕是新约定。
 - ADR-0003/0007 不改写（历史）；本 ADR 是对其流程的编排化细化。
-- 决策 4 / 7 经一次端到端 **dogfood**（throwaway PRD）验证并修订：dogfood 实跑暴露了"PRD 本体员 + 功能点员并行各自造 `FP-NN` → 同号指不同物"的 blocker 与"原型对待确认点静默取默认"，据此改为 PRD 先出 + FP 单一权威 + 原型默认全披露（结构 `make verify` 查不出这种语义级缺陷，须端到端跑）。
+- 决策 4 / 7 经端到端 **dogfood**（throwaway PRD）暴露并**复验**：首轮 dogfood 实跑暴露"PRD 本体员 + 功能点员并行各自造 `FP-NN` → 同号指不同物"的 blocker 与"原型对待确认点静默取默认"，据此改为 PRD 先出 + FP 单一权威 + 原型默认全披露；**二轮 dogfood 复验修复**：`prd.md` 不再自造 FP 号（`feature-points.md` 单一权威）、重审由"4 轮不收敛"变"2 轮 clean"、无 FP 撞号 blocker（结构 `make verify` 查不出这种语义级缺陷，须端到端跑）。
 - 押后：常驻自主总监、通用 loop-engineering 引擎、harness 自身 observability、外部 MCP 连接器。
