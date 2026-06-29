@@ -29,6 +29,16 @@ printf '%s' "$out" | grep -q '整理' && ok || no "pending 超阈值未注入整
 # 5) 未超阈值 → 不注入整理提醒（证明它真受计数控制，不是恒发）
 out="$(printf '{}' | LESSONS_FILE="$tmpd/L.md" LESSONS_PROMOTE_THRESHOLD=99 bash scripts/correction-nudge.sh 2>/dev/null)"
 printf '%s' "$out" | grep -q '整理' && no "未超阈值却注入了整理提醒" || ok
+
+# 6) optimization-log 有「待处理」(- [ ]) 发现 → 注入"待处理"反馈（load-bearing：turn-backstop 写的发现靠这条送达 agent）
+printf '## x\n- [ ] [docs] 改了 foo.sh 没改 README\n' > "$tmpd/optlog.md"
+out="$(printf '{}' | BACKSTOP_LOG="$tmpd/optlog.md" bash scripts/correction-nudge.sh 2>/dev/null)"
+printf '%s' "$out" | grep -q '待处理' && ok || no "log 有 - [ ] 待处理却没注入反馈"
+
+# 7) 全已打勾 → 不注入"待处理"（证明受状态控制、不是恒发）
+printf '## x\n- [x] [docs] 已处理\n' > "$tmpd/optlog.md"
+out="$(printf '{}' | BACKSTOP_LOG="$tmpd/optlog.md" bash scripts/correction-nudge.sh 2>/dev/null)"
+printf '%s' "$out" | grep -q '待处理' && no "无待处理却注入了反馈" || ok
 rm -rf "$tmpd"
 
 echo "correction-nudge.test: pass=$pass fail=$fail"

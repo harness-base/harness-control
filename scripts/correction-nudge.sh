@@ -23,4 +23,13 @@ case "$pending" in ''|*[!0-9]*) pending=0 ;; esac
 if [ "$pending" -gt "$THRESHOLD" ]; then
   printf '\n[整理·rule-0011] tasks/lessons.md 攒了 %s 条还没整理的 lesson（超 %s）。\n转达用户：可走 self-evolution 挑哪些该升成规则（走 add-rule）、不值得的标 skip。\n转达后把这批未标记的标题行尾加 <!-- opt: seen -->（提醒过·待决定），免得下轮重复打扰。\n' "$pending" "$THRESHOLD"
 fi
+
+# 提醒 3：optimization-log 里有「待处理」(未打勾)的 backstop 发现 → 反馈给 agent 去处理。
+# turn-backstop 把发现写成 `- [ ]`；这里是它的送达通道(替代不被看见的 exit-0 stderr)。
+OPTLOG="${BACKSTOP_LOG:-$ROOT/tasks/optimization-log.md}"
+undone="$(grep -cE '^- \[ \]' "$OPTLOG" 2>/dev/null || echo 0)"
+case "$undone" in ''|*[!0-9]*) undone=0 ;; esac
+if [ "$undone" -gt 0 ]; then
+  printf '\n[待处理·rule-0011] tasks/optimization-log.md 有 %s 条待处理发现（含文档漂移/没落文档的知识）。逐条处理：改掉对应文档 / 落到 ADR·lessons·规则，处理完把该行 `- [ ]` 改 `- [x]`（暂缓改 `- [~]` 并写一句理由）。别让它烂在 log 里。\n' "$undone"
+fi
 exit 0

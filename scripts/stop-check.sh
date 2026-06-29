@@ -24,8 +24,10 @@ task="$(grep -oE 'task:[[:space:]]*[A-Za-z0-9._-]+' "$TODO" | sed -E 's/task:[[:
 #       会让闸 mid-task 误拦（lessons 2026-06-27 两条）。收尾段标题认 Review/评审/复盘（大小写不限）。
 # 档位 / 收尾段声明靠 agent 诚实——见 docs/harness/HOOKS.md 的局限说明。
 finishing_now() {
-  awk '/^##[[:space:]]*(暂挂|归档|[Aa]rchive)/{exit} {print}' "$TODO" \
-    | grep -qiE '^##[[:space:]].*(review|评审|复盘)'
+  # 归档/暂挂边界：扫到它就停（含"已闭/完成"，本仓归档段常用）。收尾段标题须以 review/评审/复盘 起头
+  # 且后接非字母或行尾——锚定整词，免得 "reviewer"（review 是其子串）被误当 ## Review 段（lessons 2026-06-29）。
+  awk '/^##[[:space:]]*(暂挂|归档|已闭|完成|[Aa]rchive)/{exit} {print}' "$TODO" \
+    | grep -qiE '^##[[:space:]]+(review|评审|复盘)([^[:alpha:]]|$)'
 }
 if [ -n "$level" ] && [ "${level#L}" -ge 2 ] 2>/dev/null && finishing_now; then
   found=""

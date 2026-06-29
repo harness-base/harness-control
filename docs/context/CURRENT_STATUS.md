@@ -34,7 +34,7 @@ related_docs:
 | `docs-maintainer` skill | planned | 待接入（写文档 / 管文档） |
 | `docs/prds/` | done | 需求产出账本（prd-elicitation skill 产物 + prds-audit）；architecture 暂未建（drift 区已弃，见 ADR-0006） |
 | `docs/test-cases/` | done | 测试用例账本（test-case skill 产物 + `test-cases-audit` 硬闸校 AC/FP 覆盖闭合，ADR-0008）；空账本待实战 |
-| 自进化（① 落文档提醒 + ② self-evolution） | done | `turn-backstop.sh`（每轮落文档提醒）+ `self-evolution` skill/references + `self-optimize` 子 agent |
+| 自进化（① 落文档提醒 + ② self-evolution） | done | `turn-backstop.sh`（机械触发落文档提醒，写 `- [ ]` 状态）+ `correction-nudge` 下一轮反馈待处理 + 文档漂移判据 `docs/harness/doc-sync-checklist.md` + `doc-sync-reviewer` 子 agent（ADR-0012）+ `self-evolution` skill/references + `self-optimize` 子 agent |
 | sandbox / E2E 环境 | done | kratos-base 已建实（`projects/kratos-base/deploy/sandbox` + `verification.yaml` 路由，20 AC 弹性 e2e 跑通）；新工程随接随建 |
 
 ## eval 怎么跑（免 key）

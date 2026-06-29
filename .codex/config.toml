@@ -49,3 +49,7 @@ config_file = "agents/feature-point-writer.toml"
 [agents.prototype-builder]
 description = "原型员（prd-elicitation 可选 worker）：产出可点 HTML 原型。免 API key。"
 config_file = "agents/prototype-builder.toml"
+
+[agents.doc-sync-reviewer]
+description = "文档漂移检查员：读 git diff + doc-sync-checklist 的 🔴手 行 → 报关联文档没跟改的漂移，只读不改。免 API key。"
+config_file = "agents/doc-sync-reviewer.toml"

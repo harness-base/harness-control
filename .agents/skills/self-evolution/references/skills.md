@@ -4,7 +4,7 @@
 
 ## 规范（健康长什么样 / 不变量）
 
-- **会触发的流程都有 skill**：常见任务类型（立规则 / 交付需求 / 出 PRD / git 写操作 / 定档 / 自检）都能在 `.agents/skills/` 找到对应 skill，不靠口头约定。
+- **会触发的流程有对应承载**：常见任务类型（立规则 / 交付需求 / 出 PRD / git 写操作 等）能在 `.agents/skills/` 找到对应 skill；但**有的能力由政策 / 数据 + 子 agent 承接、不必是 skill**——"定档" = `CONTEXT_LOADING.md` 政策（ADR-0011）、"文档同步" = `doc-sync-checklist.md` + `doc-sync-reviewer`（ADR-0012）。判据见 ADR-0011/0012 的 skill 准入标准（要有触发 + 产物/闸），别把"某能力无 skill"一律当缺口。
 - **description 触发准、不重叠不漏**：每个 `description` 写清"何时用 / 何时不用"，覆盖该触发的场景，又不和别的 skill 抢同一类任务。
 - **进自动索引、防漂移**：每个 skill 有 `SKILL.md`，frontmatter 含 `name / description / version / last_reviewed`；`.agents/skills/README.md` 由 `scripts/skills-index.sh` 从 frontmatter 自动生成，**禁手改**，`--check` 进 `make verify`。
 - **arch 变了回顾（rule-0007）**：架构 / 接口 / 流程变了，相关 skill 必须跟着改或在 ADR 写"无需更新 + 理由"；`SKILL.md` 末尾的「演进」段指明它依赖谁、何时回顾。

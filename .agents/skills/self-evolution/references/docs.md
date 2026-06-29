@@ -71,7 +71,7 @@ grep -nE 'README\.md|coverage-audit' "$ROOT/scripts/verify-control-plane.sh"
 
 - **机器闭环**：`scripts/docs-audit.sh`（悬空）、`scripts/verify-control-plane.sh` 的 shim 段（shim 缺配）、`make verify` / `make docs-audit` 统一入口。
 - **改文档内容**（路由/context 现状化/就近下沉）：直接编对应 `.md` / `AGENTS.md`，改完跑 `make verify` 复核。
-- **改了代码/配置/接口后主动同步文档**：用 `doc-sync` skill（对照 checklist 查 README / AGENTS / CURRENT_STATUS 等要不要跟改），是 `turn-backstop` 落文档提醒的主动版。
+- **改了代码/配置/接口后同步文档**：判据 = `docs/harness/doc-sync-checklist.md`（"改 X→查 Y"对照表，原 `doc-sync` skill 降级后的数据文件，ADR-0012）；检测由 `turn-backstop` 钩子（读该表）+ `doc-sync-reviewer` 子 agent 承接，漂移写 log（`- [ ]` 状态）经 `correction-nudge` 反馈主 agent 去改；无独立"主动 skill"入口。
 - **状态/索引文档别硬编码可自动生成的枚举**：能交给 `*-index`（如 `.agents/skills/README.md` by `skills-index`）的清单/计数，写"以该自动生成索引为准"，别在 `CURRENT_STATUS` 等处复刻——硬编码枚举是反复漂移源（`tasks/lessons.md` 2026-06-27）。
 - **沉淀一条规则到就近 `AGENTS.md` 并挂执行**：`add-rule` skill。
 - **决策类大改要留 ADR**：`templates/adr.md` 起草（rule-0007，别手搓省栏）。
