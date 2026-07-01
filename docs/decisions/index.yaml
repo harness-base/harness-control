@@ -76,3 +76,8 @@ decisions:
     status: accepted
     date: 2026-06-30
     file: 0015-hc-tech-design.md
+  - id: ADR-0016
+    title: hc-test api 用例线——实现 ADR-0014 占位（接口来源硬门槛 + 源驱动 + 与契约一一对应）
+    status: accepted
+    date: 2026-07-01
+    file: 0016-hc-test-api-testcase-line.md

@@ -338,6 +338,83 @@ one "$tmp/b28" "$MX_HEAD
 $MX_TAIL"
 [ "$(run "$tmp/b28")" != "0" ] && ok || no "矩阵占位符 <…无·理由:…> 被当已填（占位未当未填=假绿）"
 
+# ===== api 用例：接口清单(EP) + 业务异常(EX) 一一对应闭合（29-33，变异自证 rule-0009）=====
+API_GOOD='## 接口清单
+- EP-1：HTTP-REST GET /v1/items — 分页列表
+- EP-2：HTTP-REST POST /v1/items — 创建
+## 业务异常
+- EX-1：EP-1 · 400 INVALID_QUERY — 查询参数非法
+- EX-2：EP-2 · 422 VALIDATION_FAILED — 字段校验失败
+## 用例
+### TC-1：列表成功
+- covers: EP-1
+### TC-2：创建成功
+- covers: EP-2
+### TC-3：参数非法受控
+- covers: EX-1
+### TC-4：校验失败受控
+- covers: EX-2
+'
+
+# 29) api 全 EP/EX 一一对应覆盖 → 绿（正向锚；也证 `- EX-1：EP-1 · …` 里冒号后 EP-1 是描述、不误判为声明/畸形）。
+one "$tmp/b29" "$API_GOOD"
+[ "$(run "$tmp/b29")" = "0" ] && ok || no "api 全覆盖好样本被判失败（EP/EX 声明/covers 未识别，或 EX 行的 EP 引用被误判）"
+
+# 30) api 接口 EP-2 无人 covers → 红（接口一一对应·覆盖检查①作用于 EP）。
+one "$tmp/b30" '## 接口清单
+- EP-1：HTTP-REST GET /v1/items — 列表
+- EP-2：HTTP-REST POST /v1/items — 创建
+## 业务异常
+- EX-1：EP-1 · 400 INVALID_QUERY — 参数非法
+## 用例
+### TC-1：列表成功
+- covers: EP-1
+### TC-2：参数非法
+- covers: EX-1
+'
+[ "$(run "$tmp/b30")" != "0" ] && ok || no "未覆盖的接口 EP-2 未判失败（接口一一对应失守）"
+
+# 31) api 业务异常 EX-2 无人 covers → 红（异常一一对应·覆盖检查①作用于 EX）。
+one "$tmp/b31" '## 接口清单
+- EP-1：HTTP-REST GET /v1/items — 列表
+## 业务异常
+- EX-1：EP-1 · 400 INVALID_QUERY — 参数非法
+- EX-2：EP-1 · 401 UNAUTHENTICATED — 未认证
+## 用例
+### TC-1：列表成功
+- covers: EP-1
+### TC-2：参数非法
+- covers: EX-1
+'
+[ "$(run "$tmp/b31")" != "0" ] && ok || no "未覆盖的业务异常 EX-2 未判失败（异常一一对应失守）"
+
+# 32) api covers 引用未声明 EP-9 → 红（不臆造·悬空检查②作用于 EP/EX）。
+one "$tmp/b32" '## 接口清单
+- EP-1：HTTP-REST GET /v1/items — 列表
+## 业务异常
+- EX-1：EP-1 · 400 INVALID_QUERY — 参数非法
+## 用例
+### TC-1：列表成功
+- covers: EP-1
+### TC-2：臆造接口
+- covers: EX-1, EP-9
+'
+[ "$(run "$tmp/b32")" != "0" ] && ok || no "臆造(悬空)接口 EP-9 未判失败（不臆造/悬空②未作用于 EP）"
+
+# 33) api 畸形接口声明 `- 接口: EP-2`（id 不紧跟 dash）→ 红（护栏 b 作用于 EP/EX）。
+one "$tmp/b33" '## 接口清单
+- EP-1：HTTP-REST GET /v1/items — 列表
+- 接口: EP-2 真接口但格式不规范
+## 业务异常
+- EX-1：EP-1 · 400 INVALID_QUERY — 参数非法
+## 用例
+### TC-1：列表成功
+- covers: EP-1
+### TC-2：参数非法
+- covers: EX-1
+'
+[ "$(run "$tmp/b33")" != "0" ] && ok || no "畸形接口声明 `- 接口: EP-2` 未判红（护栏 b 未作用于 EP）"
+
 rm -rf "$tmp"
 echo "test-cases-audit.test: pass=$pass fail=$fail"
 [ "$fail" -eq 0 ]

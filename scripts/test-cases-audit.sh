@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # 测试用例覆盖自检：docs/test-cases/<dir>/test-cases.md 的覆盖闭合 + 账本一致。
-# 校验：① 每条 AC、每个 FP 都被 ≥1 条用例 covers 覆盖（无遗漏）
-#       ② 用例 covers 引用的 AC/FP 都已声明（无悬空）
+# 校验：① 每条 AC/FP（e2e 需求点）、每个 EP/EX（api 接口/业务异常，一一对应）都被 ≥1 条用例 covers 覆盖（无遗漏）
+#       ② 用例 covers 引用的 AC/FP/EP/EX 都已声明（无悬空/不臆造）
 #       ③ 目录 ↔ index.yaml 登记一致（正反双向）
 #       ④ e2e 用例（含「## 交互点 × 类型 覆盖矩阵」段）每格须填 TC-NN 或「无·理由:…」
 #          （空 / 占位 `<…>` / `…` = 红，逃生口防误伤；**仅含矩阵段的文件查**，api/旧用例无矩阵段→跳过）
 # covers 是覆盖关系的唯一真相源（不另存映射表）。空账本（test-cases: []）时平凡通过。
 # 解析（严格 + fail-closed，宁可误红不可静默假绿）：
 #   - sed 's/：/:/g' 归一全角冒号；剥围栏（CommonMark：记开栏字符 ```/~~~，仅"同字符且裸行"才闭合，治嵌套/伪闭合）。
-#   - 段标题前缀锚定切段：DECL=以「验收点」/「功能点」起始、CASES=以「用例」/「测试用例」起始、余 OTHER。
-#   - 声明：**一行一个 id**——DECL 段 list 行必须是 `- AC-n：…`（id 紧跟 dash、紧接冒号，可加 **粗体**）。
+#   - 段标题前缀锚定切段：DECL=以「验收点」/「功能点」/「接口清单」/「业务异常」起始、CASES=以「用例」/「测试用例」起始、MATRIX=以「交互点」起始、余 OTHER。
+#   - 声明：**一行一个 id**——DECL 段 list 行必须是 `- AC-n / FP-n / EP-n / EX-n：…`（id 紧跟 dash、紧接冒号，可加 **粗体**；
+#     EX 声明如 `- EX-1：EP-1 · …`，冒号前的 EX-1 是声明、冒号后的 EP-1 是描述里的引用、不算第二条声明）。
 #     标注写到冒号后（`- AC-1：取代旧版 AC-9` 里 AC-9 是描述，不算声明）。单行多 id / 括注 / id 前有文字
 #     等任何不合形的 list 行只要含 AC/FP id 一律判红（M），杜绝静默漏算。
 #   - covers：CASES 段 covers 行取该行**所有** AC/FP id（纯 id 列表，任意分隔符都稳）。
@@ -39,20 +40,20 @@ emit(){ # $1=file
       }
       if (fence != "") next                                 # 围栏内一律跳过
       if ($0 ~ /^##[[:space:]]/) {                          # level-2 标题切段（前缀锚定，对称）
-        if ($0 ~ /^##[[:space:]]+验收点/ || $0 ~ /^##[[:space:]]+功能点/) sect="DECL"
+        if ($0 ~ /^##[[:space:]]+验收点/ || $0 ~ /^##[[:space:]]+功能点/ || $0 ~ /^##[[:space:]]+接口清单/ || $0 ~ /^##[[:space:]]+业务异常/) sect="DECL"
         else if ($0 ~ /^##[[:space:]]+(测试)?用例/) sect="CASES"
         else if ($0 ~ /^##[[:space:]]+交互点/) sect="MATRIX"
         else sect="OTHER"
         next
       }
-      if ($0 ~ /^[[:space:]]*-[[:space:]]*\**(AC|FP)-[0-9]+/) print "L"   # 声明样式行（任意段，护栏 a）
+      if ($0 ~ /^[[:space:]]*-[[:space:]]*\**(AC|FP|EP|EX)-[0-9]+/) print "L"   # 声明样式行（任意段，护栏 a）
       if (sect=="DECL" && $0 ~ /^[[:space:]]*-[[:space:]]/) {
-        if (match($0, /^[[:space:]]*-[[:space:]]*\**(AC|FP)-[0-9]+\**[[:space:]]*:/)) {   # 严格：- AC-n：单 id
-          s=$0; sub(/^[[:space:]]*-[[:space:]]*\**/, "", s); match(s, /^(AC|FP)-[0-9]+/); print "D " substr(s,RSTART,RLENGTH)
-        } else if ($0 ~ /(AC|FP)-[0-9]+/) print "M"         # list 行含 id 却非「- AC-n：」单 id 形 → fail-closed
+        if (match($0, /^[[:space:]]*-[[:space:]]*\**(AC|FP|EP|EX)-[0-9]+\**[[:space:]]*:/)) {   # 严格：- AC-n：单 id
+          s=$0; sub(/^[[:space:]]*-[[:space:]]*\**/, "", s); match(s, /^(AC|FP|EP|EX)-[0-9]+/); print "D " substr(s,RSTART,RLENGTH)
+        } else if ($0 ~ /(AC|FP|EP|EX)-[0-9]+/) print "M"         # list 行含 id 却非「- AC-n：」单 id 形 → fail-closed
       } else if (sect=="CASES" && $0 ~ /^[[:space:]]*-?[[:space:]]*\**covers\**:/) {
         rest=$0; sub(/^.*covers[*_]*:[[:space:]]*/, "", rest)
-        while (match(rest, /(AC|FP)-[0-9]+/)) { print "C " substr(rest,RSTART,RLENGTH); rest=substr(rest,RSTART+RLENGTH) }
+        while (match(rest, /(AC|FP|EP|EX)-[0-9]+/)) { print "C " substr(rest,RSTART,RLENGTH); rest=substr(rest,RSTART+RLENGTH) }
       } else if (sect=="MATRIX" && $0 ~ /^[[:space:]]*\|/) {            # 覆盖矩阵表行
         if ($0 ~ /^[[:space:]]*\|[[:space:]:|-]+$/ && $0 ~ /-/) next    # 分隔行 |---|---|
         split($0, mc, "|"); ix=mc[2]; gsub(/^[[:space:]]+|[[:space:]]+$/, "", ix)
@@ -83,10 +84,10 @@ for d in "$TC_DIR"/*/; do
 
   # 护栏 a：有声明样式行却没解析出任何声明 → 段标题写歪/声明落段外
   if [ -z "$declared" ] && printf '%s\n' "$out" | grep -q '^L'; then
-    echo "  ✗ $name：找到 AC/FP 声明行但不在标准声明段（## 验收点 AC / ## 功能点 FP）内——疑似段标题写错或声明落段外"; fail=1
+    echo "  ✗ $name：找到 AC/FP/EP/EX 声明行但不在标准声明段（## 验收点 / 功能点 / 接口清单 / 业务异常）内——疑似段标题写错或声明落段外"; fail=1
   fi
   # 护栏 b：DECL 段 list 行含 id 却非「- AC-n：」单 id 形
-  printf '%s\n' "$out" | grep -q '^M' && { echo "  ✗ $name：声明段有 list 行含 AC/FP id 却非 \`- AC-n：…\` 单 id 形（多 id 拆行、标注移到冒号后；拒绝静默漏算）"; fail=1; }
+  printf '%s\n' "$out" | grep -q '^M' && { echo "  ✗ $name：声明段有 list 行含 AC/FP/EP/EX id 却非 \`- <ID>-n：…\` 单 id 形（多 id 拆行、标注移到冒号后；拒绝静默漏算）"; fail=1; }
   # 护栏 c：围栏未闭合
   printf '%s\n' "$out" | grep -q '^F' && { echo "  ✗ $name：检测到未闭合代码围栏（\`\`\` / ~~~），解析不可靠"; fail=1; }
   # 护栏 ④：覆盖矩阵每格须填（仅含「## 交互点 …覆盖矩阵」段的文件有 X token；无矩阵段→跳过，文件级不误伤）
