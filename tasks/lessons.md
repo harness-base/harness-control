@@ -5,7 +5,7 @@
 格式：
 
 ```
-## YYYY-MM-DD：一句话标题
+## YYYY-MM-DD：一句话标题 <!-- opt: seen -->
 - Mistake：错在哪
 - Prevention：以后怎么防
 - Earlier signal：怎么更早发现
@@ -20,42 +20,62 @@
 - Prevention：派 hc-eval 时，评审目录后缀**必须 == todo `task:` 的 slug**（一字不差）；最好从 todo 的 `task:` 直接取 slug 拼目录名，别另起一个更"具体"的名。
 - Earlier signal：定 todo `task:` slug 与给 eval 的目录名时，并排核一遍是否完全一致；stop-check 用的是精确 `*-$task`、不是子串。
 
-## 2026-06-30：green 的 eval + 全过的 make verify，被干净的对抗挑刺挖出 blocker——三者不可互替
+## 2026-07-01：占位→实现的接线漏了"总监总谱 skill"这个真正的功能入口（且 rule-0012 复刻表再次漂移）
+- Mistake：把 api 用例线从占位实现时，我更新了真相源 `testing-flow` + config + ADR，却漏了 `hc-test/SKILL.md`——它才是总监决定"要不要派 api 线"的入口，里头 api 仍标 🔒占位、还写"本期只实现 e2e"，与 testing-flow(✅)/config/ADR 四处自打脸；总监读它就不会触发 api 线，**功能入口断了**。对抗评审揪出（`make verify` + `docs-audit` 全绿都没逮到——又一次"三者不可互替"）。根因叠加 rule-0012：SKILL.md **复刻了** testing-flow 的「场景×实现状态」表，我改了真相源没改复刻，表就漂了（又栽在"复刻有唯一真相源的状态"上）。
+- Prevention：做"占位→实现"这类状态跃迁时，列出**所有消费该状态的入口**一并改——尤其**真正 gate 功能触发的那个（skill/总谱）**，别只改真相源文档 + ADR。且凡状态有唯一真相源（testing-flow 场景表），consumer **只放指针、不复刻**（rule-0012）——顺手把 SKILL 里复刻的状态列删掉、改指向真相源，免再漂。
+- Earlier signal：接线清单里一旦出现"改真相源文档"，就追问"谁读这份状态来做决定？那些入口都改了吗？"——尤其那个决定要不要触发本功能的 skill。
+
+## 2026-07-01：把只管"产 api 用例"的 skill 级门槛，也想升成全局规则——过度矫正 <!-- opt: seen -->
+- Mistake：推荐把"无接口来源就 MUST STOP"升成 rule-0016，类比 rule-0001。用户质疑"这只和 skills 有关，确定要升规则吗？"——对。它只管"产 api 用例"这一件事（单 skill 的产出门槛），不是任何 skill 都要守的横切；rule-0001（任何改码）/ rule-0015（任何 harness 资产）那种才是真横切。刚学过 rule-0015"该升规则的别焊进 skill"，我矫枉过正、把 skill 级门槛也往规则上推。
+- Prevention：规则该按 **SCOPE（横切多少 skill/场景）** 判、不按 FORM（是不是 MUST-STOP）。横切多 skill / 全 harness 的不变量→升全局规则；只管某一个 worker/skill 产出的门槛→落该 agent 上下文 + 流程总纲 + ADR，别占全局规则号。
+- Earlier signal：想给某条门槛升规则前先问"除了这一个 skill，还有谁必须守它？"——答"就它"→不升，落 agent 上下文。
+
+## 2026-06-30：把用户"研发方案英文怎么翻"的简单提问，误读成"要不要用中文名"，跑去查 skill 名字符集 <!-- opt: seen -->
+- Mistake：用户问"hc-design 名字像设计师用的，研发方案是这么翻译吗"→"研发方案不行吗"，真意是**"研发方案的英文是什么"**（想要个准确英文词当 slug）。我误读成"想用中文 slug 研发方案"，连两轮去提中文 slug、查 `skills-index` 正则、翻官方 skill name 字符集约束——整条岔路白跑，被用户打断纠正"我的意思是，研发方案翻译成英文是什么"。
+- Prevention：用户提问短而可多解时，先用一句话回述我的理解再答，别基于某个假设意图直接展开一整条调查支线。"X 不行吗 / X 是这么 Y 吗"常是**在问 X 本身**，不是让我论证 X 的可行性。
+- Earlier signal：发现自己为一个**一句话能答的问题**启动了查文件 / 查规范的多步调查——停，先确认问的是不是那个。
+
+## 2026-06-30：把"控制面↔项目隔离"这条全局原则（用户纠正过的）焊进 hc-design skill §⑦，而非升成规则 <!-- opt: seen -->
+- Mistake：用户早先纠正"harness 要和具体项目内容隔离"（多租户那次）。我没把它当**全局规则**升进 AGENTS.md，反而在建 hc-design 时写成 skill 的 §⑦「通用/项目隔离（控制面命根）」一段——它是适用于**所有** skill/模板/规则/子 agent 的全局不变量，焊进一个 skill 既重复、又只覆盖这一个、还读着像 hc-design 专属。用户："这种东西为什么写在 skills 里？这不是我纠正你的吗？"
+- Prevention：用户纠正的若是**跨多个产物都成立的原则/不变量**（隔离、节奏、验证口径…），先问"这是全局规则吗"——是就走 `hc-add-rule` 升进 AGENTS.md、各处只引编号，**别焊进当下在建的那个 artifact 正文**。在某 skill/模板里写"控制面命根 / 全局原则 / 所有 X 都要"这种话 = 信号：它该是规则、不该在这。
+- Earlier signal：往 skill/模板正文写"这是控制面命根 / 全局原则 / 所有 X 都……"——停，全局的归 AGENTS.md 规则，artifact 只引用编号。
+
+## 2026-06-30：green 的 eval + 全过的 make verify，被干净的对抗挑刺挖出 blocker——三者不可互替 <!-- opt: seen -->
 - Mistake：hc-design build 我跑了 `make verify`(绿) + hc-eval(green) 就准备提交，以为质量够了。用户问"对抗评审了吗"逼我补一次干净的对抗挑刺——当场挖出 1 blocker（模板假设 REST、对 kratos gRPC 不通用）+ 7 major，前者一个都没逮到。
 - Prevention：**make verify 查结构、eval 按 rubric 打分、对抗挑刺找设计/逻辑坑——三件事不可互替**。重产物（skill/设计/接口）收尾前三样都要，缺对抗挑刺 = 没真审。对抗评审对文档/skill 是**迭代收敛**的（每轮挖更深），按 blocker→major→minor 推进，别一轮就当完。
 - Earlier signal：只跑机检 + eval 就说"质量够了 / 可提交"——问自己"专门挑刺的对抗评审做了没"。
 
-## 2026-06-30：build 的对抗复核被并行踩踏搞乱（verdict 矛盾），我却当"复核过了"往提交走
+## 2026-06-30：build 的对抗复核被并行踩踏搞乱（verdict 矛盾），我却当"复核过了"往提交走 <!-- opt: seen -->
 - Mistake：hc-design build 的 4 个并行 review verdict 互相矛盾、不可信（等于没做干净）；我虽口头承认它乱，但靠 `make verify` + hc-eval green 就准备提交，**没补一次干净的对抗挑刺**。用户问"对抗评审了吗"点破：复核被污染 = 没复核，不能当复核过了。
 - Prevention：对抗复核的 verdict 若不可信（矛盾 / 时序乱 / 明显错），**就当它没做、重跑一次干净的**；别拿"机检绿 + eval green"替代"对抗挑刺"——机检查结构、eval 按 rubric 打分，都不是专门挑设计/逻辑坑。
 - Earlier signal：自己说出"这次复核 verdict 打架 / 不漂亮"却还继续往收尾走——停，复核不可信就重做，别绕过。
 
-## 2026-06-30：workflow 并行建，4 个 agent 各建"全套"互相踩 → 复核 verdict 自相矛盾
+## 2026-06-30：workflow 并行建，4 个 agent 各建"全套"互相踩 → 复核 verdict 自相矛盾 <!-- opt: seen -->
 - Mistake：建 hc-design 套件时 workflow 分 4 个"产物"并行，但 prompt 没把每个 agent 死锁到 disjoint 文件——有的 agent 建了"全套"(skill+模板+reviewer+索引)、有的只建子集，互相覆盖 + 各自在不同时刻复核，导致 review verdict 打架(一个说 reviewer 不存在、一个说存在；一个说 verify 红、一个说绿)。靠查磁盘真实态(make verify + ls)才理清，真问题只 2 个(没注册 config / 多了个空壳 README)。
 - Prevention：并行 build 必须把每个 agent **死锁到 disjoint 文件集**（prompt 写死"只建这几个文件、别碰别的、**别 regen 索引**——索引/注册收尾统一做"）；否则并行 = 重复劳动 + 时序污染。复核 verdict 互相矛盾时**一个都别采信，直接查磁盘当前态**(rule-0008)。
 - Earlier signal：workflow 的 author prompt 里多个 agent 的"建什么"有重叠、或允许"顺手 regen 索引 / 建配套"——那就一定踩。
 
-## 2026-06-30：把"某具体项目"的模板原样搬进 harness 通用模板（带进多租户/tenant_id 等项目内容）
+## 2026-06-30：把"某具体项目"的模板原样搬进 harness 通用模板（带进多租户/tenant_id 等项目内容） <!-- opt: seen -->
 - Mistake：照用户给的旧设计模板做 hc-design 模板时，把"安全 & 多租户"段连同 tenant_id / If-Match / theme-token 等**具体项目的领域内容**一起搬进来。用户纠正：**harness 工程要和具体项目内容隔离**——模板是 harness 资产，必须**通用、项目无关**，不能焊死某个项目的概念。
 - Prevention：做 harness 资产（模板/skill/规则）时先问"这条是通用流程框架，还是某项目的具体业务？"——具体业务（多租户、某域名词、某错误码值）留给项目填，模板只给**通用占位 + 维度提示**；示例用中性占位，别用某项目的真实领域词。
 - Earlier signal：模板/skill 里冒出一个**只对某类项目成立**的概念（多租户、某业务实体名）——停，那是项目内容漏进控制面。
 
-## 2026-06-30：给"研发方案"模板加了"未决/待确认"段——用户：方案是全明确后才落、必须可执行
+## 2026-06-30：给"研发方案"模板加了"未决/待确认"段——用户：方案是全明确后才落、必须可执行 <!-- opt: seen -->
 - Mistake：给 hc-design 的 design.md 模板加了"未决/待确认"段，以为交互式设计的文档天然带开放项。用户纠正：**待确认不要**——方案是"一切明确（决策点拍了、不确定的查/问清了）之后才落"的，**必须可执行、不留 TBD**；开放项在过程里（查/问/决策点）消解掉，不进最终文档。
 - Prevention：区分"过程产物"与"定稿产物"——交互过程里有开放项正常，但**定稿的方案/设计/PRD 是已收敛的可执行结果，不带"待确认"**。给"产出物"设模板时先问"这是过程草稿还是定稿？定稿就不留未决"。
 - Earlier signal：往一个"定稿交付物"模板里加"未决/TBD/待确认"段时停——定稿的东西若还有待确认，就是没定稿。
 
-## 2026-06-30：用户喊"快点"，我就把真前置（研发方案/接口契约）reframe 掉、急着建 api——被拉回
+## 2026-06-30：用户喊"快点"，我就把真前置（研发方案/接口契约）reframe 掉、急着建 api——被拉回 <!-- opt: seen -->
 - Mistake：api 用例线缺前置（没有"研发方案/接口契约"产物层），我两轮前已正确点出；用户催"快点"后，我为求快 reframe 成"契约 = 项目 proto、现在就能建 api"、直接起 workflow 建——用户拉回"应该先出研发方案 skill"。等于为赶进度把一个真前置说没了。
 - Prevention：时间压力**不消解真前置**。"快"是把对的下一步做利索，不是跳过设计前置；flag 了前置别下一轮自己 reframe 掉它。真要快，快在"赶紧跟用户敲定前置怎么建"，不是绕过它瞎建。
 - Earlier signal：发现自己在"用户催 → 把刚说的 blocker 重新解释成不是 blocker"——停，那是赶工幻觉，blocker 还在。
 
-## 2026-06-30：从 n=1 一次观测就断言"根因=X、每次必现"，被 eval 的 n=4 纠偏
+## 2026-06-30：从 n=1 一次观测就断言"根因=X、每次必现"，被 eval 的 n=4 纠偏 <!-- opt: seen -->
 - Mistake：turn-backstop 诊断第一次实跑撞 `Exceeded USD budget (0.03)`，我就对用户断言"0.03 太低、**每次都撞顶**、0 产出"。hc-eval 复跑 n=4：0.03 **三次 exit=0**、只有 0.005 必撞——真相是"0.03 偏紧、**遇长响应才** Exceeded"，不是"每次"。方向（提预算 + 装日志）对，但把单点观测说成了确定规律。
 - Prevention：下"这就是根因 / 每次都 X"这种确定结论前，**多跑几次 / 多条件复现（n≥3）**，尤其结论依赖可变量（响应长度、时延）时；单次只能说"至少这次因为 X"，不能说"每次"。
 - Earlier signal：写"每次 / 总是 / 根因就是"时问一句"我跑了几次？"——n=1 就别用确定语气。
 
-## 2026-06-30：best-effort 机制全程 2>/dev/null 吞错 → 总失败（预算卡死）伪装成静默 0 产出，长期没人知
+## 2026-06-30：best-effort 机制全程 2>/dev/null 吞错 → 总失败（预算卡死）伪装成静默 0 产出，长期没人知 <!-- opt: seen -->
 - Mistake：turn-backstop（① capture）每步 `2>/dev/null || true`；headless claude 因 `--max-budget-usd 0.03` 太低、每次 `Exceeded USD budget` 报错退出、0 产出——但报错被吞，看着在跑、其实从没产出过一条，长期无人察觉。给它装诊断日志后**一次实跑即现**根因。
 - Prevention：best-effort / 永不阻断 对"不打断主流程"是对的，但**吞掉 stderr 会让你瞎**——分不清"没事可做"还是"根本没跑通"。这类机制必须配**诊断日志**：被吞的 stderr + exit 码 + 输出都留痕（独立文件、gitignore），否则"总失败"会伪装成"正常静默"。预算 / 超时这类外部约束要给足头寸。
 - Earlier signal：在一个"本该产出点什么"的步骤上写 `2>/dev/null` / `|| true` 时，当场问"它真失败了我看得见吗"——看不见就配 log。

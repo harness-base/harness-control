@@ -4,6 +4,7 @@
 
 - `adr.md` — ADR-XXXX <标题>
 - `api-contract.md` — 接口契约：<design-id> <标题>
+- `api-test-case.md` — api 测试用例：<主题>
 - `design.md` — 研发方案：<design-id> <标题>
 - `doc.md` — <标题>
 - `e2e-test-case.md` — e2e 测试用例：<主题>

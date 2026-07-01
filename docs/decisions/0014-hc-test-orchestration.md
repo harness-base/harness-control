@@ -2,17 +2,20 @@
 title: ADR-0014 hc-test 测试编排——测试总监调度专职 worker、干掉 test-case 并入；e2e 本期实现、api/脚本占位
 status: accepted
 date: 2026-06-30
-last_updated: 2026-06-30
+last_updated: 2026-07-01
 source_files: []
 related_docs:
   - 0008-test-case-skill.md
   - 0010-prd-orchestration.md
   - 0011-demote-context-loading.md
+  - 0016-hc-test-api-testcase-line.md
   - ../harness/testing-flow.md
   - ../superpowers/specs/2026-06-29-testing-flow-vision.md
 ---
 
 # ADR-0014：hc-test 测试编排
+
+> **更新（2026-07-01）**：本 ADR 决策 5 的 **api 用例线占位已由 [ADR-0016](0016-hc-test-api-testcase-line.md) 实现、不再占位**——e2e + api 两线本期落地（脚本线 / 统一回归仍占位）。下方决策叙述保留历史原样（当时决定占位），实现状态以 `../harness/testing-flow.md`「场景 × 实现状态」表为准（rule-0012：状态以真相源为准、本 ADR 不复刻）。
 
 ## 背景
 

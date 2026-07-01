@@ -72,7 +72,12 @@ decisions:
     date: 2026-06-30
     file: 0014-hc-test-orchestration.md
   - id: ADR-0015
-    title: hc-design 研发方案/技术设计阶段——交互式设计 skill，填 hc-prd 与 hc-dev 之间的设计空档
+    title: hc-tech-design 研发方案/技术设计阶段——交互式设计 skill，填 hc-prd 与 hc-dev 之间的设计空档
     status: accepted
     date: 2026-06-30
-    file: 0015-hc-design.md
+    file: 0015-hc-tech-design.md
+  - id: ADR-0016
+    title: hc-test api 用例线——实现 ADR-0014 占位（接口来源硬门槛 + 源驱动 + 与契约一一对应）
+    status: accepted
+    date: 2026-07-01
+    file: 0016-hc-test-api-testcase-line.md

@@ -62,6 +62,14 @@ config_file = "agents/hc-e2e-qa.toml"
 description = "e2e 用例审稿员（hc-test worker，挑刺）：对抗式审 e2e 用例——主观覆盖率 / 引用源符合+理解偏差 / 质量，rubric = eval 015 / rule-0014 / rule-0009，只评不改。免 API key。"
 config_file = "agents/hc-e2e-reviewer.toml"
 
-[agents.hc-design-reviewer]
-description = "研发方案/技术设计审稿员（hc-design 评审步，挑刺）：七块审 design.md + api-contract.md——基于现状不悬空 / 决策有据 / 接口契约逐字段可执行(错误码按约定·未约定切) / 异常+安全闭合 / 零 TBD / 完整性 / 忠于需求源，rubric = rule-0008 + rule-0009，只评不改。免 API key。"
-config_file = "agents/hc-design-reviewer.toml"
+[agents.hc-tech-design-reviewer]
+description = "研发方案/技术设计审稿员（hc-tech-design 评审步，挑刺）：七块审 design.md + api-contract.md——基于现状不悬空 / 决策有据 / 接口契约逐字段可执行(错误码按约定·未约定切) / 异常+安全闭合 / 零 TBD / 完整性 / 忠于需求源，rubric = rule-0008 + rule-0009，只评不改。免 API key。"
+config_file = "agents/hc-tech-design-reviewer.toml"
+
+[agents.hc-api-qa]
+description = "api 用例员（hc-test worker）：接口来源硬门槛（无源即停）——优先 api-contract.md ＞ 用户指定源(proto/OpenAPI/路由/代码) ＞ 无则 MUST STOP；覆盖=与契约一一对应(每接口一用例、每业务异常一 case，机检双向闭合)、源驱动不预设(协议/横切/Mock 按来源)，成功逐字段锚契约、失败测业务异常码，套 templates/api-test-case.md 落 docs/test-cases/<id>/，只写不跑。免 API key。"
+config_file = "agents/hc-api-qa.toml"
+
+[agents.hc-api-reviewer]
+description = "api 用例审稿员（hc-test worker，挑刺）：对抗式审 api 用例——覆盖率 / 源符合+对账(回契约原文逐字段·错误码) / 质量三块，另加无接口来源硬产用例的门槛复核(违 rule-0008 判 blocker)，rubric = eval 015 / rule-0014 / rule-0009 / rule-0008，只评不改。免 API key。"
+config_file = "agents/hc-api-reviewer.toml"
