@@ -9,7 +9,12 @@
 - [x] **对抗评审 2 栈 + 修**：① 正确性栈实跑挖出**机检假绿漏洞**（黑名单判红、被 `" "`/`"..."`/小写 todo/`# 注释`/裸 PENDING/待定 骗过）→ 改 **fail-closed** + 补变异自测；② 设计栈揪 major「PROJECT_ONBOARDING 只贴 banner 没真瘦身（rule-0012 复刻）」→ 真瘦身成口子速查（0 流程步）+ minor 清 CURRENT_STATUS docs-maintainer。
 - [x] **多工程兼容（用户 2026-07-01 追加）**：projects/ 可多工程共存——skill 查重名 + ⑥ 隔离硬规则（只 append 自己那条、不碰别的工程）、reviewer 双栈核不撞名/不碰他人、机检加多工程逐工程测试。`verification-audit.test` **17/0**、make verify + docs-audit(48) 全绿。
 - [x] 收尾 eval：**green**（考题 010/011/014/rule-0015 全 pass；评委独立造 fixture 亲验 fail-closed 堵住各种绕过 + 多工程逐工程核成立；`docs/eval/task-reviews/20260701T070010Z-hc-onboard/`）。评委另挖 **F-1**（单引号空值 `'  '` 绕过 fail-closed）→ 已修（clean 剥单引号 `\047` + 自测 18/0；坑：注释里单引号闭合了 awk，已记 lessons）。
-- [ ] 提交（待授权；本批新一摊、与 PR #10 那两 commit 不相干）
+- [x] 提交：合 PR #10 后 → commit `5615381`（rebase onto main）→ **独立 PR [#11](https://github.com/harness-base/harness-control/pull/11)**（CI verify 绿、MERGEABLE，待你合）
+
+## 已闭：hc-tech-design 硬化（ADR-0015 follow-up 4 条，2026-07-01，L1 polish·未跑 eval）
+- [x] reviewer 两栈补：「无对外接口 N/A」回 `source` 核实（防假 N/A 逃避对账）、③ 分页一致性硬动作、限流/熔断视项目 soft 提示。
+- [x] 模板补：`api-contract` 写端点**幂等/并发槽位**（+ 块结构注明）、`design.md` ③ **多表写法**指引；async 骨架 api-contract 既有 gRPC/MQ 逃生口已覆盖。ADR-0015 follow-up 标已做。`make verify` + `docs-audit`(49) 绿、两栈一致。
+- [ ] 提交（待授权）
 
 ## 已闭（本会话交付、下次 archive）：hc-tech-design 研发方案/设计阶段 skill（hc-prd → hc-tech-design → api 用例 的关键一环）
 - [x] 设计敲定：交互式设计 skill（≈hc-dev 做→挑刺，非 hc-prd 编排）；硬原则=参考项目代码/资产·不确定查+问·决策点用户拍·**全明确才落可执行方案(零 TBD)**·用户审核门·对抗评审·**模板通用不掺项目内容**

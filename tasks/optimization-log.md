@@ -129,3 +129,6 @@
 
 ## 2026-07-01T06:34:32Z `落文档`（触发： 变更涨=16≥10）
 - [ ] [harness 模块状态变更] `docs/context/CURRENT_STATUS.md` 中旧的 `docs-maintainer` 引用应更新为 `hc-doc-sync`（与 ADR-0017 变更同步）
+
+## 2026-07-01T07:42:52Z `落文档`（触发： commit边界）
+- [ ] [Cross-file sync] hc-tech-design skill 新建但未见 `.codex/agents/*.toml` 对等同步记录

@@ -54,4 +54,4 @@ harness 现有 `hc-prd`（需求）→ `hc-dev`（实现），**中间没有"技
 - 模板/skill 通用、方案项目专属——延续控制面 ↔ 项目隔离。
 - 本 ADR 为决策留档；实现（skill / reviewer / 模板 / 账本）随本批，收尾 eval + `make verify`。
 - **质量过程**：3 轮独立对抗评审——R1 揪出真 blocker（模板偷设 REST、对 kratos gRPC 不通用）+ 7 major 并修；R2 修口径自洽（reviewer 判据回灌 skill / 模板示例 / 文档登记 designs-audit）；R3 收敛到精修级，修掉 R2 引入的自相矛盾（"逐行对齐"→"⑧=各端点并集"、机检词表 4→7 统一、config 描述"不列 500"→约定/未约定）。
-- **后续硬化（follow-up，本批不做、真用中迭代）**：reviewer 的「无对外接口 N/A」分支应回 `source` 核实属实（防假 N/A 逃避③对账）；reviewer 补**分页一致性**硬动作、**限流/熔断**视项目提示；`api-contract` 写端点模板补**幂等/并发槽位**（现 reviewer 要求但模板无槽，首轮易误判）；③数据模型多表写法 + async 协议骨架。均为 reviewer/模板的渐进硬化、非阻断。
+- **后续硬化（follow-up）—— 已做（2026-07-01）**：reviewer「无对外接口 N/A」分支补**回 `source` 核实属实**（防假 N/A 逃避③对账，真 N/A 不报、假 N/A 要抓）；reviewer ③ 补**分页一致性**硬动作 + **限流/熔断**视项目 soft 提示；`api-contract` 写端点模板补**幂等/并发槽位**（块结构注明"写端点补幂等/并发"，堵首轮误判）；`design.md` ③ 补**多表写法**指引。async 协议骨架已由 `api-contract` 既有的 gRPC / MQ-event 逃生口骨架覆盖、不另加。均 reviewer/模板渐进硬化、非阻断，收尾 `make verify` ✓。
