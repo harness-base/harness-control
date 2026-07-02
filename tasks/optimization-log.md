@@ -126,3 +126,9 @@
 - [ ] [左 hc-design skill 新建] — 没看到 `.codex/agents/*.toml` 对等被同步
 - [ ] [左 harness 模块 hc-design 新增] — 没看到 `docs/context/CURRENT_STATUS.md` 控制面表被更新  
 - [ ] [左 turn-backstop 修改] — `HOOKS.md` 虽说"记一笔"但没看到实际 Edit/Write 操作（诊断日志 + gitignore 也没见记）
+
+## 2026-07-01T06:34:32Z `落文档`（触发： 变更涨=16≥10）
+- [ ] [harness 模块状态变更] `docs/context/CURRENT_STATUS.md` 中旧的 `docs-maintainer` 引用应更新为 `hc-doc-sync`（与 ADR-0017 变更同步）
+
+## 2026-07-01T07:42:52Z `落文档`（触发： commit边界）
+- [ ] [Cross-file sync] hc-tech-design skill 新建但未见 `.codex/agents/*.toml` 对等同步记录
