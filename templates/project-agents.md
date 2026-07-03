@@ -1,7 +1,7 @@
 # <项目名>（被管工程入口规则）
 
 > 新工程根 `AGENTS.md` 骨架。本模板**通用、中性**：`hc-onboard` 接入时按真实项目填，填好的那份才项目专属。
-> 本文件**精简**——只列工程简介 + 工程红线 + 就近下沉指针 + 验证入口。规则多就下沉到各层 `AGENTS.md`，别都堆这里（见 `docs/harness/PROJECT_ONBOARDING.md` 第 2 步）。
+> 本文件**精简**——只列工程简介 + 工程红线 + 就近下沉指针 + 验证入口。规则多就下沉到各层 `AGENTS.md`，别都堆这里（见 `docs/harness/PROJECT_ONBOARDING.md` 口子速查「工程规范 / 红线」行）。
 > 控制面常驻规则以仓库根 `AGENTS.md` 为准；冲突时**用户当前指令 > 本文件 > 根 AGENTS.md**。
 
 ## 工程简介
@@ -29,7 +29,7 @@
 
 ## 指针
 
-- 设计 / 选型 / 决策记录：`../../docs/decisions/`（本工程第一个 ADR 由 `hc-onboard` 第 3 步落）
+- 设计 / 选型 / 决策记录：**本工程自己的决策记录处**（如工程内 `docs/decisions/` 目录——**不是**控制面根 `docs/decisions/`，项目内容不进控制面账本，rule-0015）；第一个 / 历史 ADR 由 `hc-onboard` 落（新项目第 3 步 / 老项目第 3 步补记历史决策）
 - 需求包账本：`../../docs/features/index.yaml`（第一个需求包按 rule-0001 立）
 - 怎么 build / generate / test：`README.md`
 

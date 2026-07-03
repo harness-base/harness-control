@@ -2,7 +2,7 @@
 title: 工程接入指南
 status: active
 owner: harness
-last_updated: 2026-07-01
+last_updated: 2026-07-02
 source_files:
   - ../../workspace/verification.yaml
 related_docs:
@@ -10,11 +10,12 @@ related_docs:
   - ../context/CONTEXT_LOADING.md
   - ../features/README.md
   - ../decisions/0017-hc-onboard-project-onboarding.md
+  - ../decisions/0018-hc-onboard-legacy-branch.md
 ---
 
 # 工程接入指南（把一个工程挂进 harness）
 
-> **接入走 `hc-onboard` skill（引导式，ADR-0017）**——它领着你一步步把工程接进来、每步先确认再落、最后对抗评审。**流程实质以 `hc-onboard` skill + ADR-0017 为准**；本文只留「口子速查 + 校验清单」，**不复刻步骤流程**（rule-0012，防两处各写一份、改一处漂一处）。新项目分支已实现；老项目（扫 → 消化 → 对齐）分支后续补。
+> **接入走 `hc-onboard` skill（引导式，ADR-0017 新项目 / ADR-0018 老项目）**——它领着你一步步把工程接进来、每步先确认再落、最后对抗评审。**流程实质以 `hc-onboard` skill + ADR-0017/0018 为准**；本文只留「口子速查 + 校验清单」，**不复刻步骤流程**（rule-0012，防两处各写一份、改一处漂一处）。新项目（从零搭骨架）与老项目（拆模块 → 扫→确认→搬 → 对齐）两分支均已实现。
 
 ## 接入口子速查（各样东西落哪）
 

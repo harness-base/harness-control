@@ -86,3 +86,8 @@ decisions:
     status: accepted
     date: 2026-07-01
     file: 0017-hc-onboard-project-onboarding.md
+  - id: ADR-0018
+    title: hc-onboard 老项目分支——先拆模块（引导确认）→ 按模块滚（扫→确认→搬）→ 引入关联进主目录；不改业务代码
+    status: accepted
+    date: 2026-07-02
+    file: 0018-hc-onboard-legacy-branch.md

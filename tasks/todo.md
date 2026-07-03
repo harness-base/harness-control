@@ -1,9 +1,21 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：level: L3 ｜ task: hc-onboard
+> 元：level: L3 ｜ task: hc-onboard-legacy
 
-## 当前：hc-onboard 新项目接入 skill（ADR-0017）
+## 当前：hc-onboard 老项目分支（ADR-0018）——接入 skill 的另一半
+- [x] 方案敲定（多轮）：同一 skill 第二岔路；8 步=定位接管 → **拆模块（引导对话，边界拿不准问用户、地图确认才作数）** → **按模块滚（扫→逐条确认→搬进规范）** → 接执行口（发现+对齐现有 verify/ci/sandbox，三态）→ **引入关联进主目录五项**（登记/shim/根级索引/CI/加载链）→ 对抗评审 → make verify → 交棒；铁律=扫到先确认再落（rule-0008）、只收规范不改业务代码。
+- [x] build：workflow 并行 2 块（skill 老分支 8 步小节 + reviewer 双栈 a–d 判据）+ 我串行（ADR-0018 定稿登记 / 0017 前向指针+follow-up 注 / PROJECT_ONBOARDING 两分支口径 / 索引 regen）。
+- [x] **对抗评审 2 栈 + 修**（2 major+5 minor，无 blocker）：M1 reviewer 执行环没双分支化（判据挂了、工作步骤仍新项目口径）→ 五处双分支化（scope/输入集/a–d 硬动作/回步映射/步号），两栈同步；**M2「项目 ADR 进根级 decisions index」三头打架**（decisions index 无自动脚本+手维护、reviewer ③ 说项目 ADR 该在项目自己那、rule-0015 隔离）→ 三处统一口径：**只有 rules 半边自动（rules-index 全仓扫），项目 ADR 落项目自己的决策记录处**；M3 CURRENT_STATUS 漏改（仅新工程→新/老）；minors（步号残留/last_reviewed·last_updated bump/0017 follow-up 注/⑥总览对齐 6 块/CI 措辞"尚未建则建起"）全修。make verify + docs-audit(50) 绿。
+- [x] 收尾 eval：**yellow → 两针已修**（`docs/eval/task-reviews/20260702T095612Z-hc-onboard-legacy/`；010/012/014/rule-0015 pass、评委独立核 M2 三处口径真一致+两栈真双分支化；**011 fail=F-1**：M2 口径漏滚到 `templates/project-agents.md:32`[仍指控制面 decisions/、死锁换门重现]→ 已改指工程自己的决策记录处+分支限定+修:4 悬空引用+ADR-0018 受影响栏补记；**F-2**：reviewer 两栈一处分支盲步号 → 已改"⑥（新第5步/老第6步派发）"。修后 make verify + docs-audit(50) 绿。eval 结果按用户口径保留、统一优化时再回看。）
+- [ ] 提交（待授权）
+
+## Review（hc-onboard 老项目分支）
+- **做了什么**：填 ADR-0017 留的老项目占位——skill 老分支 8 步（拆模块引导确认 → 按模块滚 → 发现+对齐执行口 → 引入关联五项）+ reviewer 双栈 a–d 判据 + ADR-0018 + 全套接线口径。
+- **对抗评审的价值**：两栈收敛揪出 M2 这种"锚了不存在机制"的口径矛盾（decisions index 根本没有自动生成脚本、首次实战必死锁）和 M1"判据加了、执行环没跟"（上批 hc-test SKILL 漏改的同款）——都在实战前堵掉。
+- **质量**：rule-0015 双向核过（新增文字零项目词）；8 步与 ADR 逐步一致；两栈等价（连漏都对称漏、修也对称修）。
+
+## 已闭：hc-onboard 新项目接入 skill（ADR-0017）
 - [x] 设计敲定（多轮对话）：引导式接入 skill（≈hc-tech-design）；新项目分支先做、老项目占位；7 步（收信息/搭最小骨架/记选型 ADR/接执行口/对抗评审/make verify/交棒）；铁律=全程用户确认不替定；**只搭壳不越界**（代码结构归 hc-dev/hc-tech-design）；接入点占位**三态**（真命令/PENDING:理由/N/A:理由，静默空=红，看得见+绕不过去）；create-sandbox 拆下一轮、verify/ci 当内部步骤。
 - [x] build（workflow 并行 3 块 disjoint：skill + reviewer 双栈 + templates/project-agents.md）+ 我串行：ADR-0017、占位机检 `verification-audit`（进 make verify）、config 注册、verification.yaml/VERIFICATION_ROUTING 三态、PROJECT_ONBOARDING 瘦身 + 修 docs-maintainer→hc-doc-sync、CURRENT_STATUS 清、索引 regen。
 - [x] **对抗评审 2 栈 + 修**：① 正确性栈实跑挖出**机检假绿漏洞**（黑名单判红、被 `" "`/`"..."`/小写 todo/`# 注释`/裸 PENDING/待定 骗过）→ 改 **fail-closed** + 补变异自测；② 设计栈揪 major「PROJECT_ONBOARDING 只贴 banner 没真瘦身（rule-0012 复刻）」→ 真瘦身成口子速查（0 流程步）+ minor 清 CURRENT_STATUS docs-maintainer。

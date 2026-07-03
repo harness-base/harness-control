@@ -2,16 +2,19 @@
 title: ADR-0017 hc-onboard 工程接入 skill（本 ADR：新项目分支）——引导式搭骨架、接线不接假内容、占位不许静默
 status: accepted
 date: 2026-07-01
-last_updated: 2026-07-01
+last_updated: 2026-07-02
 source_files:
   - ../../workspace/verification.yaml
 related_docs:
   - ../harness/PROJECT_ONBOARDING.md
   - 0015-hc-tech-design.md
   - 0009-dev-skill.md
+  - 0018-hc-onboard-legacy-branch.md
 ---
 
 # ADR-0017：hc-onboard 工程接入 skill（新项目分支）
+
+> **更新（2026-07-02）**：本 ADR 留占位的**老项目分支已由 [ADR-0018](0018-hc-onboard-legacy-branch.md) 实现**——`hc-onboard` 现覆盖新 + 老两类工程。下方决策叙述保留历史原样。
 
 ## 背景
 
@@ -62,4 +65,4 @@ related_docs:
 ## 影响 / follow-up
 
 - 新项目从零就长在规范里、接入即被治理；占位有据可查 + 机检兜底，不留隐性空洞。
-- **follow-up**：① `create-sandbox` skill + sandbox 契约（起/停/查、形式无关）；② `hc-onboard` 老项目分支（扫 → 消化历史资产 → 搬进规范 → 对齐）。
+- **follow-up**：① `create-sandbox` skill + sandbox 契约（起/停/查、形式无关）——待做；② `hc-onboard` 老项目分支（扫 → 消化历史资产 → 搬进规范 → 对齐）——**已由 ADR-0018 实现（2026-07-02）**。
