@@ -91,3 +91,8 @@ decisions:
     status: accepted
     date: 2026-07-02
     file: 0018-hc-onboard-legacy-branch.md
+  - id: ADR-0019
+    title: sandbox 契约 + hc-create-sandbox skill——起/停/查三入口、基线态（资产/脏两分）、幂等 + 三层检查
+    status: accepted
+    date: 2026-07-03
+    file: 0019-hc-create-sandbox.md

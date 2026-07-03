@@ -5,6 +5,7 @@
 | name | description |
 | --- | --- |
 | hc-add-rule | 把一条规则真正落地（团队规范、踩坑约束、编码红线）。用户说"以后都要/不许/必须…"、或你想固化一条规范时用本 skill，走"定范围→写下来+登记→挂执行"三步，确保规则会被加载、违反会被发现，而不是写完没人理。 |
+| hc-create-sandbox | 引导式给被管工程把 sandbox 从 PENDING 接实：按 SANDBOX_CONTRACT 建 起/停/查(+可选 reset/seed)，聊形式源驱动不预设、真跑验收[双 up 验幂等+status 翻转]、接线 verification.yaml 三字段、派 hc-sandbox-reviewer 对抗评审；用户说「接 sandbox / 建沙箱 / 补 sandbox_status / 测试环境接实」时用。 |
 | hc-dev | 写代码的统一入口（写功能 / 工程代码 / 重构 / 改 bug / 迁移 都走它）：想清楚 → 列 plan → 你确认 → 写（不假设、决策点问你、防技术债）→ 挑刺（对抗 review，循环到无 bug）→ 提醒你测。两级（常规 / 深度），默认按任务轻重自判、可指定。用户说「写 / 实现 / 改 / 重构 / 迁移 / 修 bug / 做个功能 / 开发」时用。 |
 | hc-git-workflow | 做任何 git 写操作（建分支 / 提交 / rebase / 合并 / 解冲突 / 推送 / worktree 清理）前用本 skill：① 安全红线（没授权不写、不强推、别动 main）② 本仓 git 约定（feat/fix 分支从 main 切、本地 rebase main 解冲突、PR 走 merge commit、commit 格式）。打算 commit / push / reset / 合并 / 删分支 时必看。 |
 | hc-onboard | 引导式把一个工程接进 harness 控制面（新 / 老两分支均已实现）：主 agent 当接入向导，先问 新/老 分流 → 新项目走 7 步（收信息 / 搭最小骨架 / 记第一个 ADR / 接执行口 / 对抗评审 / make verify 收尾 / 交棒），每步先摆选项 + 讲取舍让用户拍再落；老项目走 8 步（定位接管 / 拆模块引导对话 / 按模块滚 扫→确认→搬进规范 / 接执行口发现+对齐现有的 / 引入关联进主目录 / 对抗评审 / 收尾 / 交棒），倒着对齐：扫出来的先经用户逐条确认才落、只收规范不改业务代码 → 派 hc-onboard-reviewer 对抗评审到过。接入点占位守「三态」（真命令 / PENDING: / N/A:，静默空=红）。产出的项目骨架 / 规范（AGENTS.md / ADR / verification 条目）本就项目专属。用户说「接入项目 / 新建项目 / 挂个工程 / onboard / 接入老项目 / 存量项目 / 对齐现有项目」时用。 |

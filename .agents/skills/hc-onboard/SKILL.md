@@ -1,8 +1,8 @@
 ---
 name: hc-onboard
 description: 引导式把一个工程接进 harness 控制面（新 / 老两分支均已实现）：主 agent 当接入向导，先问 新/老 分流 → 新项目走 7 步（收信息 / 搭最小骨架 / 记第一个 ADR / 接执行口 / 对抗评审 / make verify 收尾 / 交棒），每步先摆选项 + 讲取舍让用户拍再落；老项目走 8 步（定位接管 / 拆模块引导对话 / 按模块滚 扫→确认→搬进规范 / 接执行口发现+对齐现有的 / 引入关联进主目录 / 对抗评审 / 收尾 / 交棒），倒着对齐：扫出来的先经用户逐条确认才落、只收规范不改业务代码 → 派 hc-onboard-reviewer 对抗评审到过。接入点占位守「三态」（真命令 / PENDING: / N/A:，静默空=红）。产出的项目骨架 / 规范（AGENTS.md / ADR / verification 条目）本就项目专属。用户说「接入项目 / 新建项目 / 挂个工程 / onboard / 接入老项目 / 存量项目 / 对齐现有项目」时用。
-version: 2
-last_reviewed: 2026-07-02
+version: 3
+last_reviewed: 2026-07-03
 ---
 
 # 引导式把工程接进 harness（hc-onboard）
@@ -50,13 +50,13 @@ last_reviewed: 2026-07-02
 ### 第 4 步 · 接执行口（接线、不接假内容）
 把项目的执行口**接上线**（不接假内容、不静默空）：
 
-- **问什么**：这项目将来怎么验证——verify（项目自检）/ unit（单测）/ api（接口测）/ e2e（端到端）/ sandbox（沙箱）**这几条接入点，每条现在能接实吗**？将来脚本放哪、叫什么命令？
+- **问什么**：这项目将来怎么验证——verify（项目自检）/ unit（单测）/ api（接口测）/ e2e（端到端）/ **sandbox 三字段**（`sandbox` 起 / `sandbox_down` 停 / `sandbox_status` 查，契约见 `SANDBOX_CONTRACT.md`；可选 `sandbox_reset` / `sandbox_seed`）**这几条接入点，每条现在能接实吗**？将来脚本放哪、叫什么命令？
 - **确认什么**：每条接入点的**三态取值**（见 ⑤）跟用户逐条确认——现在有真命令就填真命令；接不了就填 `PENDING:` 并写清楚为什么现在空 / 补的条件；这项目压根不需要就填 `N/A:` 并写理由。
 - **落什么**：
-  - 在 `workspace/verification.yaml` 给项目**占一条**（verify / unit / api / e2e / sandbox 各按三态取值）——**注意隔离纪律**：本 skill **只教用户怎么标、教 reviewer 怎么审**，实际写 `workspace/verification.yaml`、接 CI、建机检脚本是**主 agent 串行接线**做（本 skill 不代跑 index/regen、不代改 workspace / CI）；
+  - 在 `workspace/verification.yaml` 给项目**占一条**（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status 各按三态取值）——**注意隔离纪律**：本 skill **只教用户怎么标、教 reviewer 怎么审**，实际写 `workspace/verification.yaml`、接 CI、建机检脚本是**主 agent 串行接线**做（本 skill 不代跑 index/regen、不代改 workspace / CI）；
   - 约定 **CI 认得它**（口子留好）；
   - 约定**将来脚本放哪、叫什么命令**（命令名先约定，**脚本本体先占位**）。
-- **sandbox 特别说明**：sandbox 复杂，**下一轮单独建 `create-sandbox` skill**；本 skill 里 sandbox **只留占位**（三态里多半是 `PENDING:` 或 `N/A:`），不在这里搭沙箱。**verify / ci 是本 skill 内部小步骤**、不单独成 skill。
+- **sandbox 特别说明**：sandbox 复杂、**由 `hc-create-sandbox` skill 单独接实**（契约见 `docs/harness/SANDBOX_CONTRACT.md`，ADR-0019）；本 skill 里 sandbox **只留占位**（三态里多半是 `PENDING:` 或 `N/A:`），不在这里搭沙箱。**verify / ci 是本 skill 内部小步骤**、不单独成 skill。
 
 ### 第 5 步 · 对抗评审搭出来的骨架
 - **派 `hc-onboard-reviewer`** 子 agent 对抗挑刺搭出来的骨架（骨架完整性 / 三态占位是否合规 / 隔离边界有没有踩 / 是否越界搭了代码结构），**回改到过**（详见 ⑥）。
@@ -97,7 +97,7 @@ last_reviewed: 2026-07-02
 老项目多半"**已有一套**"验证——本步是**发现 + 对齐现有的**，不是从空占位起步：
 - **问什么**：扫出项目现有 verify / build / 测试 / CI / sandbox 配置，出"我看到的"清单。
 - **确认什么**：清单跟用户逐条确认；CI 跟用户定「接进 harness affected-verify（**推荐**，口径统一）还是保留项目那套」。
-- **落什么**：确认后接进来——verify / 单测 / api / e2e 现有命令**确认后填真命令**进 `workspace/verification.yaml`（仍守三态：有则真、无则 `PENDING:` / `N/A:`，见 ⑤）；sandbox 有现成就接真命令、没有填 `PENDING:` + 以后 `create-sandbox` 补。**接线纪律同新项目第 4 步**：skill 只教怎么标 / 怎么审，实际写 verification.yaml / 接 CI 由主 agent 串行做。
+- **落什么**：确认后接进来——verify / 单测 / api / e2e 现有命令**确认后填真命令**进 `workspace/verification.yaml`（仍守三态：有则真、无则 `PENDING:` / `N/A:`，见 ⑤）；sandbox 有现成就接真命令、没有填 `PENDING:` + 以后走 `hc-create-sandbox` 补。**接线纪律同新项目第 4 步**：skill 只教怎么标 / 怎么审，实际写 verification.yaml / 接 CI 由主 agent 串行做。
 
 ### 第 5 步 · 引入关联进主目录（最后一公里，五项，新老共用）
 项目内落了东西**不等于**挂进了治理网——五项检查逐项过（新项目收尾也按这五项对，见 ③ 第 6 步）：
@@ -117,7 +117,7 @@ last_reviewed: 2026-07-02
 - 往后开发走 `hc-prd` → `hc-tech-design` → `hc-dev`；**动业务码前先在 `docs/features/` 立需求包**（rule-0001）——接入只收了规范 / 记录，**不含任何业务代码改动的许可**。
 
 ## ⑤ 占位三态规矩（关键：占位不许静默空）
-第 4 步每个接入点（verify / unit / api / e2e / sandbox）的值**必是三态之一**——**目标：占位看得见 + 绕不过去，防"开发过了没补"**（同 `test-cases-audit` 的「无 · 理由」逃生口思路）：
+第 4 步每个接入点（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status，+可选 sandbox_reset / sandbox_seed——sandbox 拆三字段见 `docs/harness/SANDBOX_CONTRACT.md`）的值**必是三态之一**——**目标：占位看得见 + 绕不过去，防"开发过了没补"**（同 `test-cases-audit` 的「无 · 理由」逃生口思路）：
 
 1. **真命令**（已接实）——直接写将来能跑的命令。
 2. **`PENDING: <为啥现在空 / 补的条件>`**（待接实）——例：`PENDING: 首个接口落地后补 api 冒烟`。**`make verify` 会 warn 提醒**（机检脚本主 agent 另建），同时**项目 `AGENTS.md` 里留一条"待补"记录**，让 agent 以后进来看得见、绕不过去。

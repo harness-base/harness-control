@@ -42,7 +42,7 @@ related_docs:
 | e2e 用例 | 有 PRD | `hc-e2e-qa` → `hc-e2e-reviewer` | ✅ 本期实现 |
 | api 用例 | 有接口契约（或用户指定接口来源） | `hc-api-qa` → `hc-api-reviewer` | ✅ 本期实现 |
 | 接口契约对照 | 开发完成 + routelist | 总监调度 | 🔒 占位 |
-| 测试脚本 | 开发彻底结束 | `hc-script-impl` → `hc-script-reviewer` | 🔒 占位·待 sandbox |
+| 测试脚本 | 开发彻底结束 | `hc-script-impl` → `hc-script-reviewer` | 🔒 占位（sandbox 前置已就绪：契约 + `hc-create-sandbox`，ADR-0019；待建脚本线） |
 | 统一回归 | 脚本就绪 | 总监调度 | 🔒 占位 |
 
 > 占位 = 全量设计已留位，加时**填空、不重构** skill 形态。
@@ -136,9 +136,10 @@ related_docs:
 
 - routelist 新增接口 vs 接口契约是否一致；不一致 → 复核根因：**契约不足** → 补契约 + 补用例；**实现不足** → 补实现。
 
-## 测试脚本（占位·待 sandbox）
+## 测试脚本（占位；sandbox 前置已就绪——契约 `SANDBOX_CONTRACT.md` + `hc-create-sandbox` 接实，ADR-0019）
 
 - api + e2e 脚本；**每需求独立**（不和过往混）；与用例**一一对照**；**单独审核**（`hc-script-reviewer`）。
+- 跑之前按 sandbox 契约**卡门**：`up` → `status`（exit 0 才跑）→ 跑 → `down`（见 `SANDBOX_CONTRACT.md`「运行时卡门」）。
 
 ## 回归（占位）
 

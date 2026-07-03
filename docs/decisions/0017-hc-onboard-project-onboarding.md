@@ -10,6 +10,7 @@ related_docs:
   - 0015-hc-tech-design.md
   - 0009-dev-skill.md
   - 0018-hc-onboard-legacy-branch.md
+  - 0019-hc-create-sandbox.md
 ---
 
 # ADR-0017：hc-onboard 工程接入 skill（新项目分支）
@@ -65,4 +66,4 @@ related_docs:
 ## 影响 / follow-up
 
 - 新项目从零就长在规范里、接入即被治理；占位有据可查 + 机检兜底，不留隐性空洞。
-- **follow-up**：① `create-sandbox` skill + sandbox 契约（起/停/查、形式无关）——待做；② `hc-onboard` 老项目分支（扫 → 消化历史资产 → 搬进规范 → 对齐）——**已由 ADR-0018 实现（2026-07-02）**。
+- **follow-up**：① `create-sandbox` skill + sandbox 契约（起/停/查、形式无关）——**已由 ADR-0019 实现（2026-07-03，落名 `hc-create-sandbox`）**；② `hc-onboard` 老项目分支（扫 → 消化历史资产 → 搬进规范 → 对齐）——**已由 ADR-0018 实现（2026-07-02）**。

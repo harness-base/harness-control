@@ -15,6 +15,7 @@
 - `hc-prd-writer.md` — hc-prd-writer
 - `hc-prototype-builder.md` — hc-prototype-builder
 - `hc-requirements-gatherer.md` — hc-requirements-gatherer
+- `hc-sandbox-reviewer.md` — hc-sandbox-reviewer
 - `hc-self-optimize.md` — hc-self-optimize
 - `hc-tech-design-reviewer.md` — hc-tech-design-reviewer
 - `hc-user-story-writer.md` — hc-user-story-writer

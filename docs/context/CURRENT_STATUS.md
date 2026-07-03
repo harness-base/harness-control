@@ -29,13 +29,13 @@ related_docs:
 | `.claude/` | done | settings（PreToolUse + Stop hook）+ 子 agent（**以 `.claude/agents/README.md` 为准**，自动索引；如 hc-eval / hc-code-reviewer）+ skills 软链 |
 | `.codex/` | done(部分) | 子 agent 与 `.claude/agents/` **一一双栈对齐**（各有 `.toml` + `config.toml` 注册，行为一致）+ config；其余按需 |
 | `docs/features/` | done | F-0001~0006（kratos-base 6 个需求包） |
-| `workspace/verification.yaml` | done | kratos-base 路由已填全（verify/unit/e2e/sandbox + 20 AC 弹性矩阵），含示例模板 |
+| `workspace/verification.yaml` | done | kratos-base 路由已填（verify/unit/e2e + sandbox 三字段：up/down 真命令、status PENDING 待走 hc-create-sandbox 补），含三字段示例模板；接入点三态由 `verification-audit` 机检 |
 | `projects/` | done | 挂载点，已挂 kratos-base（详见被管工程表）；接工程（新 / 老）走 `hc-onboard` skill（ADR-0017 新项目 / ADR-0018 老项目） |
 | `docs/prds/` | done | 需求产出账本（hc-prd skill 产物 + prds-audit）；architecture 暂未建（drift 区已弃，见 ADR-0006） |
 | `docs/designs/` | done | 研发方案产出账本（hc-tech-design skill 产物（ADR-0015）：design.md + 可选 api-contract + `designs-audit` 硬闸校登记一致 / design.md 在 / 零 TBD，进 make verify；判断层归 hc-tech-design-reviewer）；空账本待实战 |
 | `docs/test-cases/` | done | 测试用例账本（hc-test skill 产物（ADR-0014） + `test-cases-audit` 硬闸校 AC/FP 覆盖闭合，ADR-0008）；空账本待实战 |
 | 自进化（① 落文档提醒 + ② hc-self-evolution） | done | `turn-backstop.sh`（机械触发落文档提醒，写 `- [ ]` 状态）+ `correction-nudge` 下一轮反馈待处理 + 文档漂移判据 `docs/harness/doc-sync-checklist.md` + `hc-doc-sync-reviewer` 子 agent（ADR-0012）+ `hc-self-evolution` skill/references + `hc-self-optimize` 子 agent |
-| sandbox / E2E 环境 | done | kratos-base 已建实（`projects/kratos-base/deploy/sandbox` + `verification.yaml` 路由，20 AC 弹性 e2e 跑通）；新工程随接随建 |
+| sandbox / E2E 环境 | done(契约已立) | **契约 = `docs/harness/SANDBOX_CONTRACT.md`**（起/停/查三入口 + 基线态 + 幂等，ADR-0019），接实走 `hc-create-sandbox` skill；kratos-base up/down 真命令在路由、`sandbox_status` PENDING 待走 skill 补（首个实战） |
 
 ## eval 怎么跑（免 key）
 

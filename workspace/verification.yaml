@@ -5,7 +5,9 @@
 #   · 真命令（已接实）
 #   · "PENDING: <为啥现在空 / 补的条件>"（待接实：make verify ⚠ 提醒；同时项目 AGENTS.md 留待补记录）
 #   · "N/A: <理由>"（这项目不需要这个接入点）
-#   静默空 / 无理由 / 裸 TODO / <占位> = ✗ 红。补 sandbox 用 create-sandbox skill。
+#   静默空 / 无理由 / 裸 TODO / <占位> = ✗ 红。
+# sandbox 按契约拆三字段：sandbox（起）/ sandbox_down（停）/ sandbox_status（查，exit 0=就绪）
+#   （+可选 sandbox_reset / sandbox_seed）；接实走 hc-create-sandbox skill，契约见 docs/harness/SANDBOX_CONTRACT.md。
 version: 1
 projects:
   - name: kratos-base
@@ -16,9 +18,11 @@ projects:
     # S5-T2: 配置/注册中心运行期宕场景新增：
     #   AC-CR1(etcd/nacos): 配置中心运行期宕→进程不崩→恢复后热更续上
     #   AC-CR2(etcd/nacos): 注册中心运行期宕→discovery失败→恢复后自动重注册+discovery续上
-    sandbox: "make -C projects/kratos-base sandbox-up"    # E2E 所需 sandbox 环境
+    sandbox: "make -C projects/kratos-base sandbox-up"        # 起（E2E 所需环境；契约见 docs/harness/SANDBOX_CONTRACT.md）
+    sandbox_down: "make -C projects/kratos-base sandbox-down"  # 停
+    sandbox_status: "PENDING: 按 SANDBOX_CONTRACT 补 status 入口（走 hc-create-sandbox，ADR-0019 follow-up）"
 
-# 示例（新项目接入后，hc-onboard 按「三态」填；真内容后补，见 ADR-0017）：
+# 示例（新项目接入后，hc-onboard 按「三态」填；真内容后补，见 ADR-0017 / 0019）：
 # projects:
 #   - name: backend-service
 #     path: projects/backend-service
@@ -26,4 +30,6 @@ projects:
 #     unit:    "make -C projects/backend-service test"        # 已接实
 #     api:     "N/A: 无对外 api 层"                            # 显式不需要
 #     e2e:     "PENDING: 首个需求上线后补"                     # 待接实（make verify ⚠ 提醒）
-#     sandbox: "PENDING: 要跑 e2e 时用 create-sandbox 接实"    # 待接实
+#     sandbox:        "PENDING: 要跑 e2e 时走 hc-create-sandbox 接实"   # 起（三字段见 SANDBOX_CONTRACT.md）
+#     sandbox_down:   "PENDING: 同上，随 sandbox 一起接"                # 停
+#     sandbox_status: "PENDING: 同上，随 sandbox 一起接"                # 查（exit 0=就绪）

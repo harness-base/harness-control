@@ -4,8 +4,8 @@
 
 ## 规范（健康长什么样 / 不变量）
 
-- 接入有**成文流程**：`docs/harness/PROJECT_ONBOARDING.md` 是唯一入口，10 步 + 校验清单，不是口头约定。
-- 每个被管工程在 `workspace/verification.yaml` 有**一条路由**：`name` / `path` / `verify`（最小收口）/ 按需 `unit`·`api`·`e2e`·`sandbox`。
+- 接入有**成文流程**：走 `hc-onboard` skill（引导式，新项目 7 步 / 老项目 8 步，ADR-0017 / 0018）；`docs/harness/PROJECT_ONBOARDING.md` 是**口子速查 + 校验清单**（不复刻流程，rule-0012），不是口头约定。
+- 每个被管工程在 `workspace/verification.yaml` 有**一条路由**：`name` / `path` / `verify`（最小收口）/ `unit`·`api`·`e2e` + **sandbox 三字段**（`sandbox`·`sandbox_down`·`sandbox_status`，契约 `docs/harness/SANDBOX_CONTRACT.md`）——每项守**三态**（真命令 / `PENDING:理由` / `N/A:理由`，`verification-audit` 机检登记形态）。
 - 路由登记的命令**从 harness 根原样跑得通**：脚本 CWD 无关，`path` 真存在，`make -C` 的 target 真存在。
 - 规则**随工程进 `projects/`**：工程红线在 `projects/<name>/AGENTS.md`（精简 + 指针），细规则下沉到各层 `projects/<name>/<dir>/AGENTS.md`，就近生效——不堆进根 `AGENTS.md`。
 - 每个 `AGENTS.md` 有同级 `CLAUDE.md` shim（`@AGENTS.md`），否则 Claude Code 加载不到该层规则。
@@ -54,8 +54,8 @@ bash projects/kratos-base/test/resilience/run_all.sh   # e2e 路由
 
 ## 修复用哪个操作 skill / 脚本
 
-- **接新工程 / 补缺步骤**：照 `docs/harness/PROJECT_ONBOARDING.md` 10 步 + 校验清单走（缺哪步补哪步）。
-- **改/补验证路由**：编辑 `workspace/verification.yaml`，按 `docs/harness/VERIFICATION_ROUTING.md` 填 `verify`/`unit`/`e2e`/`sandbox`；**填完从 harness 根原样亲跑一次**。
+- **接新工程 / 补缺步骤**：走 `hc-onboard` skill（新 7 步 / 老 8 步引导 + 对抗评审，ADR-0017 / 0018）；速查与校验清单见 `docs/harness/PROJECT_ONBOARDING.md`（缺哪项补哪项）。
+- **改/补验证路由**：编辑 `workspace/verification.yaml`，按 `docs/harness/VERIFICATION_ROUTING.md` 填 `verify`/`unit`/`api`/`e2e` + sandbox 三字段（守三态）；**真命令填完从 harness 根原样亲跑一次**；sandbox 从 `PENDING:` 接实走 `hc-create-sandbox`（契约 `SANDBOX_CONTRACT.md`）。
 - **工程级规则落地（就近）**：用 `hc-add-rule` skill（定范围 → 写进就近 `AGENTS.md`/`docs/rules` + 登记 → 挂 hook/eval 执行）。
 - **第一个需求包**：用 `hc-dev` skill 深度级（rule-0001）。
 - **结构 / shim 体检**：`bash scripts/verify-control-plane.sh`（兜 shim 缺失）+ `make docs-audit`（兜 onboarding 引用的死文件）。注意：当前 `verify-control-plane.sh` 只校验 `verification.yaml` **存在**，**不**校验路由命令真能跑——路由命令亲跑这一关仍要手动做。

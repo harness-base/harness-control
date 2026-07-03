@@ -4,10 +4,12 @@
 
 ## 规范（健康长什么样 / 不变量）
 
-- **一键起 / 一键销**：有 `sandbox-up` / `sandbox-down`（或等价），销要**幂等 + 清卷**（`down -v`），重复跑不报错、不残留。
+> 契约唯一真相源 = `docs/harness/SANDBOX_CONTRACT.md`（ADR-0019）：入口 **起 / 停 / 查 三个必须**（`sandbox` / `sandbox_down` / `sandbox_status`，status exit 0=就绪、机器可判）+ reset / seed 可选；基线态（资产 / 脏数据两分）；幂等 / 具名 / 自包含 / fail loud / status 真查。给工程接实走 `hc-create-sandbox` skill。本手册审"工程现状健不健康"，判据以契约为准。
+
+- **一键起 / 一键销 / 一键查**：有 起 / 停 / 查 三入口（`sandbox-up` / `sandbox-down` / `sandbox-status` 或等价，登记进 `verification.yaml` 三字段；没接实的按三态标 `PENDING:`），销要**幂等 + 清卷**（`down -v`），重复跑不报错、不残留；查要**真查**（健康检查 / 探活，exit 语义，不许 sleep+echo 装）。
 - **CWD 无关**：任何脚本不假设 `CWD=工程根`。两种合法形态：① 脚本开头自 `cd` 到根（`cd "$(dirname "$0")/../.."`）；② 命令用 `make -C <projectdir>` 把 CWD 钉死。裸 `make` / `go build` / 相对 `-f compose.yaml` 必须配套其一。
 - **起后等 healthy 才返回**：用 docker healthcheck 轮询，**绝不 `sleep` 凑数**；超时打容器日志再 `exit 1`。
-- **路由对得上**：`workspace/verification.yaml` 的 `sandbox` / `e2e` 命令，**逐字从其工作目录亲跑能过**——登记 ≠ 能跑。
+- **路由对得上**：`workspace/verification.yaml` 的 `sandbox` / `sandbox_down` / `sandbox_status` / `e2e` 命令，**逐字从其工作目录亲跑能过**——登记 ≠ 能跑。
 - **依赖固定项目名**：compose 用固定 `-p <name>`（如 `-p kratosbase-sandbox`），保证 up/down 操作同一组容器、teardown 确定。
 
 ## 怎么检索现状（索引 / 文件 / 机器检查入口）
@@ -28,7 +30,7 @@ make -C projects/kratos-base sandbox-up && make -C projects/kratos-base sandbox-
 bash projects/kratos-base/test/resilience/run_all.sh       # e2e 路由原文，从 harness 根跑
 ```
 
-注意：`make verify`（`scripts/verify-control-plane.sh:11`）只校验 `workspace/verification.yaml` **文件在不在**，**不**验证路由命令可跑——sandbox 维度没有机器兜底，必须**亲跑**。
+注意机器兜底的边界：`make verify` 里 `verification-audit` **只机检登记形态**（sandbox 三字段的占位三态：真命令 / `PENDING:理由` / `N/A:理由`，静默空红）——**"命令真能跑"没有机器兜底，必须亲跑**（登记 ≠ 能跑）。
 
 ## 怎么判（逐条可判定）
 
@@ -51,4 +53,5 @@ bash projects/kratos-base/test/resilience/run_all.sh       # e2e 路由原文，
 - **亲跑路由收口**：`make -C projects/kratos-base sandbox-up && ... sandbox-down`；`bash projects/kratos-base/test/resilience/run_all.sh`（路由原文，从 harness 根）。
 - **路由 / CWD 红线没沉淀就补**：把"CWD 无关 + 登记前亲跑"写成就近规则 → 走 `hc-add-rule`（落 `test/resilience/AGENTS.md` 一类就近位，带 `<!-- rule: -->` 标记）。
 - **改 sandbox 环境本身**（加依赖容器 / initdb）：改 `projects/<name>/deploy/sandbox/docker-compose.yaml` + 同步该目录 `README.md` 索引 + `Makefile` 的 up/down 等待逻辑。
-- **路由登记 / 文档对账**：事实源 `workspace/verification.yaml`；路由规约见 `docs/harness/VERIFICATION_ROUTING.md`；改完跑 `make docs-audit`。
+- **给工程接实 sandbox（从 `PENDING:` 到真命令）**：走 `hc-create-sandbox` skill（按契约建 起/停/查、真跑验收[双 up 验幂等 + status 翻转]、派 `hc-sandbox-reviewer` 评审）。
+- **路由登记 / 文档对账**：事实源 `workspace/verification.yaml`；路由规约见 `docs/harness/VERIFICATION_ROUTING.md`、契约见 `docs/harness/SANDBOX_CONTRACT.md`；改完跑 `make docs-audit`。

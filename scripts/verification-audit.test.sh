@@ -134,6 +134,41 @@ one "$tmp/f18" "$HEAD
     e2e: \"bash x\""
 [ "$(run "$tmp/f18")" != "0" ] && ok || no "单引号纯空格未判红（clean 未剥单引号=假绿，F-1）"
 
+# ===== sandbox 契约字段（ADR-0019：sandbox_down/sandbox_status 等也是接入点、三态照罩）=====
+# 19) sandbox 三字段：真命令 + status 标 PENDING 有理由 → 绿（新字段被认、PENDING 只 warn）。
+one "$tmp/f19" "$HEAD
+    verify: \"make x\"
+    sandbox: \"make -C projects/demo sandbox-up\"
+    sandbox_down: \"make -C projects/demo sandbox-down\"
+    sandbox_status: \"PENDING: 按 SANDBOX_CONTRACT 补\""
+[ "$(run "$tmp/f19")" = "0" ] && ok || no "sandbox 契约字段(down/status)未被认或 PENDING 被误红"
+
+# 20) sandbox_down 静默空 → 红（新字段也吃三态 fail-closed，变异自证：与 19 仅差这一处）。
+one "$tmp/f20" "$HEAD
+    verify: \"make x\"
+    sandbox: \"make -C projects/demo sandbox-up\"
+    sandbox_down: \"\"
+    sandbox_status: \"PENDING: 按 SANDBOX_CONTRACT 补\""
+[ "$(run "$tmp/f20")" != "0" ] && ok || no "sandbox_down 静默空未判红（新字段没进 fail-closed=假绿）"
+
+# 21) sandbox_status 静默空 → 红（锁正则里的 sandbox_status 分支——删了它此 case 翻红）。
+one "$tmp/f21" "$HEAD
+    verify: \"make x\"
+    sandbox_status: \"\""
+[ "$(run "$tmp/f21")" != "0" ] && ok || no "sandbox_status 静默空未判红（字段没被正则认=假绿）"
+
+# 22) sandbox_reset 裸 TODO → 红（锁 sandbox_reset 分支）。
+one "$tmp/f22" "$HEAD
+    verify: \"make x\"
+    sandbox_reset: \"TODO\""
+[ "$(run "$tmp/f22")" != "0" ] && ok || no "sandbox_reset 裸 TODO 未判红（字段没被正则认=假绿）"
+
+# 23) sandbox_seed 静默空 → 红（锁 sandbox_seed 分支）。
+one "$tmp/f23" "$HEAD
+    verify: \"make x\"
+    sandbox_seed: \"\""
+[ "$(run "$tmp/f23")" != "0" ] && ok || no "sandbox_seed 静默空未判红（字段没被正则认=假绿）"
+
 rm -rf "$tmp"
 echo "verification-audit.test: pass=$pass fail=$fail"
 [ "$fail" -eq 0 ]
