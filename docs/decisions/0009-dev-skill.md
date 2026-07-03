@@ -2,18 +2,21 @@
 title: ADR-0009 dev skill——写代码统一入口（两级 + 挑刺 + 共享 code-reviewer 双栈），替代 feature-delivery / bugfix
 status: accepted
 date: 2026-06-28
-last_updated: 2026-06-28
+last_updated: 2026-07-03
 source_files:
   - ../../.agents/skills/hc-dev/SKILL.md
   - ../../.claude/agents/hc-code-reviewer.md
   - ../../.codex/agents/hc-code-reviewer.toml
 related_docs:
+  - 0021-hc-dev-orchestration.md
   - 0003-prd-elicitation-and-prototype.md
   - 0007-prd-workflow-redesign.md
   - 0008-test-case-skill.md
 ---
 
 # ADR-0009：dev skill——写代码统一入口，替代 feature-delivery / bugfix
+
+> **更新（2026-07-03）**：hc-dev 形态已由 [ADR-0021](0021-hc-dev-orchestration.md) 演进为**开发总监编排式**（源驱动分层 worker、契约为接缝、吃设计方案、实现↔契约对账、UI 视觉还原纪律）——本 ADR 的"统一入口 + 纪律 + 挑刺 + 子模式"精神保留，"单 agent 两级"的编制方式被演进。下方决策叙述保留历史原样。
 
 ## 背景
 

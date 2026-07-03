@@ -22,8 +22,12 @@ config_file = "agents/hc-eval.toml"
 description = "hc-self-evolution 规范检查层的深审执行器：按维度 reference 深审、链路诊断定位断环、写 optimization-log。免 API key（用会话模型）。"
 config_file = "agents/hc-self-optimize.toml"
 
+[agents.hc-dev-worker]
+description = "hc-dev 总监的通用写码 worker（一种类型、多实例按层派）：领「一层/范围 + 契约 + 纪律」派单，只写范围内（防并行踩踏）；接口/数据按 api-contract 落、契约定死不擅改，方案/契约问题停下上报总监；继承纪律（不假设/决策点上报/TDD 优先/验证如实），UI 还原按视觉纪律（渲染证据）。免 API key。"
+config_file = "agents/hc-dev-worker.toml"
+
 [agents.hc-code-reviewer]
-description = "独立 code reviewer（挑刺）：读变更，对抗式找 correctness bug / 技术债 / 缺测试 / 安全问题，回结构化清单。hc-dev skill 的 review 步派它。免 API key（用会话模型）。"
+description = "独立 code reviewer（挑刺）：读变更，对抗式找 correctness bug / 技术债 / 缺测试 / 安全问题；另核 实现↔契约对账（有契约时回 api-contract 原文逐端点/字段/错误码）与 UI 视觉还原证据（渲染两件套：截图对比＋inspect 计算后样式，读源码不算），回结构化清单。hc-dev skill 的 review 步派它。免 API key（用会话模型）。"
 config_file = "agents/hc-code-reviewer.toml"
 
 [agents.hc-prd-reviewer]

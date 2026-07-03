@@ -5,7 +5,7 @@
 ## 规范（健康长什么样 / 不变量）
 
 - **会触发的流程有对应承载**：常见任务类型（立/改/删规则 / 写代码 / 出 PRD / 技术设计 / 出测试用例 / 接入工程 / 接 sandbox / git 写操作 等）能在 `.agents/skills/` 找到对应 skill；但**有的能力由政策 / 数据 + 子 agent 承接、不必是 skill**——"定档" = `CONTEXT_LOADING.md` 政策（ADR-0011）、"文档同步" = `docs/harness/doc-sync-checklist.md` + `hc-doc-sync-reviewer`（ADR-0012）。判据见 ADR-0011/0012 的 skill 准入标准（要有触发 + 产物/闸），别把"某能力无 skill"一律当缺口。
-- **两类形态分清**：**编排式**（hc-prd / hc-test——总监调度专职 worker + reviewer，约束本体写在 worker 子 agent 上下文、skill 只留总谱）vs **交互式**（hc-dev / hc-tech-design / hc-onboard / hc-create-sandbox——主 agent 引导、决策点让用户拍）。审 description / 边界 / 重叠时先认形态，别拿交互式的标准套编排式。
+- **两类形态分清**：**编排式**（hc-prd / hc-test / hc-dev——总监调度专职 worker + reviewer，约束本体写在 worker 子 agent 上下文、skill 只留总谱）vs **交互式**（hc-tech-design / hc-onboard / hc-create-sandbox——主 agent 引导、决策点让用户拍）。审 description / 边界 / 重叠时先认形态，别拿交互式的标准套编排式。
 - **流程真相源分离、skill 只跟引用**：编排 / 契约类 skill 的流程唯一真相源在 `docs/harness/`（hc-test → `testing-flow.md`、hc-create-sandbox → `SANDBOX_CONTRACT.md`、hc-onboard → `PROJECT_ONBOARDING.md`）——实质改动改真相源，skill 正文不复制细节；两份各写 = 必漂。
 - **description 触发准、不重叠不漏**：每个 `description` 写清"何时用 / 何时不用"，覆盖该触发的场景，又不和别的 skill 抢同一类任务。
 - **进自动索引、防漂移**：每个 skill 有 `SKILL.md`，frontmatter 含 `name / description / version / last_reviewed`；`.agents/skills/README.md` 由 `scripts/skills-index.sh` 从 frontmatter 自动生成，**禁手改**，`--check` 进 `make verify`。
