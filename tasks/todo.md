@@ -1,9 +1,18 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：level: L3 ｜ task: old-skills-uplift
+> 元：level: L3 ｜ task: hc-dev-uplift
 
-## 当前：老 skill 优化批（ADR-0020）——add-rule 重构 + git-workflow 修 + self-evolution references 刷新
+## 当前：hc-dev 编排式重构（ADR-0021）——coding 环，用户点名重中之重
+- [x] 方案敲定（用户逐点拍，2026-07-03）：① **UI/UX 还原用视觉做与校验**（用户点名：读 HTML 不准）——边写边看渲染 + 截图对比 + inspect 精确值 + 状态过全，"读源码觉得对"不算验证（渲染证据 rule-0009）；② **多 subagent 编制**（用户定）——**源驱动分层**（前端/后端/客户端是常见例、不硬编 worker 种类，按项目真实分层临场定）、**按改动面伸缩**（单层直做/跨层并行）、**契约为接缝**（各层 worker 拿同一份 api-contract 独立并行）、一种 `hc-dev-worker` 多实例；③ 吃设计方案（有方案照方案拆、定死的不许擅改、发现方案问题停下回 hc-tech-design）；④ 实现↔契约对账 + 视觉还原证据进 hc-code-reviewer 判据；⑤ 保留：纪律/两级精神/bug·重构·迁移子模式/需求包门禁/TDD；⑥ 交棒口径接 hc-test 现状。
+- [x] ADR-0021 定稿登记 + ADR-0009 前向指针（历史不改写）。
+- [x] build（workflow 并行 3：hc-dev 总监 SKILL v2 / hc-dev-worker 双栈 / hc-code-reviewer 加两判据）+ 接线（config 注册 worker、索引 regen、ADR-0009 前向指针、process-coverage 过时句修）。
+- [x] **用户两次追加口径**（build 中/后）：改 bug=①本地核实+确认复现场景（读代码不好核实可先复现）②**复现↔根因互相印证缺一不可**（读代码找的原因只是假设、复现不了不算真根因；只复现挖不到根因也没用）③修改（守护测试先红）④再测试通过后结束——已落 SKILL ⑥（"两条路都行"错误表述已纠，lessons 记）。
+- [x] **对抗评审 2 栈 + 修**（合计 ~7 major+4 minor）：忠实栈——M1 reviewer 视觉判据"或"弱于用户拍的"两件套＋"→ 两栈改"缺一如实标未验证"；M2 子模式口径在派 worker 路径无承载 → worker 派单三件套扩**四件套**（加"任务口径"槽）+ SKILL ③"子模式活派单必附 ⑥ 口径"；接线栈——skills.md 形态分类 hc-dev 挪编排式、hc-tech-design 类比反向误导改写、"深度级"悬空术语 ×2 清、reviewer 尾段旧编制口径、config description 补两判据；minors（深度信号补"读很多才动手"、原型可点照点 worker/reviewer 四处补）。修后 verify 绿、TOML 解析过。
+- [x] 收尾 eval：**green 一把过**（`docs/eval/task-reviews/20260703T092042Z-hc-dev-uplift/`；010/011/012/rule-0012/0015 全 pass；五项重点独立复核全过——改 bug 双向印证两句都在、视觉两件套八处全合取、四件套发端收端闭环、旧术语 live 零残留、两栈零语义差）
+- [ ] 提交（待授权）
+
+## 已闭：老 skill 优化批（ADR-0020）——add-rule 重构 + git-workflow 修 + self-evolution references 刷新
 - [x] 体检 + 方案敲定（用户逐点拍，2026-07-03）：
   - **hc-add-rule**：扩成**加/改/删统一入口** + **规则关联对照表**（8 行：本体标记[数字 rule-00NN + 工程命名 id 两种口径]/索引 regen/shim/执行挂钩/eval 指针/**引用点全仓 grep**[改删要害]/lessons 晋升销点/反向该引未引）+ **两角色分离**（用户提出）：主 agent 生成规则本体，新建 **hc-rule-reviewer** 双栈巡查关联对照表（只评不改、机器能查的不重复）。
   - **hc-git-workflow**：**不加 subagent**（无产物可审、硬防线已有）、**不加 agent 钩子**（用户砍：每次检查太蠢）；加**操作三档分级表**（只读随意/写需授权[授权不跨批]/高危禁止 hook 已拦）+ **发布前起手式**（只挂 push/合并/开 PR 前：status+fetch 对齐+核 PR 状态+force-with-lease 显式 SHA；**有效期=本轮对话**，轮内不重查）+ commit 规范补**不加 Co-Authored-By/AI 署名** + sandbox 环境 HTTPS push 备注；分支约定不动（用户：问题不大）。
@@ -11,7 +20,7 @@
 - [x] ADR-0020 定稿登记 + build（workflow 并行 7 agent：add-rule 重构 v3 / hc-rule-reviewer 双栈 / git-workflow 修 v3 / 11 份 references 四组刷新[检索命令实跑验证]）+ 接线（config 注册 rule-reviewer、self-evolution meta bump v3、索引 regen）。make verify + docs-audit(53) 绿。
 - [x] **对抗评审 2 栈 + 修**：栈①忠实度 1 major+2 minor——**M1 对照表第 1 行"兜底=reviewer"但 reviewer 五块不含此项（声称的兜底没人干，rule-0009 同款）**→ 改"主 agent 第 1/2 步自查+用户拍"；m1 第 5 行 eval 指针正向存在性已有机检 → 兜底栏拆"机检管存在性/reviewer 管内容真伪"+reviewer ④ 两栈收窄；m2 标题正名。栈② references 事实抽查（~40 项实跑）**无 blocker/major**——新事实全证实、行号锚全精确、旧口径无漏网、历史案例保留；5 minor 旧日期锚/死 commit 哈希 → 全修（06-11→06-23/24/26、ee72ca4→task-review 路径）。修后 verify + docs-audit(53) 绿。
 - [x] 收尾 eval：**yellow → 三针已修**（`docs/eval/task-reviews/20260703T075345Z-old-skills-uplift/`；010/011/012/rule-0012 pass、四项重点独立核全过[对照表兜底三方一致亲验/两栈 parity diff 空/git-workflow 四点无走样/references 锚点亲跑]；**F-1 rule-0015 fail**：add-rule 示例用了真实工程规则 id `kratos/...`——守隔离的 skill 自己越界 → 换中性占位；F-2 变异自证出处错位 → 改指 task-review；F-3 lessons 晋升补"先跟用户确认再升"步。修后 verify + docs-audit(53) 绿。）
-- [ ] 提交（待授权）
+- [x] 提交：commit `0178e38` 并进 **PR #13**（现 2 commit：create-sandbox + 老 skill 优化批，待你合）
 
 ## Review（old-skills-uplift）
 - **做了什么**：三个老 skill 跟上这波 uplift——add-rule 扩加/改/删 + 关联对照表（8 行、谁兜底列三方一致）+ hc-rule-reviewer 双栈巡查（补齐"唯一没 reviewer 的 skill"）+ lessons 晋升入口（先确认再升）；git-workflow 三档分级表（授权不跨批）+ 发布前起手式（只挂发布类、轮内有效）+ 署名条款；self-evolution 11 份 references 对照现状刷新（检索命令实跑验证、历史案例保留）。

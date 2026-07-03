@@ -62,7 +62,7 @@ bash scripts/docs-audit.sh
 ## 修复用哪个操作 skill / 脚本
 
 - **补 / 改 ADR**：照 `templates/adr.md` 起草（别手搓省「受影响 skill」栏），写 `docs/decisions/NNNN-*.md`，登记进 `docs/decisions/index.yaml`，跑 `bash scripts/index-audit.sh docs/decisions` 防漂。大改连带回顾 `.agents/skills/` 并在该栏逐条写（已改写已改 / 不需改写「无需更新+理由」）——rule-0007。
-- **补登需求包**：`hc-dev` skill 深度级（`.agents/skills/hc-dev/`），照 `templates/feature-package.md` 建包、登记 `docs/features/index.yaml`、推进 delivery_status。改业务代码前必须就绪（rule-0001）。
+- **补登需求包**：`hc-dev`（编排式，含 rule-0001 需求包门禁，`.agents/skills/hc-dev/`），照 `templates/feature-package.md` 建包、登记 `docs/features/index.yaml`、推进 delivery_status。改业务代码前必须就绪（rule-0001）。
 - **修 context 漂移**：直接改 `docs/context/CURRENT_STATUS.md`（含 `last_updated` + 正文事实）；清单类内容改成「以自动生成索引为准」的指针而非复刻（rule-0012）。然后 `bash scripts/dir-index.sh docs/context` 重生成 README、`bash scripts/docs-audit.sh` 复核引用。
 - **固化 / 加红线**：用 `hc-add-rule` skill——它已是规则**加 / 改 / 删的统一入口**（ADR-0020：带规则关联对照表 + `hc-rule-reviewer` 巡查）。「index⇄目录一致」这类机器门禁 decisions/features 已由 `index-audit.sh` 挂进 make verify；新账本可仿 `prds-audit / designs-audit / test-cases-audit` 写校验挂进去。
 - **自检收尾**：`make verify`（结构 + docs-audit + 索引漂移 + index-audit + 各账本 audit）、`make docs-audit`（frontmatter 引用通不通）；判断与归档走 `hc-self-evolution` skill（复杂时 spawn `hc-self-optimize` 子 agent）。

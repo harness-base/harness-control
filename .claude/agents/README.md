@@ -5,6 +5,7 @@
 - `hc-api-qa.md` — hc-api-qa
 - `hc-api-reviewer.md` — hc-api-reviewer
 - `hc-code-reviewer.md` — hc-code-reviewer
+- `hc-dev-worker.md` — hc-dev-worker
 - `hc-doc-sync-reviewer.md` — hc-doc-sync-reviewer
 - `hc-e2e-qa.md` — hc-e2e-qa
 - `hc-e2e-reviewer.md` — hc-e2e-reviewer

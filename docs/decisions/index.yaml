@@ -101,3 +101,8 @@ decisions:
     status: accepted
     date: 2026-07-03
     file: 0020-old-skills-uplift.md
+  - id: ADR-0021
+    title: hc-dev 编排式重构——开发总监按改动面定编制（源驱动分层 worker、契约为接缝）、吃设计方案、实现↔契约对账、UI 视觉还原纪律
+    status: accepted
+    date: 2026-07-03
+    file: 0021-hc-dev-orchestration.md
