@@ -132,3 +132,7 @@
 
 ## 2026-07-01T07:42:52Z `落文档`（触发： commit边界）
 - [ ] [Cross-file sync] hc-tech-design skill 新建但未见 `.codex/agents/*.toml` 对等同步记录
+
+## 2026-07-02T10:22:40Z `落文档`（触发：K=8轮到点）
+- [ ] [ADR] ADR-0019 尚未创建，应记录环境管理接口（up/down/status/reset/seed）、基线态定义、资产数据分类方案
+- [ ] [文档同步] docs/decisions/index.yaml 缺少 ADR-0019 登记
