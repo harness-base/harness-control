@@ -96,3 +96,8 @@ decisions:
     status: accepted
     date: 2026-07-03
     file: 0019-hc-create-sandbox.md
+  - id: ADR-0020
+    title: 老 skill 优化批——hc-add-rule 扩加/改/删 + 关联对照表 + hc-rule-reviewer；hc-git-workflow 分级表 + 发布前起手式；hc-self-evolution references 刷新
+    status: accepted
+    date: 2026-07-03
+    file: 0020-old-skills-uplift.md

@@ -74,6 +74,10 @@ config_file = "agents/hc-api-qa.toml"
 description = "api 用例审稿员（hc-test worker，挑刺）：对抗式审 api 用例——覆盖率 / 源符合+对账(回契约原文逐字段·错误码) / 质量三块，另加无接口来源硬产用例的门槛复核(违 rule-0008 判 blocker)，rubric = eval 015 / rule-0014 / rule-0009 / rule-0008，只评不改。免 API key。"
 config_file = "agents/hc-api-reviewer.toml"
 
+[agents.hc-rule-reviewer]
+description = "规则变更巡查员（hc-add-rule 巡查步，挑刺）：照「规则关联对照表」巡查加/改/删规则后的关联闭合——引用点(全仓 grep，改删要害) / 该引未引 / 挂钩合理性(装 hook=blocker) / eval 指针双向 / lessons 晋升销点，机器能查的归 make verify 不重复，只评不改。免 API key。"
+config_file = "agents/hc-rule-reviewer.toml"
+
 [agents.hc-sandbox-reviewer]
 description = "sandbox 接入审稿员（hc-create-sandbox 评审步，挑刺）：六块审 sandbox 脚本+登记是否守 SANDBOX_CONTRACT——status 真查还是装的(blocker) / 幂等真处理(major) / 具名不猜端口 / 资产·脏数据口径 / 真跑验收证据(blocker) / fail loud+边界(动业务代码=越界)，rubric = SANDBOX_CONTRACT + rule-0008 + rule-0009，只评不改。免 API key。"
 config_file = "agents/hc-sandbox-reviewer.toml"

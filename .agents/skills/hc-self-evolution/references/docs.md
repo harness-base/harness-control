@@ -41,8 +41,8 @@ grep -rn '<!-- rule:' "$ROOT" --include=AGENTS.md
 find "$ROOT" -name README.md -not -path '*/.git/*' -not -path '*/node_modules/*' \
   -not -path '*/docs/*' -not -path '*/.agents/*'
 
-# 这些 README 是否被某 *-index / *-audit 守（在 verify-control-plane.sh 里能找到）
-grep -nE 'README\.md|coverage-audit' "$ROOT/scripts/verify-control-plane.sh"
+# 这些 README / 索引是否被某 *-index / *-audit 守（在 verify-control-plane.sh 里能找到守它的那行）
+grep -nE 'dir-index|skills-index|index-audit|audit' "$ROOT/scripts/verify-control-plane.sh"
 ```
 
 ## 怎么判（逐条可判定）
@@ -50,8 +50,8 @@ grep -nE 'README\.md|coverage-audit' "$ROOT/scripts/verify-control-plane.sh"
 - **事实源单一？** 同一条规则正文是否在两处出现（根又复刻到某 doc）= 违反，收敛到 `AGENTS.md`。
 - **根红线精简、就近？** 根 `AGENTS.md` 是否混入了只对某工程成立的规则 = 该下沉到 `projects/**/AGENTS.md`。
 - **shim 齐？** `find AGENTS.md` 的每个目录下都有 `CLAUDE.md` 且含 `@AGENTS.md`？`verify-control-plane.sh` shim 段报 `✗` = 缺/未 import。
-- **路由准？** `docs/README.md` 目录职责表的每一项在磁盘上存在；阅读顺序里的文件 `docs-audit` 不报悬空。
-- **context 不漂移？** `CURRENT_STATUS.md` 写的状态与代码对得上（例：规则条数、工程进度、skills 个数）。机器查不了，逐条对现状判。
+- **路由准？** `docs/README.md` 目录职责表的每一项在磁盘上存在；阅读顺序里的文件 `docs-audit` 不报悬空。**反向也查**：磁盘上新增的 docs 子目录（如后加的 `designs/`、`test-cases/` 产物账本区）职责表里要有对应行——目录职责表是手写的，新增区最容易漏。
+- **context 不漂移？** `CURRENT_STATUS.md` 写的状态与代码对得上（例：规则条数、工程进度、skills 个数）。skill 枚举这一格已有机检（`verify-control-plane.sh` 的「状态文档不硬编码可自生成枚举（rule-0012）」段：`.agents/skills/` 行列举 ≥4 个真实 skill 名即红）；其余计数/进度类仍机器查不了，逐条对现状判。
 - **引用不悬空？** `docs-audit.sh` 退出 0 且打印 `✓ docs-audit 通过`；任何 `✗ ... → 引用不存在` = 悬空。
 - **知识就近？** 新沉淀的工程/目录级规矩是否写进了**最近**的 `AGENTS.md`，还是堆在根/某大文档里。
 - **手写 README 有没有人守？** 在 `scripts/verify-control-plane.sh` 找不到守它的命令、自身也没标"由谁维护、何时同步" = 缺口。
@@ -59,7 +59,7 @@ grep -nE 'README\.md|coverage-audit' "$ROOT/scripts/verify-control-plane.sh"
 
 ## 常见漏洞模式（本仓真实案例）
 
-- **文档现状漂移**：commit `ee72ca4`（R11）专门"文档现状化"——文档描述与代码已脱节，靠对抗评审才照出。**活例（写本手册时实测）**：`docs/context/CURRENT_STATUS.md` 仍写 "8 条规则（rule-0001 ~ 0008）" 与 `.agents/skills` "4 个技能"，但当时实际已增至 7 个（含 `hc-prd`/`hc-self-evolution` 等）—— 典型 context 没跟代码同步（该批已修 CURRENT_STATUS）。
+- **文档现状漂移**：早期对抗轮（R11，见 `docs/eval/task-reviews/20260612T050146Z-kratos-base-s3-rereview/`）专门"文档现状化"——文档描述与代码已脱节，靠对抗评审才照出。**活例（写本手册时实测）**：`docs/context/CURRENT_STATUS.md` 仍写 "8 条规则（rule-0001 ~ 0008）" 与 `.agents/skills` "4 个技能"，但当时实际已增至 7 个（含 `hc-prd`/`hc-self-evolution` 等）—— 典型 context 没跟代码同步（该批已修 CURRENT_STATUS）。
 - **声称"全保留/不变"却偷改**（`tasks/lessons.md` 2026-06-26 规则分布化）：ADR 凭记忆写"severity/eval 映射全保留"，实际改了 rule-0007 severity、给规则编了不存在的 eval 指针 → hc-eval 子 agent 逐条 `git show HEAD` 对比判 yellow。教训：凡"X 保留/不变"，必须对事实源机械核对，能机器查的固化成 `--check`。
 - **知识堆在根、没就近**：本仓 kratos 早期工程规则曾缺就近 `AGENTS.md`（规则分布化前都堆控制面）；现已下沉到 `projects/kratos-base/**/AGENTS.md`（`pkg/*` · `app/demo/internal/*` · `test/resilience` 各层就近），根 `AGENTS.md` 明确"项目专属规则沉淀在 `projects/**/AGENTS.md`，不堆这里"。审查时查"该就近的有没有就近"。
 - **shim 漏配**：新建 `AGENTS.md` 忘了同级 `CLAUDE.md` → Claude Code 加载不到该层规则（`verify-control-plane.sh` shim 段会拦，但漏跑就漏）。
@@ -71,10 +71,10 @@ grep -nE 'README\.md|coverage-audit' "$ROOT/scripts/verify-control-plane.sh"
 
 - **机器闭环**：`scripts/docs-audit.sh`（悬空）、`scripts/verify-control-plane.sh` 的 shim 段（shim 缺配）、`make verify` / `make docs-audit` 统一入口。
 - **改文档内容**（路由/context 现状化/就近下沉）：直接编对应 `.md` / `AGENTS.md`，改完跑 `make verify` 复核。
-- **改了代码/配置/接口后同步文档**：判据 = `docs/harness/doc-sync-checklist.md`（"改 X→查 Y"对照表，原 `doc-sync` skill 降级后的数据文件，ADR-0012）；检测由 `turn-backstop` 钩子（读该表）+ `hc-doc-sync-reviewer` 子 agent 承接，漂移写 log（`- [ ]` 状态）经 `correction-nudge` 反馈主 agent 去改；无独立"主动 skill"入口。
+- **改了代码/配置/接口后同步文档**：判据 = `docs/harness/doc-sync-checklist.md`（"改 X→查 Y"对照表，原 `doc-sync` skill 降级后的数据文件，ADR-0012）；检测由 `turn-backstop` 钩子（读该表）+ `hc-doc-sync-reviewer` 子 agent 承接，漂移写 log（`- [ ]` 状态）经 `correction-nudge` 反馈主 agent 去改；无独立"主动 skill"入口。**新增一类会被人手同步坑到的文档，checklist 要加对应行**（先例：`SANDBOX_CONTRACT.md` 落地时加了"契约改→查 hc-create-sandbox skill 口径 + verification-audit 字段清单"一行）。
 - **状态/索引文档别硬编码可自动生成的枚举**：能交给 `*-index`（如 `.agents/skills/README.md` by `skills-index`）的清单/计数，写"以该自动生成索引为准"，别在 `CURRENT_STATUS` 等处复刻——硬编码枚举是反复漂移源（`tasks/lessons.md` 2026-06-27）。
 - **沉淀一条规则到就近 `AGENTS.md` 并挂执行**：`hc-add-rule` skill。
 - **决策类大改要留 ADR**：`templates/adr.md` 起草（rule-0007，别手搓省栏）。
 - **新建 `AGENTS.md` 后**：必补同级 `CLAUDE.md`（`@AGENTS.md` 一行），靠 `verify-control-plane.sh` shim 段自证。
-- **手写 README 缺漂移检测**：写或复用 `scripts/dir-coverage-audit.sh`（通用版，按目录配置 include/exclude glob 做双向覆盖检查：文件名 ↔ README 提及），挂进 `verify-control-plane.sh`。
+- **手写 README 缺漂移检测**：目前**没有**现成的通用 README 覆盖校验脚本（别凭记忆引用不存在的工具）——能转成清单的目录直接换 `scripts/dir-index.sh` 自动生成；必须保持手写的（如 `scripts/README.md`），仿 `scripts/index-audit.sh` 的正反双向思路写一个「文件名 ↔ README 提及」校验挂进 `verify-control-plane.sh`，或至少在 README 内标明"由谁维护、何时同步"。
 - **新写 README 时**：不复刻规则正文（事实源在 AGENTS.md）；按需查阅型材料可以长，但要前重后轻——长会话上下文压缩后还能传递主要信息。
