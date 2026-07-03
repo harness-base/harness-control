@@ -5,6 +5,7 @@
 - `CI.md` — CI 闸门
 - `HOOKS.md` — Git Hooks
 - `PROJECT_ONBOARDING.md` — 工程接入指南
+- `SANDBOX_CONTRACT.md` — sandbox 契约（被管工程测试环境的标准接入点）
 - `VERIFICATION_ROUTING.md` — 验证路由
 - `doc-sync-checklist.md` — 文档同步对照表（doc-sync checklist）
 - `testing-flow.md` — 测试流程总纲（testing flow）

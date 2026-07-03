@@ -4,7 +4,9 @@
 
 ## 规范（健康长什么样 / 不变量）
 
-- **会触发的流程有对应承载**：常见任务类型（立规则 / 交付需求 / 出 PRD / git 写操作 等）能在 `.agents/skills/` 找到对应 skill；但**有的能力由政策 / 数据 + 子 agent 承接、不必是 skill**——"定档" = `CONTEXT_LOADING.md` 政策（ADR-0011）、"文档同步" = `doc-sync-checklist.md` + `hc-doc-sync-reviewer`（ADR-0012）。判据见 ADR-0011/0012 的 skill 准入标准（要有触发 + 产物/闸），别把"某能力无 skill"一律当缺口。
+- **会触发的流程有对应承载**：常见任务类型（立/改/删规则 / 写代码 / 出 PRD / 技术设计 / 出测试用例 / 接入工程 / 接 sandbox / git 写操作 等）能在 `.agents/skills/` 找到对应 skill；但**有的能力由政策 / 数据 + 子 agent 承接、不必是 skill**——"定档" = `CONTEXT_LOADING.md` 政策（ADR-0011）、"文档同步" = `docs/harness/doc-sync-checklist.md` + `hc-doc-sync-reviewer`（ADR-0012）。判据见 ADR-0011/0012 的 skill 准入标准（要有触发 + 产物/闸），别把"某能力无 skill"一律当缺口。
+- **两类形态分清**：**编排式**（hc-prd / hc-test——总监调度专职 worker + reviewer，约束本体写在 worker 子 agent 上下文、skill 只留总谱）vs **交互式**（hc-dev / hc-tech-design / hc-onboard / hc-create-sandbox——主 agent 引导、决策点让用户拍）。审 description / 边界 / 重叠时先认形态，别拿交互式的标准套编排式。
+- **流程真相源分离、skill 只跟引用**：编排 / 契约类 skill 的流程唯一真相源在 `docs/harness/`（hc-test → `testing-flow.md`、hc-create-sandbox → `SANDBOX_CONTRACT.md`、hc-onboard → `PROJECT_ONBOARDING.md`）——实质改动改真相源，skill 正文不复制细节；两份各写 = 必漂。
 - **description 触发准、不重叠不漏**：每个 `description` 写清"何时用 / 何时不用"，覆盖该触发的场景，又不和别的 skill 抢同一类任务。
 - **进自动索引、防漂移**：每个 skill 有 `SKILL.md`，frontmatter 含 `name / description / version / last_reviewed`；`.agents/skills/README.md` 由 `scripts/skills-index.sh` 从 frontmatter 自动生成，**禁手改**，`--check` 进 `make verify`。
 - **arch 变了回顾（rule-0007）**：架构 / 接口 / 流程变了，相关 skill 必须跟着改或在 ADR 写"无需更新 + 理由"；`SKILL.md` 末尾的「演进」段指明它依赖谁、何时回顾。
@@ -29,7 +31,7 @@ bash scripts/skills-index.sh --check
 # 重新生成索引（注意：是脚本，没有 make skills-index 目标）
 bash scripts/skills-index.sh
 
-# 全量控制面自检（内含 skills-index --check，见 verify-control-plane.sh:29）
+# 全量控制面自检（内含 skills-index --check，见 scripts/verify-control-plane.sh）
 make verify
 ```
 
@@ -43,18 +45,20 @@ make verify
   - **索引漂移**：新增/改了 `SKILL.md` 但没重生成 README → `--check` 非零；或有人手改了 README（脚本生成物，禁手改）。
   - **误/漏触发**：两个 skill description 边界含糊、抢同一类任务（误触发）；或措辞太窄/没写触发场景，该用时不被选（漏触发）。
   - **arch 变 skill 没跟（rule-0007）**：架构改了但相关 `SKILL.md` 没改、ADR「受影响的 skill」栏空着。
+  - **skill 与真相源两份漂移**：编排 / 契约类 skill 正文复制了 `docs/harness/` 真相源（testing-flow / SANDBOX_CONTRACT / PROJECT_ONBOARDING）的细节，改了一份没改另一份。
   - **过期**：`version` / `last_reviewed` 与正文实际状态脱节（流程已变但没 bump）。
   - **脏锚点**：`SKILL.md` 引用的脚本 / 文件路径已不存在（如「演进」段指向的脚本被删/改名）。
 
 ## 常见漏洞模式（本仓真实案例）
 
 - **arch 变 skill 没在 ADR 记 = 判失败**（`tasks/lessons.md` 2026-06-26「rule-0007 改了 skill 却没在 ADR 记录」；eval 评审 `docs/eval/task-reviews/20260626T014408Z-harness-rules-distribution/decision.md` §4）：规则分布化大改时 `hc-add-rule` 实际已更新（version 2、`last_reviewed: 2026-06-26`），但 ADR-0004 漏掉模板强制的「受影响的 skill（rule-0007）」栏，且最相关的 `context-loading` 既没回顾也没声明"无需更新" → eval-011 直接判 blocker fail。**教训：做了 ≠ 记了**；改 skill 必须在 ADR 该栏逐条写（改了的写改了、不需改的写"无需更新 + 理由"），ADR 用 `templates/adr.md` 起草别手搓省栏。这正是本维度 plan 里点名的"本仓 hc-add-rule 差点漏"。
-- **索引头与真实命令漂移**（现存）：`.agents/skills/README.md` 头部写"由 `make skills-index` 自动生成"，但 `Makefile` 里**没有 `skills-index` 目标**；真实命令是 `bash scripts/skills-index.sh`，`--check` 经 `make verify` 跑。文案指向不存在的入口，是个该顺手修的小漂移。
+- **索引头与真实命令漂移**（已修复，留作模式）：`.agents/skills/README.md` 头部曾写"由 `make skills-index` 自动生成"，但 `Makefile` 里从来没有该目标——文案指向不存在的入口；现头部已改为真实命令 `bash scripts/skills-index.sh`。教训：索引头的"怎么生成"文案也是指针，脚本 / 入口改名要跟着扫。
 
 ## 修复用哪个操作 skill / 脚本
 
 - **加/改一个 skill**：写或改 `.agents/skills/<name>/SKILL.md`（frontmatter 四件套齐全；正文写"何时用/何时不用"+「演进」段）。
 - **改完重生成索引**：`bash scripts/skills-index.sh`，再 `bash scripts/skills-index.sh --check` 确认无漂移。
 - **arch 变了履行 rule-0007**：改相关 `SKILL.md` + 在 ADR 的「受影响的 skill」栏逐条交代（用 `templates/adr.md`）；同时 bump `version` / `last_reviewed`。
+- **skill 与真相源漂移**：实质流程改动落 `docs/harness/` 真相源（testing-flow / SANDBOX_CONTRACT / PROJECT_ONBOARDING），skill 只更新引用。
 - **缺口是"该立规则而非 skill"**：用 `hc-add-rule` skill。
 - **收口**：`make verify`（含 skills-index `--check`）绿才算落地。

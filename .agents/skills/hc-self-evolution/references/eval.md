@@ -6,10 +6,10 @@
 
 - **该评必评（rule-0005）**：L2+ 任务与关键决策点（能不能开工 / 测试够不够 / 验证结论分类对不对）收尾前必过 eval；L0/L1 不触发。
 - **独立评委，不靠自评**：评分由 `docs/eval/evaluator.md` 设定的独立评委按 `docs/eval/rubric.md` 打分，默认怀疑"已完成/已通过"，只认可复核证据。
-- **题库独立、按号引规则**：考题在 `docs/eval/prompts/`，登记在 `docs/eval/index.yaml`，每道按 `rule-00NN` 关联规则（多数考题盯一条 rule）。
-- **blocker 规则有考题守**：红线规则（尤其 blocker 级）应有对应考题钉死翻车点；规则与考题双向不悬空——index 登记的考题文件都在、prompts 里的考题都登记进 index、AGENTS.md 的 `eval:` 标记都指向存在的考题。
+- **题库独立、按号引规则**：考题在 `docs/eval/prompts/`，登记在 `docs/eval/index.yaml`（清单/编号以它为准，别硬编码枚举，rule-0012），每道按 `rule-00NN` 关联规则（多数考题盯一条 rule，如 013↔rule-0010、015↔rule-0014）；触发口径 / 跑法的真相源 = `docs/eval/README.md`。
+- **blocker 规则有考题守**：红线规则（尤其 blocker 级）应有对应考题钉死翻车点；规则与考题双向不悬空——index 登记的考题文件都在、prompts 里的考题都登记进 index、AGENTS.md 的 `eval:` 标记都指向存在的考题。改 / 删规则时这条闭合由 `hc-add-rule` 关联对照表（eval 指针项）+ `hc-rule-reviewer` 巡查兜（ADR-0020）。
 - **免 key 可跑**：默认走 hc-eval 子 agent（`.claude/agents/hc-eval.md`，Codex 用 `.codex/agents/hc-eval.toml`），免 API key；`make eval`（`scripts/run-eval.sh`）是可选 CI/headless 路径。两条路写同样的 `task-reviews/` 产出，Stop hook 只认产出在不在。
-- **产出结构齐**：每次评审落 `docs/eval/task-reviews/<时间戳>-<task>/`，含 `candidate.md` / `decision.md`（逐题 verdict + 综合分档）/ `summary.md`。
+- **产出结构齐**：每次评审落 `docs/eval/task-reviews/<时间戳>-<task>/`，含 `candidate.md` / `decision.md`（逐题 verdict + 综合分档）/ `summary.md`。目录后缀必须与 `tasks/todo.md` 的 `task:` slug **一字不差**——stop-check 是精确后缀匹配 `*-$task`，对不上会把"跑过 eval"误判成"没跑"拦收尾（lessons 2026-06-30）。
 
 ## 怎么检索现状
 
@@ -46,12 +46,12 @@ ls docs/eval/prompts/        ls docs/eval/task-reviews/
 
 - **断言被"回显"骗过，eval 才揭穿**（`lessons.md` 2026-06-12 / `task-reviews/20260612T041709Z-kratos-base-s3/`）：e2e 用裸 payload 全文 grep，命中的是发布请求 HTTP 访问日志的回显入参，实际路由键错误致消息 100% 丢失。实现+复跑都被骗，独立 eval 评委 `rabbitmqctl` 查队列+注入对照才抓出 → 沉淀为考题 012，复评见 `20260612T050146Z-kratos-base-s3-rereview/` 反转结论。**启示：考题判据要锚"只能由处理方产出的结构化字段+业务 id"，裸串 grep 一律打回。**
 - **指针凭记忆迁移、悬空**（`lessons.md` 2026-06-26）：规则分布化时给 rule-0005/0006/0008 编了不存在的 eval 指针（005/006/008）、rule-0007 severity 私改，hc-eval 子 agent 逐条 `git show HEAD` 对比判 yellow。**修复固化：把"eval 标记必须指向存在考题"加进 `rules-index.sh --check` 并变异自证。**
-- **"假收敛"——绿了但机制脆弱**（`lessons.md` 2026-06-11 redis-flip / s3 系列 14 轮对抗）：断言虽 PASS 但靠"超时巧合"成立，非干净因果 → 催生考题 012 的共因污染/超时竞态/无守护测试三类假阳性专项清单。**启示：考题不仅判"绿没绿"，要判"绿得是不是真行为"。**
-- **eval 走过场 / 大改没回顾**（`lessons.md` 2026-06-11 eval-011 blocker fail）：ADR 漏"受影响的 skill"栏、context-loading 没声明 → 011 直接判 blocker。**启示：收尾评审要逐项要 verdict+证据，不接受"应该没问题"。**
+- **"假收敛"——绿了但机制脆弱**（`lessons.md` 2026-06-23 超时巧合/redis 两条 + 2026-06-24「14 轮对抗」补记）：断言虽 PASS 但靠"超时巧合"成立，非干净因果 → 催生考题 012 的共因污染/超时竞态/无守护测试三类假阳性专项清单。**启示：考题不仅判"绿没绿"，要判"绿得是不是真行为"。**
+- **eval 走过场 / 大改没回顾**（`lessons.md` 2026-06-26「rule-0007 改了 skill 却没在 ADR 记录 = 判失败」）：ADR 漏"受影响的 skill"栏、context-loading 没声明 → 011 直接判 blocker。**启示：收尾评审要逐项要 verdict+证据，不接受"应该没问题"。**
 
 ## 修复用哪个操作 skill / 脚本
 
-- **加/改考题或补规则守护** → `hc-add-rule` skill（定范围→写下来+登记→挂执行），新增考题后跑 `verify-eval-materials.sh` 确认双向登记。
+- **加/改考题或补规则守护** → `hc-add-rule` skill（加 / 改 / 删规则统一入口，ADR-0020：定范围→写下来+登记→挂执行，关联对照表的"eval 指针"项要求标记 `eval: NNN` 与考题双向对上、收尾 `hc-rule-reviewer` 巡查），新增考题后跑 `verify-eval-materials.sh` 确认双向登记。
 - **重生成规则索引 / 校验 eval 指针** → `bash scripts/rules-index.sh`（重生成）/ `--check`（只校验，进 `make verify`）。
 - **补评 / 重评** → hc-eval 子 agent（`.claude/agents/hc-eval.md`，免 key）；CI/headless 用 `make eval ARGS="..."`。产出落 `docs/eval/task-reviews/`。
 - **结构自检** → `bash scripts/verify-eval-materials.sh`（`make verify-eval`）；整体控制面自检 `make verify`。

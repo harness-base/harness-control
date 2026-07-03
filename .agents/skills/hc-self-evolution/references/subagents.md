@@ -15,11 +15,15 @@
 ## 怎么检索现状（命令可直接跑）
 
 ```bash
-# 现有子 agent 定义（Claude 侧）
-ls .claude/agents/ ; cat .claude/agents/hc-eval.md .claude/agents/hc-self-optimize.md .claude/agents/hc-code-reviewer.md
+# 现有子 agent 定义（Claude 侧）——按需 cat 关注的定义
+ls .claude/agents/ ; cat .claude/agents/hc-eval.md
 
 # Codex 侧对等定义 + 注册
 ls .codex/agents/ ; sed -n '/\[agents/,$p' .codex/config.toml
+
+# 双栈对等硬核对：两侧名单 diff（应为空）+ 注册行逐条在
+diff <(ls .claude/agents | sed -n 's/\.md$//p' | grep -v README) <(ls .codex/agents | sed 's/\.toml$//')
+grep -n '^\[agents\.' .codex/config.toml
 
 # 谁 spawn 它们 / 何时 spawn（事实源）
 grep -rn "子 agent\|子代理\|subagent\|spawn" AGENTS.md docs/ scripts/ .agents/skills/
@@ -32,21 +36,21 @@ bash scripts/dir-index.sh .claude/agents --check
 grep -n "claude -p\|MODEL\|HARNESS_TRIAGE" scripts/turn-backstop.sh
 ```
 
-事实锚点：子 agent **以 `.claude/agents/README.md` 自动索引为准**（不硬编计数，rule-0012；含 `hc-eval` 收尾评委、`hc-self-optimize` ② 深审执行器、`hc-code-reviewer` hc-dev 挑刺、`prd-*` 编排 worker、`hc-doc-sync-reviewer` 文档漂移检查 等）；`hc-code-reviewer` / `hc-doc-sync-reviewer` 等 **无 Write、只评不改**；均免 key。每轮兜底 `scripts/turn-backstop.sh` 跑的是 **headless Haiku**（`claude -p --model`），**不是** spawn 子 agent——子 agent 由主 agent / skill / workflow 按需派。
+事实锚点：子 agent **以 `.claude/agents/README.md` 自动索引为准**（不硬编计数，rule-0012）。大类：`hc-eval` 收尾评委、`hc-self-optimize` ② 深审执行器、各产出型 skill 的**对抗 reviewer**（`hc-code-reviewer` / `hc-tech-design-reviewer` / `hc-onboard-reviewer` / `hc-sandbox-reviewer` 等，ADR-0013~0019 起「做 → 挑刺」成惯例）、编排式 skill 的**专职 worker**（hc-prd 的 `hc-*-writer` 系、hc-test 的 `hc-e2e-qa` / `hc-api-qa` 及配对 reviewer）、`hc-doc-sync-reviewer` 文档漂移检查。各 reviewer **无 Write、只评不改**；均免 key。每轮兜底 `scripts/turn-backstop.sh` 跑的是 **headless Haiku**（`claude -p --model`），**不是** spawn 子 agent——子 agent 由主 agent / skill / workflow 按需派。
 
 ## 怎么判（逐条可判定）
 
 - **该独立却塞主 agent**：评分 / 审查 / 重判断仍在主 agent 上下文里硬做（污染上下文、不可并行、自评失独立性）→ 缺口，抽成子 agent。
 - **定义过期**：`<name>.md` 的步骤 / 产出落点 / `tools` 与现实脱节（如步骤引用已改名的文件、`tools` 给多了或漏了 Write）→ 缺口。
-- **与 skill 重叠空转**：skill 正文把子 agent 的判断逻辑又抄一遍（两份会漂），或 skill 与子 agent 边界含糊到不知道该读哪份 → 漏洞，收敛成「skill=入口/流程，subagent=引擎」单一事实源。
+- **与 skill 重叠空转**：skill 正文把子 agent 的判断逻辑又抄一遍（两份会漂），或 skill 与子 agent 边界含糊到不知道该读哪份 → 漏洞，收敛成「skill=入口/流程，subagent=引擎」单一事实源。编排式 skill 的定式（ADR-0014/0015）：**约束本体写在 worker / reviewer 子 agent 正文，skill 总谱只留调度、不复制明细**。
 - **软硬错配**：把「漏了就失效」的兜底做成靠主 agent 记得 spawn 的子 agent（应走 hook headless）；或反过来把需要会话模型/隔离上下文的重判断硬塞进 headless → 缺口。
 - **索引漂移 / 悬空**：`dir-index.sh .claude/agents --check` 报漂移；AGENTS.md「已有子代理：…」清单与 `.claude/agents/` 实际不符 → 缺口。
-- **Codex 不对等**：`.claude/agents/` 每个子 agent 要在 `.codex/agents/*.toml` 有等价定义并在 `config.toml` 注册，否则 Codex 侧裸奔。当前 `hc-eval`、`hc-self-optimize`、`hc-code-reviewer` 均已对等（`.codex/agents/{hc-eval,hc-self-optimize,hc-code-reviewer}.toml` 且在 `.codex/config.toml` 注册 `[agents.<name>]`）；新增子 agent 须同步补 `.codex/` 的 toml **并注册**（漏注册 = Codex 侧调不到）。
+- **Codex 不对等（硬判据）**：`.claude/agents/` 每个子 agent 要在 `.codex/agents/<name>.toml` 有等价定义并在 `.codex/config.toml` 注册 `[agents.<name>]`，否则 Codex 侧裸奔（调不到）。ADR-0013 起新子 agent 一律双栈落地——用上面的名单 diff 核（应为空），巡检重点在**新增时漏一侧 / 漏注册**。
 
 ## 常见漏洞模式（本仓真实案例）
 
 - **职责与 skill 重叠**：早期 `hc-self-optimize` 把 skill 和子 agent 混在一起——靠 ADR-0005 拆清为 `hc-self-evolution` skill（入口）+ `hc-self-optimize` 子 agent（引擎），老 hc-self-optimize skill 已退役。维度种子点名的本仓老毛病。
-- **triage 误做成子 agent**：ADR-0005 决策 4（`docs/decisions/0005-self-evolution-loop.md:41`）否决「兜底 triage 做成子 agent」——子 agent 要主 agent 记得 spawn=软，会忘记记的 agent 同样会忘记触发；故兜底走 hook headless 才硬，hc-self-optimize 重判断仍是子 agent。
+- **triage 误做成子 agent**：ADR-0005 备选段（`docs/decisions/0005-self-evolution-loop.md:49`）否决「兜底 triage 做成子 agent」——子 agent 要主 agent 记得 spawn=软，会忘记记的 agent 同样会忘记触发；故兜底走 hook headless 才硬，hc-self-optimize 重判断仍是子 agent。
 - **prompt 不自包含 → 流式超时 / 0 产出**：`tasks/lessons.md` 2026-06-02「子代理长任务流式超时」——prompt 不自包含导致先读一堆文件长时间静默触发 idle timeout；早期信号 = 子代理 tool_uses 不少但 0 token 输出、目标目录无产物。教训：派发前 prompt 自包含（接口/语义/测试全给，明示「别读文件直接写」）、预热依赖缓存。
 - **子代理掩盖 CWD 假设**：`tasks/lessons.md` 2026-06-02「e2e 脚本隐含 CWD 假设」——子代理在工程目录跑全过，掩盖了「从 harness 根调用即全挂」的坏路由。子 agent 的工作目录假设要和真实调用点对齐。
 - **hc-eval 子 agent 抓出主线假收敛**：`tasks/lessons.md` 2026-06-26 + `docs/eval/task-reviews/20260626T014408Z-harness-rules-distribution/`——hc-eval 子 agent 逐条 `git show HEAD` 对比，抓出主线「无损迁移/全保留」实为偷改、判 yellow。正面案例：独立子 agent 的隔离视角抓出主 agent 自评抓不到的。
