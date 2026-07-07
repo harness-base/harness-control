@@ -2,7 +2,7 @@
 title: 文档同步对照表（doc-sync checklist）
 status: active
 owner: harness
-last_updated: 2026-06-29
+last_updated: 2026-07-07
 source_files: []
 related_docs:
   - HOOKS.md
@@ -25,13 +25,13 @@ related_docs:
 | `docs/decisions/*.md` 新建或大改（ADR）| 相关 skill 是否要更新（rule-0007，必填"受影响 skill"栏）+ `docs/decisions/index.yaml` 登记 | 🔴手（skill 回顾要判断；index 那半机检） |
 | `docs/harness/SANDBOX_CONTRACT.md` 改（sandbox 契约） | `hc-create-sandbox` skill + `hc-sandbox-reviewer` 双栈里复述的入口/约束口径要跟改；`verification.yaml` 字段约定、`verification-audit` 字段清单 | 🔴手 |
 | `AGENTS.md` 加 / 改 `<!-- rule: -->` 标记 | `docs/eval/prompts/` 是否要新增 / 更新考题；跑 `bash scripts/rules-index.sh` 重生成 catalog | 🔴手（考题要判断；catalog 机检） |
-| `.claude/agents/*.md` 新建 / 改子 agent | `.codex/agents/*.toml` 对等是否要同步 | 🔴手 |
+| `.claude/agents/*.md` 新建 / 改**子 agent** | `.codex/agents/*.toml` 对等是否要同步（**仅子 agent**；skill 走 `.agents/skills/` 双栈共享，Codex 侧**无** skill 对等目录，别把 skill 当子 agent 报） | 🔴手 |
 | `docs/features/*` 状态变更 / 加新 feature | `docs/context/CURRENT_STATUS.md` 被管工程表；`docs/features/index.yaml` 登记 | 🔴手（CURRENT_STATUS 那半；index 机检） |
 | harness 模块状态变更（done / planned / skeleton）| `docs/context/CURRENT_STATUS.md` 控制面表 | 🔴手 |
 | `scripts/turn-backstop.sh` 或其它 hook 触发逻辑变 | `docs/harness/HOOKS.md`；对应 `*.test.sh` 必须红得起来 | 🔴手 |
 | 改了 `workspace/verification.yaml` 路由 | `docs/harness/VERIFICATION_ROUTING.md` | 🔴手 |
 | 新建 `AGENTS.md` | 同级必补 `CLAUDE.md`（一行 `@AGENTS.md`）—— `verify-control-plane.sh` shim 段会拦 | ✅机检 |
-| 新建 skill 目录 | 跑 `bash scripts/skills-index.sh` 重生成 `.agents/skills/README.md` | ✅机检 |
+| 新建 skill 目录（`.agents/skills/<name>/`）| 跑 `bash scripts/skills-index.sh` 重生成 `.agents/skills/README.md`；**skill 双栈共享（Claude 侧 `.claude/skills` 软链读同一份），Codex 侧无 skill 对等目录，不用同步** | ✅机检 |
 | 新建 / 改模板 `templates/*.md` | `templates/README.md`（`dir-index.sh` 生成，跑 `bash scripts/dir-index.sh templates`） | ✅机检 |
 | 改了 PRD 内容 / 新增 PRD | `docs/prds/index.yaml`；`prds-audit.sh` 守章节齐全 | ✅机检 |
 

@@ -117,22 +117,22 @@
 - **[impact｜软硬定性✓] 触发口径=hook 机械派，非主 agent spawn（避开 ADR-0005 决策4 坑）**：lessons.md:44 实证用户已锁定「钩子机械派、不再叠收尾主动 spawn」——即 turn-backstop（hook，硬触发）派 reviewer，不靠主 agent 记得。这符合 subagents.md「必须机械可靠的兜底走 hook，别做成靠记得 spawn 的子 agent」。设计方向正确，无软硬错配 gap（前述 :11/:42/:49 是 reference **措辞**需补，非设计错）。
 
 ## 2026-06-30T08:44:34Z `落文档`（触发：K=8轮到点）
-- [ ] [ADR索引遗漏] `docs/decisions/*.md` 修改了对抗评审教训（三者不可互替、并行复核污染），但 `docs/decisions/index.yaml` 未见登记。
-- [ ] [skill同步遗漏] 新增的"make verify + eval 不可替代对抗挑刺"和"并行复核污染"教训应同步到 `superpowers:verification-before-completion` 等相关 skill，但未见修改。
+- [~] [ADR索引遗漏] `docs/decisions/*.md` 修改了对抗评审教训（三者不可互替、并行复核污染），但 `docs/decisions/index.yaml` 未见登记。 <!-- 2026-07-07 销号：方法论已在 lessons.md 多处沉淀（三者不可互替=line 83-89，并行复核污染=line 88，另有 line 64/269/285/354 同型）；ADR 层记方法论非其定位（ADR = 架构决策，不装教训——教训归 lessons），本条属 backstop 误报。晋升成规则的窗口留给 rule-0007 触发（≥6 条同型 lesson 时统一裁决）。 -->
+- [~] [skill同步遗漏] 新增的"make verify + eval 不可替代对抗挑刺"和"并行复核污染"教训应同步到 `superpowers:verification-before-completion` 等相关 skill，但未见修改。 <!-- 2026-07-07 销号：superpowers 系 skill 归第三方 plugin（`.claude/plugins/`）、本仓不改；本仓兜底 = rule-0011 落文档提醒 + lessons.md 三段式（已多处记录）。 -->
 
 ## 2026-06-30T09:09:38Z `落文档`（触发： commit边界）
-- [ ] [左 scripts/designs-audit.sh 新建] — 没看到 `scripts/README.md` 被更新
-- [ ] [左 hc-design/hc-design-reviewer skill 新建] — 没看到 `AGENTS.md` 的规则标记被加
-- [ ] [左 hc-design skill 新建] — 没看到 `.codex/agents/*.toml` 对等被同步
-- [ ] [左 harness 模块 hc-design 新增] — 没看到 `docs/context/CURRENT_STATUS.md` 控制面表被更新  
-- [ ] [左 turn-backstop 修改] — `HOOKS.md` 虽说"记一笔"但没看到实际 Edit/Write 操作（诊断日志 + gitignore 也没见记）
+- [x] [左 scripts/designs-audit.sh 新建] — 没看到 `scripts/README.md` 被更新 <!-- 2026-07-07 修：`scripts/README.md` 章节 3 补 `designs-audit.sh` 行、章节 4 补 `designs-audit.test.sh` 行（同轮把 `verification-audit.sh/.test.sh` 一起补，本 backstop 报的两个 audit 脚本类漂移一次清）。 -->
+- [~] [左 hc-design/hc-design-reviewer skill 新建] — 没看到 `AGENTS.md` 的规则标记被加 <!-- 2026-07-07 销号：AGENTS.md 只挂全局规则的 `<!-- rule: rule-00NN ... -->` 标记（rules-index 扫这个），skill 不是规则不该挂标记；skill 走 `skills-index` 自动生成 `.agents/skills/README.md`，AGENTS.md 硬编 skill 违 rule-0012。属 backstop 误报。 -->
+- [~] [左 hc-design skill 新建] — 没看到 `.codex/agents/*.toml` 对等被同步 <!-- 2026-07-07 销号：skill 双栈共享靠 `.agents/skills/` + Claude 侧 `.claude/skills` 软链，Codex 侧本就无 skill 对等目录；`.codex/agents/` 是子 agent 对等（reviewer 已有 `hc-tech-design-reviewer.toml` + config 注册）。属 backstop 误报（把"子 agent 对等"错套到"skill 对等"）。 -->
+- [x] [左 harness 模块 hc-design 新增] — 没看到 `docs/context/CURRENT_STATUS.md` 控制面表被更新 <!-- 2026-07-07 销号：CURRENT_STATUS.md:35 `docs/designs/` 行已含 hc-tech-design 描述（ADR-0015 + designs-audit 硬闸 + hc-tech-design-reviewer 判断层）。已做没销。 -->
+- [x] [左 turn-backstop 修改] — `HOOKS.md` 虽说"记一笔"但没看到实际 Edit/Write 操作（诊断日志 + gitignore 也没见记） <!-- 2026-07-07 销号：HOOKS.md:51-58 详细记录 turn-backstop 机制（触发形态 / optimization-log 状态位 / correction-nudge 送达 / 诊断留痕 `tasks/.turn-backstop.log` + gitignore + 800 行自裁 / 安全五不变量）。已做没销。 -->
 
 ## 2026-07-01T06:34:32Z `落文档`（触发： 变更涨=16≥10）
-- [ ] [harness 模块状态变更] `docs/context/CURRENT_STATUS.md` 中旧的 `docs-maintainer` 引用应更新为 `hc-doc-sync`（与 ADR-0017 变更同步）
+- [x] [harness 模块状态变更] `docs/context/CURRENT_STATUS.md` 中旧的 `docs-maintainer` 引用应更新为 `hc-doc-sync`（与 ADR-0017 变更同步） <!-- 2026-07-07 销号：CURRENT_STATUS.md 全文 grep `docs-maintainer` 零命中，line 37 已含 `hc-doc-sync-reviewer` 子 agent（ADR-0012）。已做没销。 -->
 
 ## 2026-07-01T07:42:52Z `落文档`（触发： commit边界）
-- [ ] [Cross-file sync] hc-tech-design skill 新建但未见 `.codex/agents/*.toml` 对等同步记录
+- [~] [Cross-file sync] hc-tech-design skill 新建但未见 `.codex/agents/*.toml` 对等同步记录 <!-- 2026-07-07 销号：同 06-30T09:09 那条——skill 双栈共享靠 `.agents/skills/` 目录本身（Claude 侧 `.claude/skills` 软链读同一份），Codex 侧无 skill 对等目录；`.codex/agents/` 是子 agent 对等，`hc-tech-design-reviewer.toml` + config 已注册。属 backstop 误报（同型第二次报）——考虑给 backstop prompt 补一条"skill 双栈共享 ≠ 子 agent 对等"消歧。 -->
 
 ## 2026-07-02T10:22:40Z `落文档`（触发：K=8轮到点）
-- [ ] [ADR] ADR-0019 尚未创建，应记录环境管理接口（up/down/status/reset/seed）、基线态定义、资产数据分类方案
-- [ ] [文档同步] docs/decisions/index.yaml 缺少 ADR-0019 登记
+- [x] [ADR] ADR-0019 尚未创建，应记录环境管理接口（up/down/status/reset/seed）、基线态定义、资产数据分类方案 <!-- 2026-07-07 销号：`docs/decisions/0019-hc-create-sandbox.md` 已创建（sandbox 契约批产出，见 CURRENT_STATUS.md:38 + tasks/todo.md 老 skill 优化批区）。 -->
+- [x] [文档同步] docs/decisions/index.yaml 缺少 ADR-0019 登记 <!-- 2026-07-07 销号：index.yaml 已含 ADR-0019 登记（`file: 0019-hc-create-sandbox.md`）。 -->
