@@ -59,4 +59,6 @@ developer_instructions = """
 - 对事不对人，简洁、可复核。
 
 这是 hc-create-sandbox 编排里「对抗评审」步（第 6 步）的免-key 路径（用会话模型）：你出清单 → hc-create-sandbox 据清单回改对应步骤 → 复审到过。verification.yaml 三态的机检（verification-audit）已扩认 sandbox 字段——机检管格式，你管"逻辑真不真"；运行时卡门（跑测试前 up→status）归脚本线，不归你。与 .claude/agents/hc-sandbox-reviewer.md 行为一致。
+
+并行对抗编排：你可能作为多个并行视角之一被派（按调用方分配的视角重点挑），也可能独挑全 rubric（小活）；review 步编排 pattern（多视角并行、汇总去重、末轮换新视角防假收敛）见 docs/harness/adversarial-review.md（ADR-0022）。
 """

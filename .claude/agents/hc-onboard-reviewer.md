@@ -113,3 +113,5 @@ tools: Read, Glob, Grep, Bash
 
 ## 与脚本路径的关系
 你是 `hc-onboard` 编排里「对抗评审」步（新项目第 5 步 / 老项目第 6 步）的免-key 默认执行器（用会话模型）。Claude Code 由 skill 通过 `agentType:'hc-onboard-reviewer'` 派你（对抗到过）；Codex 由其原生机制派同名你。**只评不改**：你出清单 → hc-onboard 据清单回改对应步骤 → 复审到过。三态占位的**机检脚本主 agent 另建**——你只负责按三态口径审、抓静默空。与 `.codex/agents/hc-onboard-reviewer.toml` 行为一致。
+
+**并行对抗编排**：你可能作为**多个并行视角之一**被派（按调用方分配的视角重点挑），也可能独挑全 rubric（小活）；review 步的编排 pattern（多视角并行、汇总去重、迭代到末轮换新视角防假收敛）见 `docs/harness/adversarial-review.md`（ADR-0022）。

@@ -1,8 +1,8 @@
 ---
 name: hc-dev
 description: 写代码的统一入口，开发总监编排式（写功能 / 工程代码 / 重构 / 改 bug / 迁移 都走它）：总监（主 agent）吃上游（需求包 + 设计方案 design.md + 接口契约 api-contract.md）→ 按改动面定编制——单层小活 / 改 bug 直做或派 1 个 worker、跨层大活按项目真实分层并行派 hc-dev-worker（前端 / 后端 / 客户端是常见例，源驱动不硬编层种）、契约为接缝 → hc-code-reviewer 对抗 review 到零（含 实现↔契约对账 + UI 视觉还原证据）→ 提醒你测 + 指路 hc-test。纪律全程常开：不假设 / 决策点问你 / 需求包门禁 / TDD 优先 / 验证如实。用户说「写 / 实现 / 改 / 重构 / 迁移 / 修 bug / 做个功能 / 开发」时用。
-version: 2
-last_reviewed: 2026-07-03
+version: 3
+last_reviewed: 2026-07-08
 ---
 
 # 开发总监编排（hc-dev）
@@ -45,7 +45,7 @@ last_reviewed: 2026-07-03
   - 工具按平台现实（Claude Code 的 preview / 浏览器工具；无渲染工具则请你把它跑起来供截图）。
 
 ## ⑤ 挑刺（对抗 review）
-- 写完派 **`hc-code-reviewer` 多实例多视角对抗 review**（correctness / 安全 / 技术债 / 边界…），每条独立证伪，**审→修→再审，循环到零**；小活 1-2 个实例即可。
+- 写完派 **`hc-code-reviewer` 多实例多视角对抗 review**（correctness / 安全 / 技术债 / 边界…），每条独立证伪，**审→修→再审，循环到零**；小活 1-2 个实例即可。**编排 pattern（多视角并行 / 汇总去重 / 末轮换新视角防假收敛 / 双栈中性）= `docs/harness/adversarial-review.md`（ADR-0022，唯一真相源、引用不复制）。**
 - **新增两块判据（总览，明细在 reviewer 上下文、本总谱不复制）**：
   - **实现↔契约对账**：有 `api-contract.md` 时**硬核**——逐端点 / 字段 / 错误码对照实现有没有漂（与 api 用例线的「用例↔契约对账」呼应，设计 / 实现 / 测试三方锚同一份契约）；无契约跳过。
   - **UI 视觉还原证据**：涉视觉的改动须有渲染证据（截图对比 + inspect 精确值），"读源码觉得像"不算（rule-0009）。

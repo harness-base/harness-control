@@ -1,8 +1,8 @@
 ---
 name: hc-test
 description: 编排式产出测试（而非实现）：测试总监（主 agent）按手上产物 + 到了哪一步自动选场景，调度专职 worker——e2e 用例 / api 用例 / 接口契约对照 / 测试脚本 / 回归（各线实现状态见 testing-flow）——带 默认编排 + 用户覆盖、worker→reviewer 回改 loop、两层覆盖防线。用户说「写测试用例 / 写 e2e 用例 / 写 api 用例 / 接口用例 / 测试覆盖 / 用例覆盖率 / 把验收点转成用例 / 做测试」时用。流程唯一真相源 = docs/harness/testing-flow.md；产物独立落 docs/test-cases/<id>/，与实现体系松耦合。
-version: 2
-last_reviewed: 2026-07-01
+version: 3
+last_reviewed: 2026-07-08
 ---
 
 # 编排式产出测试（hc-test）
@@ -42,11 +42,11 @@ last_reviewed: 2026-07-01
    - **api**：**接口来源硬门槛**——① `api-contract.md`（`hc-tech-design` 产）＞ ② 用户指定源（proto / OpenAPI / 路由表 / 接口代码）＞ ③ **都无 → MUST STOP**（无源不臆造接口，rule-0008）。与 e2e「缺则略」不同、有硬地板。明细见 `testing-flow.md` 对应小节。
 2. **派 worker 写用例**：e2e 派 `hc-e2e-qa`（套 `templates/e2e-test-case.md`、每交互点 ×{成功,失败,边界}）、api 派 `hc-api-qa`（套 `templates/api-test-case.md`、与接口来源**一一对应**：每接口一用例、每业务异常各一 case）；预期锚唯一真实信号（rule-0009）、`covers:` 声明覆盖、**只写不跑**。要求**写在 worker 子 agent 上下文里**，本总谱不复制、明细见 `testing-flow.md`。
 3. **派 reviewer 审用例**：e2e 派 `hc-e2e-reviewer`、api 派 `hc-api-reviewer`（api reviewer 多一条「无接口来源硬产用例 → blocker」门槛复核 + 回契约原文对账）；**只评不改**，出结构化清单。
-4. **回改 loop**：reviewer 挑问题 → 总监派对应 worker 回改 → 复审 → **到覆盖齐、清单清零**（同 `hc-dev` 对抗 review 循环到零）。
+4. **回改 loop**：**多视角并行对抗**——fan out 对应 reviewer 多实例、各盯一个视角（覆盖 / 源符合 / 质量…）→ 汇总去重 → 总监派 worker 回改 → 复审 → **到覆盖齐、清单清零**（末轮换新视角防假收敛；编排 pattern = `docs/harness/adversarial-review.md`，ADR-0022，唯一真相源、引用不复制）。
 5. **`test-cases-audit` 机检兜底**：结构层闸（e2e 覆盖矩阵完整性 / api 的 EP·EX ↔ `covers:` 双向闭合，带「无·理由」逃生口）跑通、`make verify` 绿。见下「两层防线」。
 6. **提醒用户**：产物落 `docs/test-cases/<id>/`（登记不漂移）；明确告诉用户用例齐了、覆盖闸过了，**用例没跑**（执行另起）。
 
-派 worker / reviewer 怎么编排：Claude Code 用 workflow / Task（`agent(..., {agentType:'hc-e2e-qa'/'hc-e2e-reviewer'/'hc-api-qa'/'hc-api-reviewer'})` 循环，会话模型）；Codex 派同名双栈 worker。**e2e / api 均单 worker 线性 loop（写→审→回改），无独立 `references/` 编排模板文件——同 `hc-dev`**；待脚本 / 多 worker 并行落地再补 `references/`，与 `hc-prd` 对齐。
+派 worker / reviewer 怎么编排：Claude Code 用 workflow / Task（`agent(..., {agentType:'hc-e2e-qa'/'hc-e2e-reviewer'/'hc-api-qa'/'hc-api-reviewer'})`，会话模型）；Codex 用原生多 agent 派同名双栈。**宏观次序是「写用例 → 审 → 回改」**（写用例目前单 worker、无独立 `references/` 编排模板文件），但 **审步走多视角并行对抗**（④.4：fan out reviewer 多实例、见 `docs/harness/adversarial-review.md`）——不是单 reviewer 一遍过；待脚本 / 多 worker 并行落地再补写用例侧的 `references/`，与 `hc-prd` 对齐。
 
 ## ⑤ 两层覆盖防线（不重叠）
 权威表见 `testing-flow.md`「两层覆盖防线」：

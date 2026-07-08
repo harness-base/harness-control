@@ -1,8 +1,8 @@
 ---
 name: hc-tech-design
 description: 交互式产出研发方案 / 技术设计（而非需求、而非实现）：主 agent 当设计者，读项目现状 → 提方案 → 不确定就查/问 → 决策点让用户拍 → 全明确 + 用户审核才落稿 → 派 hc-tech-design-reviewer 对抗评审到过。产出 项目专属 的 研发方案；有对外接口才附 接口契约（被 api 用例消费），纯内部无接口标 N/A。它填 hc-prd(需求) 与 hc-dev(实现) 之间的设计空档：hc-prd → hc-tech-design →（api 用例 / hc-dev）。用户说「出研发方案 / 技术设计 / 设计接口 / 接口契约 / 怎么实现这块 / 把需求落成方案」时用。
-version: 3
-last_reviewed: 2026-06-30
+version: 4
+last_reviewed: 2026-07-08
 ---
 
 # 交互式产出研发方案（hc-tech-design）
@@ -48,10 +48,10 @@ last_reviewed: 2026-06-30
 - frontmatter：`id` / `status: draft｜reviewed` / `source`（需求来源链接或说明）/ `related_docs`。
 
 ## ⑥ 对抗评审（派 hc-tech-design-reviewer 到过）
-方案定稿后 / 评审环节，**派 `hc-tech-design-reviewer` 子 agent 对抗挑刺**，**回改到过**（同 `hc-dev` 对抗 review 循环到零）：
+方案定稿后 / 评审环节，**派 `hc-tech-design-reviewer` 多视角并行对抗挑刺**，**回改到过**（编排 pattern = `docs/harness/adversarial-review.md`，ADR-0022，唯一真相源、引用不复制）：
 - reviewer **只评不改**（无 Write），出结构化清单（位置 / 严重度 / 问题 / 证据 / 怎么补）；
-- 主 agent（设计者）据清单回改 → 复审 → **到零缺陷**。
-- 怎么派：**Claude Code** 用 workflow / Task（`agent(..., {agentType:'hc-tech-design-reviewer'})` 循环，会话模型）；**Codex** 派同名双栈 reviewer。hc-tech-design 是**单 reviewer 线性 loop（设计 → 审 → 回改）、无独立 `references/` 编排模板**——同 `hc-dev` / `hc-test` e2e。
+- 主 agent（设计者）据清单回改 → 复审 → **到零缺陷**（末轮换新视角防假收敛，见 pattern）。
+- 怎么派：**Claude Code** 用 workflow / Task（`agent(..., {agentType:'hc-tech-design-reviewer'})` **多视角并行** / 循环，会话模型）；**Codex** 用原生多 agent 派**同名双栈 reviewer**（`max_threads` 并发）。设计本体是**一条连贯推演对话不可拆并行**，但**评审步走多视角并行对抗**（同各 skill，见 pattern）、无独立 `references/` 编排模板。
 
 **两层防线（机器查结构、reviewer 查判断、不重复）**：**结构层**（目录↔index 登记一致、`design.md` 在、字面残留 TBD / 待确认 / 待定 / 待补 / FIXME / TODO / 留待实现）由 `scripts/designs-audit.sh` **机检**（已进 `make verify`）；**判断层**（可执行 / 契约逐字段 / 决策有据 / 安全对账 / 忠于源 / 含糊措辞）由 **hc-tech-design-reviewer**——和 `hc-e2e-reviewer` ↔ `test-cases-audit` 一个分工。
 

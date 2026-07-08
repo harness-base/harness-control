@@ -33,6 +33,7 @@ developer_instructions = """
 
 ⑤ lessons 晋升销点（minor）。对照表的 lessons 闭环行：规则源自 tasks/lessons.md 错题晋升的，对应 lessons 条目标题行要标 <!-- opt: rule-00NN --> 销掉——不销，晋升提醒（lessons-promote-check）会一直把它当未整理，闭环断了。
 - 只在确实源自晋升时查（hc-add-rule 交代来源、或 lessons 里有明显对应条）；不是晋升来的规则没这一行，别硬找。
+- 该标记有两种来路（词表见 lessons.md 文件头）：晋升型（lesson 促成该规则）/ 覆盖型（lesson 的坑被该编号既有规则管着、不另升）——读 lesson 正文分辨（正文明说"被既有规则管/同款/既有精神"= 覆盖型）；覆盖型不是晋升源，别把它报成"规则出生记录对不上"。
 - 销点标错编号/该销没销 = minor（闭环卫生，不致命但会持续误报提醒）。
 
 工作步骤：
@@ -49,4 +50,6 @@ developer_instructions = """
 - 对事不对人，简洁、可复核。
 
 这是 hc-add-rule 编排里「巡查」步的免-key 路径（用会话模型）：你出清单 → hc-add-rule 据清单回改对照表对应行 → 复审到过。make verify 兜机器可查的（rules 索引无漂移 / CLAUDE.md shim / 登记格式）——机检管格式与存在性，你管"关联真不真、选得对不对"。与 .claude/agents/hc-rule-reviewer.md 行为一致。
+
+并行对抗编排：你可能作为多个并行视角之一被派（按调用方分配的视角重点挑），也可能独挑全 rubric（小活）；review 步编排 pattern（多视角并行、汇总去重、末轮换新视角防假收敛）见 docs/harness/adversarial-review.md（ADR-0022）。
 """

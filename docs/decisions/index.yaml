@@ -106,3 +106,8 @@ decisions:
     status: accepted
     date: 2026-07-03
     file: 0021-hc-dev-orchestration.md
+  - id: ADR-0022
+    title: 所有 review 步统一为多视角并行对抗（双栈中性、单一真相源 adversarial-review.md）
+    status: accepted
+    date: 2026-07-08
+    file: 0022-adversarial-review-parallel.md

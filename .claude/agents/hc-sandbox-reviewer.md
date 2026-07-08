@@ -69,3 +69,5 @@ tools: Read, Glob, Grep, Bash
 
 ## 与脚本路径的关系
 你是 `hc-create-sandbox` 编排里「对抗评审」步（第 6 步）的免-key 默认执行器（用会话模型）。Claude Code 由 skill 派你（对抗到过）；Codex 由其原生机制派同名你。**只评不改**：你出清单 → hc-create-sandbox 据清单回改对应步骤 → 复审到过。`verification.yaml` 三态的**机检**（verification-audit）已扩认 sandbox 字段——机检管格式，你管"逻辑真不真"；运行时卡门（跑测试前 up→status）归脚本线，不归你。与 `.codex/agents/hc-sandbox-reviewer.toml` 行为一致。
+
+**并行对抗编排**：你可能作为**多个并行视角之一**被派（按调用方分配的视角重点挑），也可能独挑全 rubric（小活）；review 步的编排 pattern（多视角并行、汇总去重、迭代到末轮换新视角防假收敛）见 `docs/harness/adversarial-review.md`（ADR-0022）。

@@ -1,8 +1,8 @@
 ---
 name: hc-create-sandbox
 description: 引导式给被管工程把 sandbox 从 PENDING 接实：按 SANDBOX_CONTRACT 建 起/停/查(+可选 reset/seed)，聊形式源驱动不预设、真跑验收[双 up 验幂等+status 翻转]、接线 verification.yaml 三字段、派 hc-sandbox-reviewer 对抗评审；用户说「接 sandbox / 建沙箱 / 补 sandbox_status / 测试环境接实」时用。
-version: 1
-last_reviewed: 2026-07-03
+version: 2
+last_reviewed: 2026-07-08
 ---
 
 # 引导式给工程把 sandbox 接实（hc-create-sandbox）
@@ -66,7 +66,8 @@ last_reviewed: 2026-07-03
 ### 第 6 步 · 对抗评审（派 hc-sandbox-reviewer 到过）
 - **派 `hc-sandbox-reviewer`** 子 agent 对抗挑刺（契约三层检查的判断层）：status 是**真查还是装的**、幂等是**真处理"已存在"还是碰运气**、有没有**硬编端口 / 猜进程**、**资产 / 脏数据口径**与基线态语义对不对、**真跑验收证据**在不在。
 - reviewer **只评不改**，出结构化清单；主 agent（sandbox 向导）据清单**回改 → 复审 → 到过**。
-- **怎么派**：**Claude Code** 用 Task（`agentType: 'hc-sandbox-reviewer'`）；**Codex** 派**同名**双栈 reviewer。
+- **多视角并行对抗**——fan out `hc-sandbox-reviewer` 多实例、各盯一个视角（status 真假 / 幂等 / 具名不猜端口 / 数据口径 / 真跑证据…）→ 汇总去重 → 回改 → 末轮换新视角防假收敛；编排 pattern = `docs/harness/adversarial-review.md`（ADR-0022，唯一真相源、引用不复制）。
+- **怎么派**：**Claude Code** 用 Task / workflow（`agentType: 'hc-sandbox-reviewer'` **多视角并行**）；**Codex** 用原生多 agent（`max_threads` 并发）并行派**同名**双栈 reviewer 多实例。
 
 ## ④ 数据口径（引契约，不复刻）
 完整口径见 `SANDBOX_CONTRACT.md`「数据口径」，工作时守这几句：

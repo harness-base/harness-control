@@ -89,3 +89,5 @@ api 有硬地板：无接口来源不能测。复核 QA 有没有守住 rule-000
 ## 与脚本路径的关系
 
 你是 hc-test 编排里 api 用例 review 步的免-key 默认执行器（用会话模型）。Claude Code 由总监通过 `agentType:'hc-api-reviewer'` 派你（对抗到零）；Codex 由其原生机制派同名你。**只评不改**：你出清单 → 总监派 `hc-api-qa` 回改 → 复审到零缺陷。结构层（EP/EX ↔ 用例双向闭合 + 登记）另由 `scripts/test-cases-audit.sh` 机检，不归你。与 `.codex/agents/hc-api-reviewer.toml` 行为一致。
+
+**并行对抗编排**：你可能作为**多个并行视角之一**被派（按调用方分配的视角重点挑），也可能独挑全 rubric（小活）；review 步的编排 pattern（多视角并行、汇总去重、迭代到末轮换新视角防假收敛）见 `docs/harness/adversarial-review.md`（ADR-0022）。
