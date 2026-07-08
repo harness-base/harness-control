@@ -26,7 +26,7 @@ related_docs:
 4. **reviewer 子 agent 持 rubric = 视角菜单**：8 个产出型 skill review 步的 reviewer 双栈各加一句"可能作为 N 个并行视角之一被派"的定性，rubric 本体不动（`hc-doc-sync-reviewer` 是钩子驱动的文档漂移检查、非产出型 skill 的评审步，不在本 pattern 内）。
 
 ## 受影响的 skill（rule-0007）
-- skill：hc-dev ／ 是否已更新：是（⑤ 挑刺步改为引用 `adversarial-review.md`，原多视角措辞收敛为指针）
+- skill：hc-dev ／ 是否已更新：是（⑤ 挑刺步保留原多视角措辞、追加 `adversarial-review.md` 真相源指针）
 - skill：hc-prd ／ 是否已更新：是（review 步单→多视角，引用 pattern）
 - skill：hc-tech-design ／ 是否已更新：是（⑥ 评审步单→多视角，引用 pattern）
 - skill：hc-onboard ／ 是否已更新：是（⑥ 对抗评审单→多视角，引用 pattern）

@@ -11,9 +11,19 @@
 - Earlier signal：怎么更早发现
 ```
 
-**整理标记**（晋升流程 / step 4 用，标在标题行尾，`scripts/lessons-promote-check.sh` 据此计数）：无标记 = 未整理 ｜ `<!-- opt: seen -->` = 提醒过·待你决定 ｜ `<!-- opt: skip -->` = 看过·不升 ｜ `<!-- opt: rule-00NN -->` = 已升成该编号规则。攒够未整理的，钩子会提醒整理（升规则走 `hc-add-rule`）。
+**整理标记**（晋升流程 / step 4 用，标在标题行尾，`scripts/lessons-promote-check.sh` 据此计数）：无标记 = 未整理 ｜ `<!-- opt: seen -->` = 提醒过·待你决定 ｜ `<!-- opt: skip -->` = 看过·不升 ｜ `<!-- opt: rule-00NN -->` = **已升成该编号规则，或已被该编号既有规则覆盖、不另升**（两种来路读正文分辨：正文明说"被既有规则管着 / 同款 / 既有精神"即覆盖型，非晋升源）。攒够未整理的，钩子会提醒整理（升规则走 `hc-add-rule`）。
 
 ---
+
+## 2026-07-08：让用户拍决策时上下文没铺够，连问两轮都被打回（"没懂"→"没头没尾我怎么决策"）
+- Mistake：review 发现 lessons marker 语义错用，要用户拍修法。第一轮问题里塞满内部术语（opt: rule-00NN / 词表 / hc-rule-reviewer）→ 用户"没懂"；第二轮换了比喻但只解释了"错在哪"，没讲**这套标签机制是干嘛的、谁在消费它、两个修法各影响什么下游**→ 用户"你不能描述清楚上下文再问吗？没头没尾我怎么决策"。同根前科：黑话 lesson、AskUserQuestion 堆规则号 lesson——但这次的新根因是**决策请求缺上下文链**：用户拍板需要完整因果（机制是什么→怎么用的→哪坏了→修法影响什么），我只给了中间一段。
+- Prevention：让用户拍任何决策前，自查四件事讲全没：① 这个机制/东西是干嘛的（一句白话）② 这次为什么牵扯到它（发生了什么）③ 坏在哪、不修的后果 ④ 每个选项动什么、影响什么下游。四缺一就先补再问。宁可正文长一点，选项本身反而要短。
+- Earlier signal：起草的问题里出现"仓内专名 + 用户最近没接触过的机制"却没配一段"这是干嘛的"——就是没头没尾的信号；换比喻不等于补上下文，比喻只替代①、替代不了②③④。
+
+## 2026-07-08：把 harness 文档资产的 review 当代码 review 套满 10 角度 + 每 candidate 一 verifier，被用户双重叫停
+- Mistake：用户说"review 一遍"，我直接套 code-review skill 的 xhigh 全家桶——10 个 finder 角度（含语言陷阱、wrapper/proxy、efficiency 等**为可执行代码设计的角度**）+ 每 candidate 一个 verifier + sweep，可能 50+ agent。用户纠正两点：① harness 工程的 review 是**抽象的语义审**——重点只有"遗漏的关联项 / 语义冲突 / 前后矛盾"，没有严谨语法逻辑可挖，别当代码 review；② 这个量级用不了这么多 agents。
+- Prevention：review 对象是**文档/控制面资产**时，别套 code-review 的角度矩阵——就 2-3 个对口视角：关联项遗漏（现成机制 = hc-doc-sync-reviewer 对照 doc-sync-checklist）、语义冲突/前后矛盾（跨文件口径对照）、必要时指针有效性；编制 2-3 个 agent 封顶。code-review skill 的 effort 分级是给代码的，文档审的"深"不等于"角度多"，等于"对照面全"。
+- Earlier signal：起 review 前问一句"这个 diff 有没有可执行代码"——全是 .md/.toml/.yaml 时，语言陷阱/wrapper/efficiency 角度必然空转，就该换文档审的编制。
 
 ## 2026-07-08：往已合并 PR 的分支追加 commit → 成孤儿（既不在 merged PR、也不在 main） <!-- opt: skip -->
 - Mistake：hc-onboard 拆分 commit（d2e5131）push 到 feat 分支时，PR #15 其实已在前一个 commit（a20ecef）合并了——合并点在 d2e5131 之前，导致拆分 commit 成孤儿：不在 merged #15、也不在 main。开下一个 PR 时 `git merge-base --is-ancestor` 才发现它 1 commit ahead of main、会连带进新 PR。
@@ -195,8 +205,8 @@
 - Prevention：用户在出声思考 / 说"一点点来 / 别急"时，**只接住当前这一个点、给我的看法 + 至多一个推进问题，不收尾成"定 / 开干"**；让用户控节奏。这条已反复——下次想在结尾写"点头我就开始"时停手。
 - Earlier signal：每轮结尾都是"点头我就开始 / 定了我出 spec"——用户没说要定，就是我在催。
 
-## 2026-06-29：把上一任务的"执行吧"当成对新任务也放行，没要授权就 commit+push（违 rule-0006） <!-- opt: rule-0006 -->
-- Mistake：doc-sync 那摊用户说过"执行吧"（含提交）。到 git-workflow，用户只给了约定 + "简单的来"（指**怎么写**），我却顺着"执行模式"把它写完**直接 commit + push 进 PR#6**，没让用户看草稿、没要本次的提交授权。用户"你已经改了？"——意外。违 rule-0006（不擅自 git 写操作）。
+## 2026-06-29：把上一任务的"执行吧"当成对新任务也放行，没要授权就 commit+push（违"不擅自 git 写操作"红线） <!-- opt: skip -->
+- Mistake：doc-sync 那摊用户说过"执行吧"（含提交）。到 git-workflow，用户只给了约定 + "简单的来"（指**怎么写**），我却顺着"执行模式"把它写完**直接 commit + push 进 PR#6**，没让用户看草稿、没要本次的提交授权。用户"你已经改了？"——意外。违根 AGENTS.md"不擅自 git 写操作"红线（无编号条目；rule-0006 是密钥/危险命令，此前错引）。该红线已由 hc-git-workflow 的"授权不跨批"承载（ADR-0020），故本条标 skip。
 - Prevention：**commit / push 授权按任务、按改动给，不跨任务延续**——上一摊的"执行吧"不等于对下一摊也放行。新改动提交前，先把产物给用户看、明确要一句"提交 / 推"再动；"按这套写" ≠ "写完就提交"。
 - Earlier signal：在一个新 sub-task 里要 git commit/push，而本 sub-task 用户没单独说过"提交 / 推"——就该停下确认。
 

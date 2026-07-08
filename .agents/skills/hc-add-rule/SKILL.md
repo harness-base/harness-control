@@ -50,7 +50,7 @@ last_reviewed: 2026-07-08
 | 4 | 执行挂钩 | 机器判 → `hook-policy.sh` + 测试；人判 → eval 考题 + 登记；都不便 → 显式标软约束 | reviewer（挂没挂、挂得对不对） |
 | 5 | eval 指针 | 标记里的 `eval: NNN` 与 `docs/eval/` 考题**双向**对上（标了号考题在、考题引的规则号存在） | 正向存在性 / 登记 = 机检（`rules-index --check` + `verify-eval-materials`）；**内容真伪（考题真考这条）= reviewer** |
 | 6 | **引用点（改 / 删要害）** | 全仓 grep 该规则 id——skill 正文 / reviewer 判据 / ADR / 模板都可能复述它；**改语义 / 删除时引用点全要跟**（防"复述点没扫"留悬空） | reviewer |
-| 7 | lessons 闭环 | 源自错题晋升的，`tasks/lessons.md` 对应条标 `<!-- opt: rule-00NN -->` 销掉 | reviewer |
+| 7 | lessons 闭环 | 源自错题晋升的，`tasks/lessons.md` 对应条标 `<!-- opt: rule-00NN -->` 销掉（该标记也用于"已被既有规则覆盖、不另升"的条目——两种来路读 lesson 正文分辨，覆盖型不当晋升源核） | reviewer |
 | 8 | 反向引用 | 新规则该不该被现有 skill 引为指针（rule-0015 立完、各 skill 补指针，是先例） | reviewer |
 
 按操作类型走表：
