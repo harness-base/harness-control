@@ -15,6 +15,11 @@
 
 ---
 
+## 2026-07-08：往已合并 PR 的分支追加 commit → 成孤儿（既不在 merged PR、也不在 main） <!-- opt: skip -->
+- Mistake：hc-onboard 拆分 commit（d2e5131）push 到 feat 分支时，PR #15 其实已在前一个 commit（a20ecef）合并了——合并点在 d2e5131 之前，导致拆分 commit 成孤儿：不在 merged #15、也不在 main。开下一个 PR 时 `git merge-base --is-ancestor` 才发现它 1 commit ahead of main、会连带进新 PR。
+- Prevention：**PR 一旦 merged，它的分支就"关了"**——再往该分支 push 的 commit 不会自动进 main。给分支追加 commit 前先 `gh pr view <branch> --json state`；若 MERGED，新工作**从最新 main 切新分支**，别在已合并分支上续。发布起手式的"核目标 PR 状态"要延伸到"push 完确认 commit 真进了 PR 的 head / 会被合并"——**push 成功 ≠ 进了 PR**。
+- Earlier signal：push 输出显示 `a20ecef..d2e5131` 更新了分支，我就当"进 PR 了"——没回头核 PR 是否还 open、这 commit 会不会被合。分支更新与 PR 合并是两件事。
+
 ## 2026-07-08：用户问"能不能给 Codex 仿 workflow"，我却跳去 brainstorm"review 要多广多深"——抓错了层（原语 vs 政策）
 - Mistake：用户说"让 review subagent 开 workflow 模式做对抗评审"，我直接进 brainstorm 问"广度/深度/通用"三选一（review 政策）。用户"其实我是想，在 Claude Code 用 workflows 模式，Codex 里没有类似模式，可以仿照这个模式吗、能实现吗"点破：他真正问的是 **Claude Code 有 Workflow 编排原语、Codex 没对等的，能不能仿一个**——是**跨运行时双栈能力对等**问题，不是 review 该多严的政策问题。我把"用什么原语实现"错当成"review 要多深"。
 - Prevention：用户提到某"模式/能力"时先分层——他问的是①这个能力本身能不能有/怎么来（原语层）还是②拿它做什么（政策层）？出现"Claude 有 X、Codex 没有、能不能仿"这种话 = 双栈对等题，先摸 X 是什么原语、两边各支持什么，别跳去设计用 X 干的活。
