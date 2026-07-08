@@ -247,11 +247,6 @@ rules:
     location: projects/kratos-base/test/resilience/AGENTS.md
     severity: blocker
     eval: []
-  - id: rule-0001
-    brief: "改业务代码前先立需求包"
-    location: AGENTS.md
-    severity: blocker
-    eval: ["001"]
   - id: rule-0002
     brief: "blocked / skipped ≠ pass"
     location: AGENTS.md

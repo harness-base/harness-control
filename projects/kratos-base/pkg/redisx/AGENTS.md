@@ -9,7 +9,6 @@ Redis client builder。本文件是本包红线；工程全局红线见 `../../A
 - **模式由 Addrs 数量自动选**：单地址=standalone，多地址=cluster（NewUniversalClient）；别在 Config 里硬编模式。（client.go:67-72） <!-- rule: kratos/redisx-mode-by-addrs | sev: warn -->
 
 ## 指针
-- 验收（懒加载/自愈/不阻塞 readyz）：`../../../../docs/features/0002-kratos-base-redis.md`
 - adapter 用法：`../../app/demo/internal/data/redis.go`
 - 配置映射（为何无 tag）：`../../app/demo/internal/conf/conf.go`
 - 镜像设计：`../pgxpool/pool.go`

@@ -5,7 +5,7 @@
 ## 规范（健康长什么样 / 不变量）
 
 - **就近入驻**：规则一律是某个 `AGENTS.md` 里的 bullet，**没有独立规则文件**（`docs/rules/` 只剩 `index.yaml`，原 `0001..0009.md` 已删，ADR-0004）。放在"能覆盖其所有目标的最浅 `AGENTS.md`"——全局红线进根 `AGENTS.md`，工程通用进 `projects/<x>/AGENTS.md`，只管某层进离那层最近的 `<dir>/AGENTS.md`。
-- **每条带隐形标记**：`<!-- rule: <id> | sev: blocker|warn | eval: <考题号,可空> -->`。id 两类口径（`rules-index.sh` 全仓扫、两种都收）：harness 用 `rule-00NN`（稳定引用键，全仓唯一，取现有最大 +1，被 eval/ADR/feature 按号引），项目用 `命名空间/slug`（如 `kratos/server-readyz-dedicated-ctx`）。
+- **每条带隐形标记**：`<!-- rule: <id> | sev: blocker|warn | eval: <考题号,可空> -->`。id 两类口径（`rules-index.sh` 全仓扫、两种都收）：harness 用 `rule-00NN`（稳定引用键，全仓唯一，取现有最大 +1、退役编号永久空缺不复用（如 rule-0001，ADR-0023），被 eval/ADR 按号引），项目用 `命名空间/slug`（如 `kratos/server-readyz-dedicated-ctx`）。
 - **通用 / 项目分界（rule-0015）**：入驻根 `AGENTS.md` 的必须是通用中性的控制面规则；掺具体项目领域名词 / 业务假设的，归 `projects/<x>/**` 的 `AGENTS.md`（用工程命名 id）。定范围时先过这道分界。
 - **catalog 自动生成、禁手改**：`docs/rules/index.yaml` 由 `scripts/rules-index.sh` 从所有标记扫出来；`--check` 进 `make verify` 防漂移。
 - **引用不悬空**：标记里每个 `eval: NNN` 必须有对应 `docs/eval/prompts/NNN-*.md`（已固化进 `rules-index.sh` 的 `check_eval_pointers`）。
@@ -50,7 +50,7 @@ grep -n '向上最近的' AGENTS.md
 - **漏洞 — 坏指针（悬空 eval）**：标记 `eval: NNN` 但 `docs/eval/prompts/NNN-*.md` 不存在 → `check_eval_pointers` 报"引用了不存在的考题"。
 - **漏洞 — 改/删规则引用点没跟**：改语义 / 删除时没全仓 `git grep` 该 id 的引用点（skill 正文 / reviewer 判据 / ADR / 模板 / 考题），留下悬空引用或过时复述——机器不兜这条（`--check` 只查索引与 eval 指针），靠 `hc-add-rule` 的关联对照表 + `hc-rule-reviewer` 巡查（ADR-0020）。
 - **漏洞 — severity / 语义偷改**：ADR/总结声称"severity 全保留 / 语义无损"，但 bullet 或 catalog 里 severity 与事实源不符。判据：凡声称"X 保留/不变"，必须能对 `git show HEAD:<file>` 机械核对；对不上即偷改。
-- **漏洞 — 例外被稀释**：规则带的例外/边界（如 rule-0001 的"纯控制面/文档/脚本不触发"、rule-0010 的"不强制 PRD 必须存在"）在迁移/重写时悄悄丢了 → 方向是"过触发"，warn 级，但仍算语义漂移。
+- **漏洞 — 例外被稀释**：规则带的例外/边界（如 rule-0014 的"只管用例齐不齐 / 不碰过没过"、rule-0010 的"不强制 PRD 必须存在"）在迁移/重写时悄悄丢了 → 方向是"过触发"，warn 级，但仍算语义漂移。
 
 ## 常见漏洞模式（本仓真实案例）
 

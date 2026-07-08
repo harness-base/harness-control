@@ -17,7 +17,7 @@ related_docs:
 | L0 | 查事实 / 纯问答 | `AGENTS.md` + 相关 1–2 个文件 |
 | L1 | 轻量修补、文案 | + `CURRENT_STATUS.md` + 目标文件 |
 | L2 | 小功能、明确改动 | + `docs/README.md` 路由 + 相关 `rules/` + 目标工程 `AGENTS.md` |
-| L3 | 标准功能 | + 对应 `features/` 需求包 + `harness/VERIFICATION_ROUTING.md` |
+| L3 | 标准功能 | + 对应 `prds/` 需求产出 / `designs/` 方案（有则读，松耦合不卡）+ `harness/VERIFICATION_ROUTING.md` |
 | L4 | 跨模块 / 较大功能 | + 相关 `decisions/`（架构级文档 `docs/architecture/` 待建） |
 | L5 | 架构级改动 | + 全量相关 ADR |
 | L6 | 重大 / 全局 | 最全相关上下文 |

@@ -37,7 +37,7 @@ bash projects/kratos-base/test/resilience/run_all.sh   # e2e 路由
 
 ## 怎么判（逐条可判定）
 
-- **流程齐**：`PROJECT_ONBOARDING.md` 在、status active、引用的 `templates/feature-package.md`·`workspace/verification.yaml`·各 skill 都真存在（被 `make docs-audit` 兜）。缺步骤或指向死文件 = 缺口。
+- **流程齐**：`PROJECT_ONBOARDING.md` 在、status active、引用的 `workspace/verification.yaml`·各 skill 都真存在（被 `make docs-audit` 兜）。缺步骤或指向死文件 = 缺口。
 - **每个 `projects/<name>/` 在路由里有一条**：`projects/` 下有目录但 `verification.yaml` 里查不到对应 `name` = 漂移漏登记。
 - **路由的 `path` 真存在**：上面 grep 出的每个 path `[ -d ]` 成立，否则 = 死路由。
 - **路由命令真跑得通**（不是只读、要亲跑）：从 harness 根跑 `verify`/`e2e` 命令退 0。脚本必须 CWD 无关（开头自 `cd "$(dirname …)/../.."`，如 `run_all.sh` 第 9/15 行）——只在工程目录里能过 = 坏路由（见漏洞模式）。
@@ -57,5 +57,5 @@ bash projects/kratos-base/test/resilience/run_all.sh   # e2e 路由
 - **接新工程 / 补缺步骤**：走 `hc-onboard` skill（新 7 步 / 老 8 步引导 + 对抗评审，ADR-0017 / 0018）；速查与校验清单见 `docs/harness/PROJECT_ONBOARDING.md`（缺哪项补哪项）。
 - **改/补验证路由**：编辑 `workspace/verification.yaml`，按 `docs/harness/VERIFICATION_ROUTING.md` 填 `verify`/`unit`/`api`/`e2e` + sandbox 三字段（守三态）；**真命令填完从 harness 根原样亲跑一次**；sandbox 从 `PENDING:` 接实走 `hc-create-sandbox`（契约 `SANDBOX_CONTRACT.md`）。
 - **工程级规则落地（就近）**：用 `hc-add-rule` skill（定范围 → 写进就近 `AGENTS.md`/`docs/rules` + 登记 → 挂 hook/eval 执行）。
-- **第一个需求包**：用 `hc-dev`（编排式，含 rule-0001 需求包门禁）。
+- **第一份需求**：走 `hc-prd`（产出 `docs/prds/`；对实现是松耦合的指路提示、非门禁——ADR-0023）。
 - **结构 / shim 体检**：`bash scripts/verify-control-plane.sh`（兜 shim 缺失）+ `make docs-audit`（兜 onboarding 引用的死文件）。注意：当前 `verify-control-plane.sh` 只校验 `verification.yaml` **存在**，**不**校验路由命令真能跑——路由命令亲跑这一关仍要手动做。

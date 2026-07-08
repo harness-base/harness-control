@@ -4,10 +4,10 @@
 
 ## 规范（健康长什么样 / 不变量）
 
-- 每类**反复出现的标准产出**都有模板，全在 `templates/`，**清单以自动生成的 `templates/README.md` 为准（rule-0012，别在这硬编码枚举）**。老三样（`adr.md` / `feature-package.md` / `prd.md` 等）之外，ADR-0007~0019 陆续补齐：`user-story.md`（PRD 上游）、`design.md` + `api-contract.md`（hc-tech-design）、`e2e-test-case.md` + `api-test-case.md`（hc-test，格式契约被 `scripts/test-cases-audit.sh` 硬闸按字面解析）、`project-agents.md`（hc-onboard 工程入口规则）。
+- 每类**反复出现的标准产出**都有模板，全在 `templates/`，**清单以自动生成的 `templates/README.md` 为准（rule-0012，别在这硬编码枚举）**。老三样（`adr.md` / `prd.md` 等）之外，ADR-0007~0019 陆续补齐：`user-story.md`（PRD 上游）、`design.md` + `api-contract.md`（hc-tech-design）、`e2e-test-case.md` + `api-test-case.md`（hc-test，格式契约被 `scripts/test-cases-audit.sh` 硬闸按字面解析）、`project-agents.md`（hc-onboard 工程入口规则）。
 - 模板字段**反映当前规范**：规则一改（尤其新增强制披露栏），相关模板同步。例：`templates/adr.md` 必须有 `## 受影响的 skill（rule-0007）` 栏。
-- 起草用模板、不手搓：ADR/feature/PRD/design/用例/skill 起草时从对应模板拷字段，省栏 = 漏强制项。
-- 模板被操作 skill / worker 显式引用（投送），指针不悬空：`hc-prd` worker → `templates/prd.md` / `templates/user-story.md`；`hc-tech-design` → `templates/design.md` / `templates/api-contract.md`；`hc-test` worker → `templates/e2e-test-case.md` / `templates/api-test-case.md`；`hc-onboard`（经 `docs/harness/PROJECT_ONBOARDING.md`）→ `templates/project-agents.md`；需求包（rule-0001，`docs/features/README.md` 指引）→ `templates/feature-package.md`。
+- 起草用模板、不手搓：ADR/PRD/design/用例/skill 起草时从对应模板拷字段，省栏 = 漏强制项。
+- 模板被操作 skill / worker 显式引用（投送），指针不悬空：`hc-prd` worker → `templates/prd.md` / `templates/user-story.md`；`hc-tech-design` → `templates/design.md` / `templates/api-contract.md`；`hc-test` worker → `templates/e2e-test-case.md` / `templates/api-test-case.md`；`hc-onboard`（经 `docs/harness/PROJECT_ONBOARDING.md`）→ `templates/project-agents.md`。
 - `templates/README.md` 是**自动生成的索引**（`scripts/dir-index.sh templates`），禁手改、进 `make verify`。
 
 ## 怎么检索现状（命令可直接跑）
@@ -23,10 +23,7 @@ grep -rn "templates/" --include="*.md" .agents/skills .claude/agents docs
 # 3. 强制栏漂移核心检查：哪些 ADR 连"受影响"段都没有（宽 grep，栏名已有变体见下）
 grep -L "受影响" docs/decisions/00*.md   # 输出 = 缺段的 ADR；再人工核栏名是否合模板
 
-# 4. feature 产出是否带模板强制字段
-for f in docs/features/000*.md; do grep -c "delivery_status\|implementation_allowed" "$f"; done
-
-# 5. 反查"有产出无模板"：列 docs/ 下反复出现的产出类型，比对 templates/
+# 4. 反查"有产出无模板"：列 docs/ 下反复出现的产出类型，比对 templates/
 ls docs/eval/task-reviews/*/    # summary.md/decision.md/candidate.md —— 反复产出，但 templates/ 无对应模板
 ```
 

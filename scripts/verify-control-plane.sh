@@ -70,8 +70,9 @@ for d in docs/context docs/harness templates .claude/agents; do
   bash scripts/dir-index.sh "$d" --check || fail=1
 done
 
-echo "== 索引一致性（decisions/features）=="
-for d in docs/decisions docs/features; do bash scripts/index-audit.sh "$d" || fail=1; done
+echo "== 索引一致性（decisions）=="
+# docs/features 已退役整删（ADR-0023），不再 audit
+bash scripts/index-audit.sh docs/decisions || fail=1
 
 echo "== 验证路由工程路径可达 =="
 rfail=0

@@ -7,7 +7,7 @@
 
 ## 验收点 AC
 
-> 从需求来源（用户口述 / `user-stories.md` 的验收点 / feature 包 AC）誊录，每条一个稳定 id `AC-n`。
+> 从需求来源（用户口述 / `user-stories.md` 的验收点 / PRD 的 AC）誊录，每条一个稳定 id `AC-n`。
 
 - AC-1：<可观察的验收点>
 - AC-2：<…>

@@ -27,7 +27,7 @@ last_reviewed: 2026-07-08
 ### 第 2 步：写下来 + 登记 —— 让它会被读到
 - 在选定的 `AGENTS.md` 加 / 改一条 bullet：一句"必须 / 禁止"（必要时带一行为什么 / 怎么做）。
 - **带隐形标记**供索引扫描：`<!-- rule: <id> | sev: blocker|warn | eval: <考题号，可空> -->`。id 有**两种口径**，`scripts/rules-index.sh` 全仓扫 `AGENTS.md`、两种都收进 catalog：
-  - **全局数字 `rule-00NN`**：harness 全局规则（根 `AGENTS.md`）。编号取现有最大 +1（查 `docs/rules/index.yaml`），全仓唯一、稳定引用键，被 eval / ADR / feature 按号引用。
+  - **全局数字 `rule-00NN`**：harness 全局规则（根 `AGENTS.md`）。编号取现有最大 +1（查 `docs/rules/index.yaml`），全仓唯一、稳定引用键，被 eval 考题 / ADR 按号引用。
   - **工程命名 id `<工程>/<主题>`**（如 `backend-service/db-eager-load-fail-fast`，中性占位）：被管工程 / 目录级规则。命名空间 = 工程短名，主题 slug 说人话、见名知义。
 - **重生成 catalog**：`bash scripts/rules-index.sh`（生成 `docs/rules/index.yaml`，**禁手改**）。加 / 改 / 删都要 regen。
 - 自检：`make verify` 绿（rules 索引无漂移 + 该 `AGENTS.md` 有 `CLAUDE.md` shim）= 已收录、就近可加载。

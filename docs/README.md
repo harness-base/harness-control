@@ -28,11 +28,10 @@ related_docs:
 | 目录 | 职责 |
 |---|---|
 | `context/` | 项目简报、真实状态、按需加载档位 |
-| `rules/` | 带编号的规则库；可被 eval / ADR / feature 按号引用 |
+| `rules/` | 带编号的规则库；可被 eval 考题 / ADR 按号引用 |
 | `decisions/` | ADR 架构决策记录 |
 | `eval/` | 评分体系：考题、rubric、评委、评审产出 |
 | `harness/` | 验证路由、CI、hooks 说明、工程接入指南、文档同步对照表（`doc-sync-checklist.md`） |
-| `features/` | 需求 / 工作包（随被管工程填；已挂 kratos-base 的需求包） |
 | `prds/` | 需求产出账本（`hc-prd` 产物：用户故事 + PRD + 可选原型） |
 | `designs/` | 研发方案产出账本（`hc-tech-design` 产物：design.md + 可选 api-contract；`designs-audit` 硬闸校登记一致 / design.md 在 / 零 TBD） |
 | `test-cases/` | 测试用例账本（`test-case` 产物：用例 + AC/FP 覆盖；`test-cases-audit` 硬闸校覆盖闭合） |

@@ -19,7 +19,6 @@ Kratos v2 微服务 monorepo。本文件**精简**：只列工程红线 + 指针
 ## 指针
 
 - 设计/选型 + 版本矩阵 + 弹性模型澄清：`../../docs/decisions/0002-kratos-base-architecture-and-resilience.md`
-- 需求包账本（F-0001 地基 / F-0002 Redis / F-0003 MQ / F-0004 配置+发现）：`../../docs/features/index.yaml`
 - 实施计划（按片）：`../../tasks/kratos-base-s0-plan.md`、`...-s1-plan.md`、`...-s3-plan.md`、`...-s4-plan.md`
 - 怎么 build / generate / test：`README.md`；弹性验收场景：`test/resilience/`（`run_all.sh`，CWD 无关）
 - 数据层规矩（用 ent、provider 取 client、非必要不 raw SQL）：`app/demo/internal/data/AGENTS.md`

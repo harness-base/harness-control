@@ -48,7 +48,7 @@ bash $ROOT/scripts/stop-check.test.sh
 ls   $ROOT/scripts/*-audit.sh $ROOT/scripts/*-index.sh
 # 产物区硬闸家族：test-cases-audit（AC/FP+EP/EX 双向闭合+覆盖矩阵）、designs-audit（登记双向+design.md+零TBD）、
 #   verification-audit（接入点显式三态 fail-closed，含 sandbox_down/status/reset/seed 四字段）、prds-audit、
-#   index-audit（decisions/features 双向一致）——前三个各带 .test.sh 变异自测
+#   index-audit（decisions 双向一致）——前三个各带 .test.sh 变异自测
 grep -n 'mutation\|变异\|check_eval_pointers' $ROOT/scripts/rules-index.sh   # 固化的自证
 
 # 8) 文档是否同步

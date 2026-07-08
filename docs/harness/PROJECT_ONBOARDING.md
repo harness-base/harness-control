@@ -8,7 +8,6 @@ source_files:
 related_docs:
   - VERIFICATION_ROUTING.md
   - ../context/CONTEXT_LOADING.md
-  - ../features/README.md
   - ../decisions/0017-hc-onboard-project-onboarding.md
   - ../decisions/0018-hc-onboard-legacy-branch.md
 ---
@@ -25,7 +24,7 @@ related_docs:
 | 工程规范 / 红线 | 工程根 `projects/<name>/AGENTS.md`（精简）+ 就近下沉各层 `<dir>/AGENTS.md`（`CONTEXT_LOADING.md`）；套 `templates/project-agents.md`；规则走 `hc-add-rule` |
 | 验证命令 | `workspace/verification.yaml` 登记 `verify`/`unit`/`api`/`e2e` + **sandbox 三字段**（`sandbox`·`sandbox_down`·`sandbox_status`，见 `SANDBOX_CONTRACT.md`），**每项守三态**（真命令 / `PENDING:理由` / `N/A:理由`，静默空=红，`verification-audit` 机检）；详见 `VERIFICATION_ROUTING.md` |
 | sandbox / E2E 环境 | 形式无关（docker / 虚拟机 / 本地 / 远程，工程实现、控制面只调）；契约=起/停/查三入口（`SANDBOX_CONTRACT.md`），接实走 `hc-create-sandbox`（ADR-0019）；没接实先 `PENDING` 占位 + 工程 `AGENTS.md` 留待补 |
-| 需求 / 开发 / 测试 | 走 `hc-prd` → `hc-tech-design` →（`hc-dev` / `hc-test`）；动业务码前先立需求包（rule-0001） |
+| 需求 / 开发 / 测试 | 走 `hc-prd` → `hc-tech-design` →（`hc-dev` / `hc-test`）；建议先走 hc-prd 理需求（提示、非门禁，ADR-0023） |
 | 文档同步 | `hc-doc-sync` 机制（ADR-0012：`hc-doc-sync-reviewer` + `doc-sync-checklist.md`） |
 | CI | `.github/workflows` 加 affected verify（按 `verification.yaml` 路由、只跑改动相关工程） |
 | 收尾 | `make verify` 绿 + L2+ 过 eval（`hc-eval`）+ Stop hook 兜底 |
@@ -36,6 +35,5 @@ related_docs:
 - [ ] 工程 `AGENTS.md`（精简 + 就近下沉）+ 同级 `CLAUDE.md` shim
 - [ ] `workspace/verification.yaml` 填了路由（每项守三态、无静默空）
 - [ ] 选型 / 结构落了第一个 ADR
-- [ ] 第一个 feature 包就绪（若动业务码，rule-0001）
 - [ ] 工程级规则按 `hc-add-rule` 落地（放对 + 登记 + 挂执行）
 - [ ] `make verify` 绿

@@ -30,7 +30,7 @@
 ## 指针
 
 - 设计 / 选型 / 决策记录：**本工程自己的决策记录处**（如工程内 `docs/decisions/` 目录——**不是**控制面根 `docs/decisions/`，项目内容不进控制面账本，rule-0015）；第一个 / 历史 ADR 由 `hc-onboard` 落（新项目第 3 步 / 老项目第 3 步补记历史决策）
-- 需求包账本：`../../docs/features/index.yaml`（第一个需求包按 rule-0001 立）
+- 需求产出账本：`../../docs/prds/index.yaml`（第一份需求建议先走 hc-prd，提示、非门禁——ADR-0023）
 - 怎么 build / generate / test：`README.md`
 
 ## 验证

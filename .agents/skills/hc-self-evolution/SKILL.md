@@ -38,7 +38,7 @@ harness 每个能力是一条**链路**；漏洞 = 某环断了。
 - `references/eval.md` — eval 题库 / 流程
 - `references/templates.md` — 模板
 - `references/gates-hooks.md` — verify / 护栏 / 门禁 / 触发（含 codex&claude 对等）
-- `references/decisions-context-features.md` — 决策 / 上下文 / 需求 索引区
+- `references/decisions-context-features.md` — 决策 / 上下文 索引区（features 区已退役，文件名保留旧称）
 - `references/sandbox.md` — 被管工程本地验证环境
 - `references/subagents.md` — 子 agent（`.claude/agents/`）
 - `references/lessons-memory.md` — 错题本 / 记忆 / 晋升
@@ -46,7 +46,7 @@ harness 每个能力是一条**链路**；漏洞 = 某环断了。
 - `references/index-system.md` — 索引体系（横切）
 - `references/process-coverage.md` — 流程覆盖（任务类型→流程；缺口如 loop-engineering）
 
-巡检/审查时先把**总览索引**当地图（默认不加载、自检时查）：`docs/rules/index.yaml`、`.agents/skills/README.md`、各区 `README.md`/`index.yaml`、`docs/decisions/index.yaml`、`docs/features/index.yaml`、`docs/eval/index.yaml`。
+巡检/审查时先把**总览索引**当地图（默认不加载、自检时查）：`docs/rules/index.yaml`、`.agents/skills/README.md`、各区 `README.md`/`index.yaml`、`docs/decisions/index.yaml`、`docs/eval/index.yaml`。
 
 ## 4 条 meta（强制）
 1. **全覆盖**：维度逐项过，不许凭记忆只查一部分。
