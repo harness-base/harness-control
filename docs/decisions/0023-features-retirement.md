@@ -21,7 +21,7 @@ related_docs:
 1. **rule-0001 退役（删除，编号不复用）**——动业务代码**没有任何硬门槛**。不是"换锚继续 MUST STOP"，而是回归本仓一贯哲学：**skill 间松耦合**——每个 skill 不强依赖其他 skill 的产物、可独立工作（同 ADR-0003"松耦合"、testing-flow"每步解耦可跳过"、hc-prd→hc-test 软提醒先例）；关联 skill 只加**提示**（指路 `hc-prd` 等上游），不做硬耦合。hc-dev 自身仍走 superpowers 流程先 plan（brainstorming → writing-plans → 实现）——那是 dev 的**内部纪律**，与跨 skill 门禁是两回事。
 2. **`docs/features/` 目录整体删除**（6 个存量包 + README + index.yaml）+ `templates/feature-package.md` 删除 + `verify-control-plane.sh` 摘除 features 的 index-audit。
 3. **eval 考题 001 下架**（考的就是这条门禁）+ `docs/eval/index.yaml` 同步。
-4. 历史文档**不改写**：旧 ADR（0002/0003/0009/0013/0016/0017/0018/0021）与 eval 产物、tasks 旧 plan 里提 rule-0001 / features 的正文保留原样，**以本 ADR 为准**；仅处理会让 `docs-audit` 悬空的 frontmatter 引用。
+4. 历史文档**不改写 + 前向指针**：旧 ADR 与 eval 产物、tasks 旧 plan 里提 rule-0001 / features 的正文保留原样（历史是真的）；但**决策被本次实质推翻的旧 ADR（0001/0003/0009/0017/0018/0021）头部加"更新"前向指针块** + related_docs 补本 ADR（照 ADR-0009→0021 先例）——"以新 ADR 为准"必须给旧文档读者一条到达新 ADR 的路径，否则只是自我安慰；顺带叙述性提及的（0002/0007/0008/0011/0013/0016）不加，防指针稀释。frontmatter 悬空引用另行处理到 `docs-audit` 绿。
 
 ## 受影响的 skill（rule-0007）
 - skill：hc-dev ／ 是否已更新：是（description "需求包门禁"删；② 吃上游第 1 条"需求包 MUST STOP"改为软提示指 `docs/prds/`；⑧ 硬规则对应条删）

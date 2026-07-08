@@ -5,12 +5,15 @@ date: 2026-07-02
 last_updated: 2026-07-02
 source_files: []
 related_docs:
+  - 0023-features-retirement.md
   - 0017-hc-onboard-project-onboarding.md
   - ../harness/PROJECT_ONBOARDING.md
   - 0012-doc-sync-redesign.md
 ---
 
 # ADR-0018：hc-onboard 老项目分支
+
+> **更新（2026-07-08）**：第 8 步交棒的"动业务码前立需求包（rule-0001）"已随 [ADR-0023](0023-features-retirement.md) 改为"提示先走 `hc-prd`（提示、非门禁）"。下方叙述保留历史原样。
 
 ## 背景
 

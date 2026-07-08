@@ -5,6 +5,7 @@ date: 2026-07-03
 last_updated: 2026-07-03
 source_files: []
 related_docs:
+  - 0023-features-retirement.md
   - 0009-dev-skill.md
   - 0015-hc-tech-design.md
   - 0016-hc-test-api-testcase-line.md
@@ -12,6 +13,8 @@ related_docs:
 ---
 
 # ADR-0021：hc-dev 编排式重构
+
+> **更新（2026-07-08）**：吃上游第 ① 条"需求包（`docs/features/`，rule-0001 门禁不变）"与"保留不动"里的"需求包门禁"已随 [ADR-0023](0023-features-retirement.md) 改为"需求产出 `docs/prds/`（有则吃、无则提示走 `hc-prd`、可独立干）"——门禁不再保留。下方叙述保留历史原样。
 
 ## 背景
 
