@@ -7,5 +7,6 @@
 - `PROJECT_ONBOARDING.md` — 工程接入指南
 - `SANDBOX_CONTRACT.md` — sandbox 契约（被管工程测试环境的标准接入点）
 - `VERIFICATION_ROUTING.md` — 验证路由
+- `adversarial-review.md` — 对抗评审 pattern（多视角并行 review）
 - `doc-sync-checklist.md` — 文档同步对照表（doc-sync checklist）
 - `testing-flow.md` — 测试流程总纲（testing flow）

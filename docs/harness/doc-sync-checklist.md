@@ -24,6 +24,7 @@ related_docs:
 | `docs/` 加 / 删子目录 | `docs/README.md` 路由表 | 🔴手 |
 | `docs/decisions/*.md` 新建或大改（ADR）| 相关 skill 是否要更新（rule-0007，必填"受影响 skill"栏）+ `docs/decisions/index.yaml` 登记 | 🔴手（skill 回顾要判断；index 那半机检） |
 | `docs/harness/SANDBOX_CONTRACT.md` 改（sandbox 契约） | `hc-create-sandbox` skill + `hc-sandbox-reviewer` 双栈里复述的入口/约束口径要跟改；`verification.yaml` 字段约定、`verification-audit` 字段清单 | 🔴手 |
+| `docs/harness/adversarial-review.md` 改（review 编排 pattern，ADR-0022） | 引用它的 7 skill review 步（`hc-dev`/`hc-prd`/`hc-tech-design`/`hc-onboard`/`hc-test`/`hc-create-sandbox`/`hc-add-rule`）+ 8 reviewer 双栈的"并行对抗编排"定性口径要跟改 | 🔴手 |
 | `AGENTS.md` 加 / 改 `<!-- rule: -->` 标记 | `docs/eval/prompts/` 是否要新增 / 更新考题；跑 `bash scripts/rules-index.sh` 重生成 catalog | 🔴手（考题要判断；catalog 机检） |
 | `.claude/agents/*.md` 新建 / 改**子 agent** | `.codex/agents/*.toml` 对等是否要同步（**仅子 agent**；skill 走 `.agents/skills/` 双栈共享，Codex 侧**无** skill 对等目录，别把 skill 当子 agent 报） | 🔴手 |
 | `docs/features/*` 状态变更 / 加新 feature | `docs/context/CURRENT_STATUS.md` 被管工程表；`docs/features/index.yaml` 登记 | 🔴手（CURRENT_STATUS 那半；index 机检） |

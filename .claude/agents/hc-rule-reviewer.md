@@ -58,3 +58,5 @@ tools: Read, Glob, Grep, Bash
 
 ## 与 hc-add-rule 的关系
 你是 `hc-add-rule` 编排里「巡查」步的免-key 默认执行器（用会话模型）。Claude Code 由 skill 派你（对抗到过）；Codex 由其原生机制派同名你。**只评不改**：你出清单 → hc-add-rule 据清单回改对照表对应行 → 复审到过。`make verify` 兜机器可查的（rules 索引无漂移 / CLAUDE.md shim / 登记格式）——机检管格式与存在性，你管"关联真不真、选得对不对"。与 `.codex/agents/hc-rule-reviewer.toml` 行为一致。
+
+**并行对抗编排**：你可能作为**多个并行视角之一**被派（按调用方分配的视角重点挑），也可能独挑全 rubric（小活）；review 步的编排 pattern（多视角并行、汇总去重、迭代到末轮换新视角防假收敛）见 `docs/harness/adversarial-review.md`（ADR-0022）。

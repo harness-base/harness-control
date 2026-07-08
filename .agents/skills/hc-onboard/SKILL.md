@@ -1,8 +1,8 @@
 ---
 name: hc-onboard
 description: 引导式把一个工程接进 harness 控制面（新 / 老两分支均已实现）：主 agent 当接入向导，先问 新/老 分流 → 新项目走 7 步（收信息 / 搭最小骨架 / 记第一个 ADR / 接执行口 / 对抗评审 / make verify 收尾 / 交棒），每步先摆选项 + 讲取舍让用户拍再落；老项目走 8 步（定位接管 / 拆模块引导对话 / 按模块滚 扫→确认→搬进规范 / 接执行口发现+对齐现有的 / 引入关联进主目录 / 对抗评审 / 收尾 / 交棒），倒着对齐：扫出来的先经用户逐条确认才落、只收规范不改业务代码 → 派 hc-onboard-reviewer 对抗评审到过。接入点占位守「三态」（真命令 / PENDING: / N/A:，静默空=红）。产出的项目骨架 / 规范（AGENTS.md / ADR / verification 条目）本就项目专属。用户说「接入项目 / 新建项目 / 挂个工程 / onboard / 接入老项目 / 存量项目 / 对齐现有项目」时用。
-version: 4
-last_reviewed: 2026-07-07
+version: 5
+last_reviewed: 2026-07-08
 ---
 
 # 引导式把工程接进 harness（hc-onboard）
@@ -60,10 +60,10 @@ last_reviewed: 2026-07-07
 **静默空 / 留白 / 裸 `TODO` = 红**。skill 只**教用户这么标、教 reviewer 这么审**；机检脚本本体由主 agent 另建。
 
 ## ⑥ 对抗评审（派 hc-onboard-reviewer 到过）
-搭 / 收完（新项目第 5 步 / 老项目第 6 步），**派 `hc-onboard-reviewer` 子 agent 对抗挑刺**，**回改到过**（同 `hc-tech-design` 单 reviewer 线性 loop）：
+搭 / 收完（新项目第 5 步 / 老项目第 6 步），**派 `hc-onboard-reviewer` 多视角并行对抗挑刺**，**回改到过**（编排 pattern = `docs/harness/adversarial-review.md`，ADR-0022，唯一真相源、引用不复制；末轮换新视角防假收敛）：
 - reviewer **只评不改**（无 Write），出结构化清单（位置 / 严重度 / 问题 / 证据 / 怎么补）；
 - 主 agent（接入向导）据清单**回改 → 复审 → 到零缺陷**。
-- **怎么派**：**Claude Code** 用 workflow / Task（`agent(..., {agentType:'hc-onboard-reviewer'})` 循环，会话模型）；**Codex** 派**同名**双栈 reviewer。
+- **怎么派**：**Claude Code** 用 workflow / Task（`agent(..., {agentType:'hc-onboard-reviewer'})` **多视角并行** / 循环，会话模型）；**Codex** 用原生多 agent（`max_threads` 并发）并行派**同名**双栈 reviewer 多实例。
 - **reviewer 审什么**（总览，约束本体在 reviewer 子 agent 上下文，共 6 块）：① **骨架最小没越界**（只搭壳、没搭代码结构 / 脚手架；**老分支该块口径改判**——老工程本就有代码，越界=「本次接入改了项目业务代码」）② **AGENTS.md 红线合理 + 有 shim**（精简、该下沉的下沉、不复刻全局）③ **选型 ADR 有据**（决策 / 备选 / 理由齐、用户拍过、引用不悬空）④ **verification.yaml 三态合规**（每接入点是真命令 / `PENDING:` / `N/A:` 之一，无静默空 / 裸 TODO，PENDING 有 AGENTS.md 待补记录）⑤ **忠于用户确认的选择**（没替用户擅自定）⑥ **隔离没搞反**（项目产物写真实领域词是**对**的；反过来 skill / reviewer / 模板不掺项目内容，见 ⑦）。
 - **老项目新增 4 条判据**（**只在老分支触发**，别拿去误伤新项目骨架；新项目原判据不动）：
   - a) **忠于确认**：落的每条规范 / 规则 / ADR 是不是用户确认过的（√）——把 agent 臆测 / 未确认项当规范落 = **major**（rule-0008）；

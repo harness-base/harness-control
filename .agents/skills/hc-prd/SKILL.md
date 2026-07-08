@@ -1,8 +1,8 @@
 ---
 name: hc-prd
 description: 编排式产出需求（而非实现）：产品总监（主 agent）调度一队专职 worker——需求采集 / 外部调研(可选) / 用户故事+AC / PRD本体 / 功能点 / 原型(可选) / PRD审稿——带 必选·可选权重 + 确认门 + 并行 + review loop，分阶段产出 用户故事 → PRD →（可选）原型，每阶段用户确认。用户说"做需求 / PRD / 原型 / 理一理需求 / 出个原型"时用。它是实现（hc-dev）的【上游】，产物独立存放、松耦合。
-version: 3
-last_reviewed: 2026-06-29
+version: 4
+last_reviewed: 2026-07-08
 ---
 
 # 编排式产出需求（用户故事 → PRD → 原型）
@@ -47,8 +47,9 @@ last_reviewed: 2026-06-29
 两处用**同一个 `hc-prd-reviewer`**，轮数 / 侧重不同。
 
 ## 挑刺（review）怎么派
-- Claude Code：用 workflow——`agent(..., {agentType:'hc-prd-reviewer'})` 并行 / 循环；每个产出 worker `agent(prompt, {model})` 配各自档；模板 `references/orchestration-workflow.js`。
-- Codex：原生派同名 worker / `hc-prd-reviewer`。
+**多视角并行对抗**，编排 pattern = `docs/harness/adversarial-review.md`（ADR-0022，唯一真相源、引用不复制）：fan out 多个 `hc-prd-reviewer` 实例、各盯一个视角（覆盖 / 可观测 / 范围闭合 / 故事↔PRD 一致…）→ 汇总去重 → 回改 → 末轮换新视角防假收敛。
+- Claude Code：用 workflow——`agent(..., {agentType:'hc-prd-reviewer'})` **多视角并行** / 循环；每个产出 worker `agent(prompt, {model})` 配各自档；模板 `references/orchestration-workflow.js`。
+- Codex：用原生多 agent（`max_threads` 并发）并行派同名 `hc-prd-reviewer` 多实例。
 
 ## 硬规则
 - 引导式、多轮、收敛；**不静默假设**（贯穿）。

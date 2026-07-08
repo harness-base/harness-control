@@ -25,3 +25,5 @@ tools: Read, Glob, Grep, Bash
 
 ## 与脚本路径的关系
 你是 hc-prd 编排里 review 步的免-key 默认执行器（用会话模型）。Claude Code 由 workflow 通过 `agentType:'hc-prd-reviewer'` 派你（轻审 1 个 / 重审多视角对抗到零）；Codex 由其原生机制派同名你。结构层面（登记 + 必备章节）另由 `scripts/prds-audit.sh` 机检，不归你。
+
+**并行对抗编排**：你可能作为**多个并行视角之一**被派（按调用方分配的视角重点挑），也可能独挑全 rubric（小活）；review 步的编排 pattern（多视角并行、汇总去重、迭代到末轮换新视角防假收敛）见 `docs/harness/adversarial-review.md`（ADR-0022）。

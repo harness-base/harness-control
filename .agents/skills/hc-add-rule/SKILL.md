@@ -1,8 +1,8 @@
 ---
 name: hc-add-rule
 description: 规则的加 / 改 / 删统一入口（团队规范、踩坑约束、编码红线）。用户说"以后都要/不许/必须…"、要改一条规则的语义/位置/severity、要删过时规则、或 lessons 攒到该升规则时用本 skill：走"定范围→写下来+登记→挂执行"三步，照「规则关联对照表」跟全关联点，派 hc-rule-reviewer 对抗巡查，确保规则会被加载、违反会被发现、改删不留悬空引用。
-version: 3
-last_reviewed: 2026-07-03
+version: 4
+last_reviewed: 2026-07-08
 ---
 
 # 规则的加 / 改 / 删（hc-add-rule）
@@ -68,10 +68,10 @@ last_reviewed: 2026-07-03
 
 ## 对抗巡查（hc-rule-reviewer）
 
-两角色分离：**主 agent 生成 / 修改规则本体**（本 skill 引导），**`hc-rule-reviewer`（双栈子 agent，只评不改）照对照表巡查**：
+两角色分离：**主 agent 生成 / 修改规则本体**（本 skill 引导），**`hc-rule-reviewer`（双栈子 agent，只评不改）照对照表巡查**——**多视角并行对抗**（编排 pattern = `docs/harness/adversarial-review.md`，ADR-0022，唯一真相源、引用不复制）：
 - 派单时给它：本次动了哪条规则（id）、操作类型（加 / 改 / 删）、涉及文件。
-- 它逐行核：引用点全不全（第 6 行）、该引未引（第 8 行）、挂钩挂没挂挂得对不对（第 4 行）、eval 指针闭合（第 5 行）、lessons 销没销（第 7 行）→ 出问题清单。
-- 主 agent 回改 → 复查 → **到过为止**。
+- **fan out 多实例、各盯对照表的一组行**（引用点第 6 行 / 该引未引第 8 行 / 挂钩第 4 行 / eval 指针第 5 行 / lessons 销点第 7 行）→ 汇总去重 → 出问题清单；Claude Code 用 workflow 并行、Codex 用原生多 agent（`max_threads` 并发）并行派同名双栈。
+- 主 agent 回改 → 复查 → **到过为止**（末轮换新视角防假收敛）。
 - **机器能查的（索引漂移 / shim / 登记）`make verify` 已兜，reviewer 不重复**（两层防线惯例：机检管形式、reviewer 管语义）。
 
 ## 收尾自检
