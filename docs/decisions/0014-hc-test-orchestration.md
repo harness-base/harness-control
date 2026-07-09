@@ -5,6 +5,7 @@ date: 2026-06-30
 last_updated: 2026-07-01
 source_files: []
 related_docs:
+  - 0024-test-script-line.md
   - 0008-test-case-skill.md
   - 0010-prd-orchestration.md
   - 0011-demote-context-loading.md
@@ -15,7 +16,9 @@ related_docs:
 
 # ADR-0014：hc-test 测试编排
 
-> **更新（2026-07-01）**：本 ADR 决策 5 的 **api 用例线占位已由 [ADR-0016](0016-hc-test-api-testcase-line.md) 实现、不再占位**——e2e + api 两线本期落地（脚本线 / 统一回归仍占位）。下方决策叙述保留历史原样（当时决定占位），实现状态以 `../harness/testing-flow.md`「场景 × 实现状态」表为准（rule-0012：状态以真相源为准、本 ADR 不复刻）。
+> **更新（2026-07-01）**：本 ADR 决策 5 的 **api 用例线占位已由 [ADR-0016](0016-hc-test-api-testcase-line.md) 实现、不再占位**——e2e + api 两线本期落地。
+
+> **更新（2026-07-08）**：**测试脚本线占位已由 [ADR-0024](0024-test-script-line.md) 实现、不再占位**（写跑一体；testing-flow 同批拆为总纲+分线）；接口契约对照 / 统一回归仍占位。下方决策叙述保留历史原样（当时决定占位），实现状态以 `../harness/testing-flow.md`「场景 × 实现状态」表为准（rule-0012：状态以真相源为准、本 ADR 不复刻）。
 
 ## 背景
 

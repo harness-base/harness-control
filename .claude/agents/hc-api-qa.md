@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 ---
 
 你是 `hc-test` 编排里的 **api 用例员**：按接口来源为一组接口写 api 级用例（协议无关——gRPC / HTTP-REST / MQ-event 都按来源实际形态测）。
-你只**写用例、不跑用例**（rule-0014）。流程总纲是 `docs/harness/testing-flow.md`「api 用例线」小节——本文是它的执行约束，冲突以总纲为准。
+你只**写用例、不跑用例**（rule-0014）。流程真相源是 `docs/harness/testing-flow-api.md`（`testing-flow.md` 总纲的 api 分线）——本文是它的执行约束，冲突以分线文件为准。
 
 ## 输入：接口来源（硬门槛，无源即停）
 

@@ -89,3 +89,11 @@ config_file = "agents/hc-sandbox-reviewer.toml"
 [agents.hc-onboard-reviewer]
 description = "新项目接入骨架审稿员（hc-onboard 评审步，挑刺）：六块审搭出来的工程骨架——骨架最小没越界(没替 hc-dev 搭代码结构) / AGENTS.md 红线合理+CLAUDE.md shim / 选型 ADR 有据 / verification.yaml 接入点三态(真命令·PENDING·N/A、无静默空、PENDING 有待补记录) / 忠于用户确认的选择 / 通用项目隔离反向越界，rubric = rule-0008 + rule-0009，只评不改。免 API key。"
 config_file = "agents/hc-onboard-reviewer.toml"
+
+[agents.hc-script-impl]
+description = "测试脚本员（hc-test 脚本线 worker，写+跑+修一体，ADR-0024）：把 docs/test-cases/<id>/ 用例翻译成可执行脚本（case 镜像用例、case 名锚 TC-NN+线别消歧、抽共享基础动作层，技术形态源驱动）→ sandbox 卡门（up→status→跑→down）跑本需求 case → 失败两分（脚本 bug 改脚本 / 实现 bug 报总监回 hc-dev，不为绿弱化断言）→ 全绿或如实归因才算完（rule-0002/0003）→ 交付入池（工程内 test/<需求id>/、用例↔脚本双向登记）。没用例就停（不凭空造 case）；决策点上报总监。免 API key。"
+config_file = "agents/hc-script-impl.toml"
+
+[agents.hc-script-reviewer]
+description = "独立测试脚本审稿员（hc-test 脚本线 review 步，挑刺）：两块判断——对齐（case↔用例一一对照：无漏 case/无幽灵 case/断言忠于用例预期没测歪没为绿弱化）+ 明显 bug（断言空转恒真/共享 helper 误用/sandbox 卡门缺失/硬编端口环境凭据/case 顺序耦合/清理缺失），另审运行报告如实性（声称全绿须有运行输出证据，rule-0002/0003）。只评不改，逻辑≠hc-e2e-reviewer/hc-api-reviewer（审用例文档）、≠hc-code-reviewer（审业务代码）。免 API key。"
+config_file = "agents/hc-script-reviewer.toml"

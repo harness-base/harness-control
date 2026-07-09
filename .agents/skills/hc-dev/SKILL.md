@@ -1,7 +1,7 @@
 ---
 name: hc-dev
 description: 写代码的统一入口，开发总监编排式（写功能 / 工程代码 / 重构 / 改 bug / 迁移 都走它）：总监（主 agent）吃上游（需求产出 docs/prds + 设计方案 design.md + 接口契约 api-contract.md，有则必吃、无则可独立干）→ 按改动面定编制——单层小活 / 改 bug 直做或派 1 个 worker、跨层大活按项目真实分层并行派 hc-dev-worker（前端 / 后端 / 客户端是常见例，源驱动不硬编层种）、契约为接缝 → hc-code-reviewer 对抗 review 到零（含 实现↔契约对账 + UI 视觉还原证据）→ 提醒你测 + 指路 hc-test。纪律全程常开：不假设 / 决策点问你 / TDD 优先 / 验证如实。用户说「写 / 实现 / 改 / 重构 / 迁移 / 修 bug / 做个功能 / 开发」时用。
-version: 4
+version: 5
 last_reviewed: 2026-07-08
 ---
 
@@ -60,7 +60,7 @@ last_reviewed: 2026-07-08
 ## ⑦ 收尾交棒
 - **验证如实**：明确说明跑了什么、结果如何；`blocked` / `skipped` 不当 pass、无证据不声称完成（rule-0002 / 0003）。
 - **深度活收尾过 eval**（rule-0005，用 hc-eval 子 agent，免 key）。
-- **提醒你测 + 指路 `hc-test`**：明确告诉你"建议你跑 / 测哪些"，把人工测试交回给你；要测试覆盖 / 用例走 `hc-test`（e2e / api 用例线已实现；测试脚本 / 统一回归占位，就绪后自动衔接——状态以 `docs/harness/testing-flow.md` 为准）。
+- **提醒你测 + 指路 `hc-test`**：明确告诉你"建议你跑 / 测哪些"，把人工测试交回给你；要测试覆盖 / 用例 / 把用例落成脚本走 `hc-test`（e2e / api 用例线 + 测试脚本线已实现[脚本写跑一体，ADR-0024]；契约对照 / 统一回归占位——状态以 `docs/harness/testing-flow.md` 场景表为准）。
 
 ## ⑧ 硬规则汇总
 - 动手前 plan（拆任务 + 编制）经你确认；**不假设、决策点必问**（worker 上报总监问你）。

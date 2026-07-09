@@ -116,3 +116,8 @@ decisions:
     status: accepted
     date: 2026-07-08
     file: 0023-features-retirement.md
+  - id: ADR-0024
+    title: hc-test 脚本线做实（写跑一体、回归独立）+ testing-flow 拆分（总纲+分线）
+    status: accepted
+    date: 2026-07-08
+    file: 0024-test-script-line.md

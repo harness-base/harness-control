@@ -136,3 +136,8 @@
 ## 2026-07-02T10:22:40Z `落文档`（触发：K=8轮到点）
 - [x] [ADR] ADR-0019 尚未创建，应记录环境管理接口（up/down/status/reset/seed）、基线态定义、资产数据分类方案 <!-- 2026-07-07 销号：`docs/decisions/0019-hc-create-sandbox.md` 已创建（sandbox 契约批产出，见 CURRENT_STATUS.md:38 + tasks/todo.md 老 skill 优化批区）。 -->
 - [x] [文档同步] docs/decisions/index.yaml 缺少 ADR-0019 登记 <!-- 2026-07-07 销号：index.yaml 已含 ADR-0019 登记（`file: 0019-hc-create-sandbox.md`）。 -->
+
+## 2026-07-09T10:23:19Z `落文档`（触发： 变更涨=16≥10）
+- [x] [文档同步] testing-flow 拆分成三个分线文件（e2e/api/script）后，docs/README.md 的路由表是否已加入这三个新文件条目？ <!-- 2026-07-08 销号：docs/README 的 harness/ 行是泛述指针（不枚举文件，rule-0012），分线文件不进它；docs/harness/README.md（dir-index 自动索引）已 regen 收录三个分线文件，make verify 绿。 -->
+- [x] [技术债] ADR-0024 改动引起 hc-test SKILL v4 写入，但相关 skill 的 version/last_reviewed 元数据是否已同步更新、有无跑 `bash scripts/skills-index.sh`？ <!-- 2026-07-08 销号：hc-test v4 + hc-dev v5 均 bump、last_reviewed=2026-07-08；skills-index 已 regen、--check 进 make verify 绿。 -->
+- [x] [Codex 同步] 提到"4 个新 agent 文件"待 workflow 回来，若为子 agent，.codex/agents/*.toml 对等是否已同步？ <!-- 2026-07-08 销号：hc-script-impl / hc-script-reviewer 双栈 4 文件齐（.claude .md + .codex .toml，tomllib 校验过）+ .codex/config.toml 两个注册块 + .claude/agents/README.md regen。 -->

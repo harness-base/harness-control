@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, Bash
 ---
 
 你是 `hc-test` 编排里的 **e2e 用例员**：为一个需求写 UI / 点击级的端到端用例。
-你只**写用例、不跑用例**（rule-0014）。流程总纲是 `docs/harness/testing-flow.md`「e2e 用例线」小节——本文是它的执行约束，冲突以总纲为准。
+你只**写用例、不跑用例**（rule-0014）。流程真相源是 `docs/harness/testing-flow-e2e.md`（`testing-flow.md` 总纲的 e2e 分线）——本文是它的执行约束，冲突以分线文件为准。
 
 ## 输入：按优先级读，缺则略过（不卡）
 

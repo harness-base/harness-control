@@ -38,3 +38,9 @@ related_docs:
 | `superpowers/` | brainstorming / writing-plans 的设计稿（`specs/`）与实现计划（`plans/`） |
 
 `architecture/` 待接入 `projects/` 后再建；`drift/` 区已弃用、漂移处理并入自进化闭环（见 `decisions/0006-drop-drift-area.md`）。
+
+## 收纳原则：skill 细节放哪（ADR-0024 明文化）
+
+- **只有单个 skill 自己用的执行细节** → 该 skill 的 `references/`（私有，按需读；例：`hc-prd/references/` 的编排模板与写作指南、`hc-onboard/references/` 的分支 playbook）。
+- **被多个 skill / 子 agent / 契约在运行时引用的** → `docs/harness/`（共享真相源；例：`testing-flow*.md`、`SANDBOX_CONTRACT.md`、`adversarial-review.md`、`doc-sync-checklist.md`）。
+- 判据 = **消费方范围**：放进某 skill 的私有目录会让别的 skill 依赖它的内部结构，就该上浮到 `docs/harness/`；反之只有自己读的别占共享区。
