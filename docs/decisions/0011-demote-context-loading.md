@@ -6,11 +6,14 @@ last_updated: 2026-06-29
 source_files:
   - ../context/CONTEXT_LOADING.md
 related_docs:
+  - 0025-mechanism-checkup.md
   - 0001-harness-skeleton-design.md
   - 0004-rules-distribution-and-loading.md
 ---
 
 # ADR-0011：context-loading 降级 skill → 政策
+
+> **更新（2026-07-09）**：本 ADR 降级保留的「加载档位政策」（L0–L6 档位表 + rule-0004）已随 [ADR-0025](0025-mechanism-checkup.md) 整体退役——\"读什么\"由渐进式引用结构承载、不再判档；`CONTEXT_LOADING.md` 已改写为「渐进式引用」指南。下方叙述保留历史原样。
 
 ## 背景
 

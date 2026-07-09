@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # eval 的【可选】CI/headless 路径：拼 evaluator+rubric+考题+候选 → 调外部 LLM API（OpenAI 兼容）→ 写 task-review。
 # 交互时默认用 hc-eval 子 agent（.claude/agents/hc-eval.md），免 key；本脚本用于无人值守自动跑分。
-# 用法：bash scripts/run-eval.sh --context-level L3 --candidate-file <file> [--prompts 010,011]
+# 用法：bash scripts/run-eval.sh --context-level <一句话任务上下文（原档位参数，档位已退役 ADR-0025，填任务描述即可）> --candidate-file <file> [--prompts 010,011]
 # 需要：curl、jq；环境变量 EVAL_API_BASE / EVAL_API_KEY，可选 EVAL_MODEL。
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -32,7 +32,7 @@ for p in $prompts; do
 done
 IFS="$oldifs"
 cand="$(cat "$candidate")"
-user="任务档位：$level"$'\n\n'"要套用的考题：$ptext"$'\n\n'"=== 候选产出 ==="$'\n'"$cand"
+user="任务上下文：$level"$'\n\n'"要套用的考题：$ptext"$'\n\n'"=== 候选产出 ==="$'\n'"$cand"
 
 body="$(jq -n --arg m "$model" --arg s "$sys" --arg u "$user" \
   '{model:$m, temperature:0, messages:[{role:"system",content:$s},{role:"user",content:$u}]}')"

@@ -121,3 +121,8 @@ decisions:
     status: accepted
     date: 2026-07-08
     file: 0024-test-script-line.md
+  - id: ADR-0025
+    title: 机制体检批——加载档位退役（eval 门槛直接化）+ hooks 补齐（force-push 拦截、Codex hooks 接线）
+    status: accepted
+    date: 2026-07-09
+    file: 0025-mechanism-checkup.md

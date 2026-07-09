@@ -9,7 +9,7 @@
 - **根 `AGENTS.md` 红线精简、全文就近**：harness 全局红线（rule-00NN）全文留在根；**项目专属规则下沉到 `projects/**/AGENTS.md` 就近生效**，不堆在根。
 - **凡 `AGENTS.md` 必有同级 `CLAUDE.md` shim**：shim 内容就一行 `@AGENTS.md`（Claude Code 靠 `@import` 加载，机制不靠"自然语言叫你读"）。
 - **`docs/README.md` 路由准**：阅读顺序、目录职责表与磁盘实际目录一致；指到的文件真存在。
-- **`docs/context/` 反映真实状态**：`CURRENT_STATUS.md` 的模块/规则/工程状态与代码现状一致；`CONTEXT_LOADING.md` 档位规则可用。
+- **`docs/context/` 反映真实状态**：`CURRENT_STATUS.md` 的模块/规则/工程状态与代码现状一致；`CONTEXT_LOADING.md` 渐进式引用链与现状一致（档位已退役，ADR-0025）。
 - **frontmatter 不悬空**：每篇带 frontmatter 的 `.md`，其 `source_files` / `related_docs` 指向的目标都存在（`docs-audit` 兜底）。
 - **README 类资产健康**：每份 `README.md` 要么机器自动生成且有 `--check` 漂移检测进 `make verify`（如 `dir-index.sh` / `skills-index.sh`），要么手写但有明确"装什么 / 由谁同步"约定。**没归属的手写 README = 漂移源**。README 不在 `@import` 加载机制内、装的是按需查阅的地图，靠根 `AGENTS.md` 启动顺序第 5 条规则触发读取。
 

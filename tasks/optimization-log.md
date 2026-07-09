@@ -19,7 +19,7 @@
 - ✅ [Codex 对等-部分] `self-optimize` 子 agent → 镜像 `.codex/agents/hc-self-optimize.toml` + 注册 config。
 - ✅ [process-coverage-部分] bugfix → 新建 `.agents/skills/bugfix/` skill。
 - ✅ [① / 自身] ① 落文档提醒正名拆分（backstop/rule-0011/log/ADR-0005 订正）；老 self-optimize skill 退役；子 agent 对齐为②深审执行器。
-- ⏳ [Codex 对等-剩余] Codex 原生 hooks（PreToolUse/Stop 等价）未接——`config.toml` 已 `hooks=true`，但需 Codex hook schema，研究性，立项。硬层(git/CI)已对等兜底。
+- ✅ [Codex 对等-剩余] Codex 原生 hooks（PreToolUse/Stop 等价）未接——`config.toml` 已 `hooks=true`，但需 Codex hook schema，研究性，立项。硬层(git/CI)已对等兜底。 <!-- 2026-07-09 销号：官方 schema 已发布，`.codex/config.toml` 已按其接 [hooks] 三事件（ADR-0025）；验证状态 PENDING（本机 codex 二进制损坏），风险与改法记 HOOKS.md。 -->
 - ⏳ [process-coverage-剩余] 迁移 / loop-engineering 流程——无具体案例，待真触发时按 plan 设计立项（别凭空造低质 skill）。
 - ⏳ [templates-小] eval task-review 三联（candidate/decision/summary）无模板——低优先。
 

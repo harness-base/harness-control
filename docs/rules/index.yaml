@@ -257,11 +257,6 @@ rules:
     location: AGENTS.md
     severity: blocker
     eval: ["003"]
-  - id: rule-0004
-    brief: "按产物/证据/目标文件判加载档，不按关键词"
-    location: AGENTS.md
-    severity: warn
-    eval: ["004"]
   - id: rule-0005
     brief: "收尾前过 eval"
     location: AGENTS.md
@@ -303,7 +298,7 @@ rules:
     severity: warn
     eval: ["014"]
   - id: rule-0013
-    brief: "非琐碎任务维护 `tasks/todo.md`（标 `level` + 收尾 Review）"
+    brief: "非琐碎任务维护 `tasks/todo.md`（标 `eval` + 收尾 Review）"
     location: AGENTS.md
     severity: warn
     eval: []

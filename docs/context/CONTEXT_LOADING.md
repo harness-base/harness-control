@@ -1,38 +1,29 @@
 ---
-title: 按需加载档位
+title: 渐进式引用（读什么怎么定）
 status: active
 owner: harness
-last_updated: 2026-06-26
+last_updated: 2026-07-09
 source_files: []
 related_docs:
   - ../README.md
+  - ../decisions/0025-mechanism-checkup.md
 ---
 
-# 按需加载档位（读多少）
+# 渐进式引用（读什么怎么定）
 
-默认少读。**按"用户要的产物 + 任务证据 + 目标文件"判断档位，不按关键词。** 拿不准就先按低档起步，遇到证据再升档。
+默认**少读、按需读**。读什么**不判档位、不按关键词**——顺着结构的引用链走，由你按任务自主判断（加载档位 L0–L6 已退役，ADR-0025；早期靠档位表规定读多深，现在"读什么"由结构本身承载）。
 
-| 档位 | 典型任务 | 至少读 |
-|---|---|---|
-| L0 | 查事实 / 纯问答 | `AGENTS.md` + 相关 1–2 个文件 |
-| L1 | 轻量修补、文案 | + `CURRENT_STATUS.md` + 目标文件 |
-| L2 | 小功能、明确改动 | + `docs/README.md` 路由 + 相关 `rules/` + 目标工程 `AGENTS.md` |
-| L3 | 标准功能 | + 对应 `prds/` 需求产出 / `designs/` 方案（有则读，松耦合不卡）+ `harness/VERIFICATION_ROUTING.md` |
-| L4 | 跨模块 / 较大功能 | + 相关 `decisions/`（架构级文档 `docs/architecture/` 待建） |
-| L5 | 架构级改动 | + 全量相关 ADR |
-| L6 | 重大 / 全局 | 最全相关上下文 |
+## 引用链（结构怎么把你带到该读的东西）
 
-## 按目录加载（就近 AGENTS.md）
+1. **状态起步**：`docs/context/CURRENT_STATUS.md`（当前真实状态）——每次任务的起点。
+2. **按需路由**：要找文档去 `docs/README.md`（文档地图 + 各区职责 + 收纳原则）。
+3. **就近规则**：在某目录**读或改**文件前，加载向上最近的 `AGENTS.md`（连同同级 `CLAUDE.md`）——就近规则随之生效；只加载最近那一个 + 它显式指向的，不把一路祖先全吞进来。例：动 `projects/backend-service/internal/data/` → 加载 `internal/data/AGENTS.md`（数据层规矩）；动别处时它根本不进上下文。工程级规则就靠这个分层放：工程根 `AGENTS.md` 精简 + 指针，细则下沉到各层。
+4. **目录导读**：进某目录想读 / 动其下文件前，若有 `README.md` 先扫一眼（知道这里有什么、该挑哪个，不必通读）。`AGENTS.md` 走 `@import` 自动加载、是必须遵守的红线；README 不在加载机制内、装查阅型材料，靠根 `AGENTS.md` 启动顺序第 5 条触发。
+5. **skill 分档**：skill 只常驻薄壳，细节按需读——进哪条分支 / 哪条线，读对应 `references/` 或分线文件（如 hc-onboard 的 new/old-project、testing-flow 的三分线）；共享真相源在 `docs/harness/`，被指到才读（收纳原则见 `docs/README.md`）。
+6. **产物上游**：做实现 / 设计 / 测试时，上游产物（`docs/prds/` / `designs/` / `test-cases/`）**有则读、无不卡**（skill 间松耦合，ADR-0023）。
 
-档位管"读多深"，目录管"读哪儿"——两者叠加：
+一句话：**别囤上下文——顺着指针走，指到什么读什么，读了不够再跟下一层指针。**
 
-- 在某目录下**读或改**代码前，从该位置**向上找最近的 `AGENTS.md`** 加载（本层没有就用上层）。只加载最近那一个 + 它显式指向的，不把一路祖先全吞进来。
-- 例：动 `projects/backend-service/internal/data/` → 加载 `internal/data/AGENTS.md`（数据层规矩，如"用 ent、非必要不写 raw SQL"）；动别处时它根本不进上下文。
-- 与档位叠加：L2 起读就近 `AGENTS.md`；L3+ 再按它的指针展开（工程级 rules / 相关文档）。
-- 工程级规则就靠这个分层放：工程根 `AGENTS.md` 精简 + 指针，细则下沉到各层 `AGENTS.md`。
-- **同时若该目录有 `README.md`，也先读一下**（不必通读，目的是了解这里有什么、该挑哪个）。`AGENTS.md` 走 `@import` 自动加载、内容是必须遵守的红线；README 不在加载机制内、装的是查阅型材料，靠根 `AGENTS.md` 启动顺序第 5 条触发。
+## 收尾要不要 eval（这才是要判的）
 
-## 配套门禁
-
-- L2 以上任务、关键决策点：收尾前必须跑 `make eval`（见 `../eval/README.md`、rule-0005）。
-- 升档要有理由（用户要求 / 任务证据 / 目标文件触发），写进 `tasks/todo.md` 的 Review。
+读多少不判档，但**收尾要不要 eval 有判据**（rule-0005）：**多步改产物 / 写了 ADR / 动业务代码 / 关键决策点**——命中任一，`tasks/todo.md` 标 `eval: 要`（rule-0013），收尾前跑 task eval review（见 `../eval/README.md`）；轻量问答、琐碎修补标 `eval: 不要`。

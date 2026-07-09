@@ -12,11 +12,11 @@
 ## 核心机制（凭什么靠谱）
 
 - **规矩能机检**：密钥 / 危险命令由带测试的 `hook-policy` + git hooks 自动拦；删旧建新的引用漂移由各 `*-index --check` 进 `make verify` 防住——不靠自觉。
-- **质量有评委**：L2+ 任务收尾由 **hc-eval 子 agent** 按 rubric 打分挑刺（用会话模型，**免 API key**），不靠 agent 自评。
+- **质量有评委**：命中判据（多步改产物 / 写 ADR / 动业务代码 / 关键决策点）的任务收尾由 **hc-eval 子 agent** 按 rubric 打分挑刺（用会话模型，**免 API key**），不靠 agent 自评。
 - **挑刺有对手**：写代码 / 产需求走对抗式 review（`hc-code-reviewer` / `hc-prd-reviewer` 子 agent：多视角找问题 + 独立证伪 + 修复循环）。
 - **文档能自检**：每篇文档头声明依赖，`docs-audit` 查"引用的文件 / 链接还在不在"。
 - **agent 有错题本**：`tasks/lessons.md` 三段式记坑，反复出现升级成规则 / 技能。
-- **按需加载**：按任务档位（L0–L6）+ 就近 `AGENTS.md` 决定读多少，不全量通读。
+- **按需加载**：顺渐进式引用链走 + 就近 `AGENTS.md`，读什么按任务自主判断（不判档、不全量通读，ADR-0025）。
 - **流程即技能**：流程写成可执行 skill（`.agents/skills/`），不是没人点开的说明文。
 
 ## 已落地
@@ -32,7 +32,7 @@
 |---|---|
 | `AGENTS.md` | 唯一权威入口：硬规则红线 + 启动顺序 + 验证命令 |
 | `tasks/` | 当前任务（`todo.md`）+ 错题本（`lessons.md`）+ 归档 |
-| `docs/context/` | 项目简报、真实状态、按需加载档位 |
+| `docs/context/` | 项目简报、真实状态、渐进式引用指南 |
 | `docs/rules/` | 带编号的规则库（eval / ADR 按号引用） |
 | `docs/decisions/` | ADR 架构决策记录 |
 | `docs/eval/` | 评分体系：考题、rubric、评委、评审产出 |
@@ -56,7 +56,7 @@ make eval          # 跑 task eval review（可选；CI / headless 用，需 EVA
 ```
 
 - **eval 免 key**：默认用 hc-eval 子 agent（`.claude/agents/hc-eval.md` / `.codex/agents/hc-eval.toml`），用会话模型打分、无需 API key；`make eval` 是可选的 CI / headless 路径。
-- **读多少**：看 [`docs/context/CONTEXT_LOADING.md`](docs/context/CONTEXT_LOADING.md)（L0–L6 档位 + 就近 `AGENTS.md`），默认少读、按需升档。
+- **读多少**：看 [`docs/context/CONTEXT_LOADING.md`](docs/context/CONTEXT_LOADING.md)（渐进式引用链 + 就近 `AGENTS.md`），默认少读、顺指针走。
 
 ## 接入一个工程
 
