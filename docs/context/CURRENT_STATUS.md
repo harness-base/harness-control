@@ -2,7 +2,7 @@
 title: 当前真实状态
 status: active
 owner: harness
-last_updated: 2026-07-02
+last_updated: 2026-07-08
 source_files: []
 related_docs:
   - PROJECT_BRIEF.md
@@ -28,7 +28,6 @@ related_docs:
 | `.agents/skills/` | done | 技能集**以 `.agents/skills/README.md` 为准**（`skills-index` 从各 `SKILL.md` 自动生成、`--check` 进 `make verify` 防漂移，故此处不再硬编码枚举）；含 hc-prd（编排式，ADR-0010：产品总监 + 6 worker 双栈 subagent + 外部调研走 deep-research skill）、hc-self-evolution（带 references 审查手册）等。**所有产出型 skill 的 review 步统一走「多视角并行对抗」**（单一真相源 `docs/harness/adversarial-review.md`，ADR-0022；Claude 用 Workflow、Codex 用原生多 agent，不再单 reviewer 一遍过） |
 | `.claude/` | done | settings（PreToolUse + Stop hook）+ 子 agent（**以 `.claude/agents/README.md` 为准**，自动索引；如 hc-eval / hc-code-reviewer）+ skills 软链 |
 | `.codex/` | done(部分) | 子 agent 与 `.claude/agents/` **一一双栈对齐**（各有 `.toml` + `config.toml` 注册，行为一致）+ config；其余按需 |
-| `docs/features/` | done | F-0001~0006（kratos-base 6 个需求包） |
 | `workspace/verification.yaml` | done | kratos-base 路由已填（verify/unit/e2e + sandbox 三字段：up/down 真命令、status PENDING 待走 hc-create-sandbox 补），含三字段示例模板；接入点三态由 `verification-audit` 机检 |
 | `projects/` | done | 挂载点，已挂 kratos-base（详见被管工程表）；接工程（新 / 老）走 `hc-onboard` skill（ADR-0017 新项目 / ADR-0018 老项目） |
 | `docs/prds/` | done | 需求产出账本（hc-prd skill 产物 + prds-audit）；architecture 暂未建（drift 区已弃，见 ADR-0006） |

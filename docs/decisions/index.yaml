@@ -111,3 +111,8 @@ decisions:
     status: accepted
     date: 2026-07-08
     file: 0022-adversarial-review-parallel.md
+  - id: ADR-0023
+    title: features 体系退役——rule-0001 删除、无硬门槛、skill 间松耦合
+    status: accepted
+    date: 2026-07-08
+    file: 0023-features-retirement.md

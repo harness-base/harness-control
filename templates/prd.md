@@ -1,7 +1,7 @@
 # PRD：<prd-id> <标题>
 
 > 由 `hc-prd` skill 引导式对话产出。落 `docs/prds/<id>/`，登记 `docs/prds/index.yaml`（条目含 `dir: <id>` = 目录名，`prds-audit` 按此校验目录↔账本一致）。
-> 下游可派生 feature 包（由 `hc-dev` skill 实现）——松耦合，不强制。
+> 下游衔接 `hc-tech-design` / `hc-dev`（直接消费本 PRD）——松耦合，不强制（ADR-0023）。
 
 ## 问题 / 目标
 （为什么做、达成什么用户可见结果）
@@ -54,4 +54,3 @@
 
 ## 状态
 - prd_status: draft | in-review | approved
-- 派生 feature：（F-xxxx，可空）

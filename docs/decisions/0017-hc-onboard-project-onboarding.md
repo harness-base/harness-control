@@ -6,6 +6,7 @@ last_updated: 2026-07-02
 source_files:
   - ../../workspace/verification.yaml
 related_docs:
+  - 0023-features-retirement.md
   - ../harness/PROJECT_ONBOARDING.md
   - 0015-hc-tech-design.md
   - 0009-dev-skill.md
@@ -16,6 +17,8 @@ related_docs:
 # ADR-0017：hc-onboard 工程接入 skill（新项目分支）
 
 > **更新（2026-07-02）**：本 ADR 留占位的**老项目分支已由 [ADR-0018](0018-hc-onboard-legacy-branch.md) 实现**——`hc-onboard` 现覆盖新 + 老两类工程。下方决策叙述保留历史原样。
+
+> **更新（2026-07-08）**：第 7 步交棒的"第一个需求包按 rule-0001 立"已随 [ADR-0023](0023-features-retirement.md) 改为"提示先走 `hc-prd`（提示、非门禁）"。下方叙述保留历史原样。
 
 ## 背景
 

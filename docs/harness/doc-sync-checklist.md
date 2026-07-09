@@ -27,7 +27,6 @@ related_docs:
 | `docs/harness/adversarial-review.md` 改（review 编排 pattern，ADR-0022） | 引用它的 7 skill review 步（`hc-dev`/`hc-prd`/`hc-tech-design`/`hc-onboard`/`hc-test`/`hc-create-sandbox`/`hc-add-rule`）+ 8 reviewer 双栈的"并行对抗编排"定性口径要跟改；**可执行编排模板也要跟**（现有 `hc-prd/references/orchestration-workflow.js` 的 review 段——skill 指它当模板，措辞改了模板没跟=执行者照旧跑单线程） | 🔴手 |
 | `AGENTS.md` 加 / 改 `<!-- rule: -->` 标记 | `docs/eval/prompts/` 是否要新增 / 更新考题；跑 `bash scripts/rules-index.sh` 重生成 catalog | 🔴手（考题要判断；catalog 机检） |
 | `.claude/agents/*.md` 新建 / 改**子 agent** | `.codex/agents/*.toml` 对等是否要同步（**仅子 agent**；skill 走 `.agents/skills/` 双栈共享，Codex 侧**无** skill 对等目录，别把 skill 当子 agent 报） | 🔴手 |
-| `docs/features/*` 状态变更 / 加新 feature | `docs/context/CURRENT_STATUS.md` 被管工程表；`docs/features/index.yaml` 登记 | 🔴手（CURRENT_STATUS 那半；index 机检） |
 | harness 模块状态变更（done / planned / skeleton）| `docs/context/CURRENT_STATUS.md` 控制面表 | 🔴手 |
 | `scripts/turn-backstop.sh` 或其它 hook 触发逻辑变 | `docs/harness/HOOKS.md`；对应 `*.test.sh` 必须红得起来 | 🔴手 |
 | 改了 `workspace/verification.yaml` 路由 | `docs/harness/VERIFICATION_ROUTING.md` | 🔴手 |

@@ -1,7 +1,7 @@
 ---
 name: hc-onboard
 description: 引导式把一个工程接进 harness 控制面（新 / 老两分支均已实现）：主 agent 当接入向导，先问 新/老 分流 → 新项目走 7 步（收信息 / 搭最小骨架 / 记第一个 ADR / 接执行口 / 对抗评审 / make verify 收尾 / 交棒），每步先摆选项 + 讲取舍让用户拍再落；老项目走 8 步（定位接管 / 拆模块引导对话 / 按模块滚 扫→确认→搬进规范 / 接执行口发现+对齐现有的 / 引入关联进主目录 / 对抗评审 / 收尾 / 交棒），倒着对齐：扫出来的先经用户逐条确认才落、只收规范不改业务代码 → 派 hc-onboard-reviewer 对抗评审到过。接入点占位守「三态」（真命令 / PENDING: / N/A:，静默空=红）。产出的项目骨架 / 规范（AGENTS.md / ADR / verification 条目）本就项目专属。用户说「接入项目 / 新建项目 / 挂个工程 / onboard / 接入老项目 / 存量项目 / 对齐现有项目」时用。
-version: 5
+version: 6
 last_reviewed: 2026-07-08
 ---
 
@@ -36,7 +36,7 @@ last_reviewed: 2026-07-08
 4. **接执行口**——verify/unit/api/e2e/sandbox 三字段按**三态**（见 ⑤）逐条与用户确认后占进 `workspace/verification.yaml`；sandbox 只占位、由 `hc-create-sandbox` 单独接实。**接线本体归主 agent 串行做**。
 5. **对抗评审**——派 `hc-onboard-reviewer` 挑刺骨架，回改到过（判据见 ⑥）。
 6. **收尾**——`make verify` 绿 + 登记好（按 ④ 第 5 步五项对一遍）；真实证据摆给用户，不假完成（rule-0002/0003）。
-7. **交棒**——指路下游 `hc-prd`→`hc-tech-design`→`hc-dev`；动业务码前第一个需求包按 rule-0001 立。
+7. **交棒**——指路下游 `hc-prd`→`hc-tech-design`→`hc-dev`；提示用户"第一份需求建议先走 `hc-prd` 理清"（提示、非门禁——skill 间松耦合，ADR-0023）。
 
 ## ④ 老项目 8 步（骨架；每步详情见 `references/old-project.md`）
 老项目 = **有代码有历史**，取向**倒着对齐**（依据 ADR-0018）。**进老项目分支时先读 `references/old-project.md`** 拿到每步 playbook + 老分支铁律 / 红线。核心两条铁律：**扫出来的先出"我看到的"草稿、用户逐条 √/✗/改、确认过的才落**（绝不"扫到就当规范落"，rule-0008）；**只收规范 / 记录、不改业务代码**（改码归 hc-dev，越界）。
@@ -48,7 +48,7 @@ last_reviewed: 2026-07-08
 5. **引入关联进主目录**（最后一公里，**五项，新老共用**）——① 登记被管工程 ② 每个 AGENTS.md 配 shim ③ 根级索引收录（rules 进 index.yaml、项目 ADR 不进控制面 `docs/decisions/`）④ CI 接根 affected-verify ⑤ 核加载链通。
 6. **对抗评审**——派 `hc-onboard-reviewer`，老项目**加 4 条判据**（见 ⑥），回改到过。
 7. **收尾**——`make verify` 绿 + 登记好（五项齐），真实证据、不假完成。
-8. **交棒**——下游 `hc-prd`→`hc-tech-design`→`hc-dev`；动业务码前立需求包（rule-0001）。
+8. **交棒**——下游 `hc-prd`→`hc-tech-design`→`hc-dev`；提示"第一份需求建议先走 `hc-prd`"（提示、非门禁，ADR-0023）。
 
 ## ⑤ 占位三态规矩（关键：占位不许静默空）
 第 4 步每个接入点（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status，+可选 sandbox_reset / sandbox_seed——sandbox 拆三字段见 `docs/harness/SANDBOX_CONTRACT.md`）的值**必是三态之一**——**目标：占位看得见 + 绕不过去，防"开发过了没补"**（同 `test-cases-audit` 的「无 · 理由」逃生口思路）：
@@ -81,7 +81,7 @@ last_reviewed: 2026-07-08
 - **占位不静默**：接入点守三态（真命令 / `PENDING: <条件>` / `N/A: <理由>`），**静默空 / 留白 / 裸 TODO = 红**；PENDING 同步在项目 AGENTS.md 留"待补"记录。
 - **通用 / 项目隔离别搞反**（rule-0015）：**skill 本体 / hc-onboard-reviewer / 模板**必须**通用、不掺具体项目内容**（中性占位，不预设某语言 / 框架 / 多租户 `tenant_id`）；但本 skill **产出的项目骨架**（`projects/<名>/AGENTS.md`、第一个 ADR、`verification.yaml` 项目条目）**本就项目专属、写满真实领域词是对的**。方向别反：通用的归资产、具体的归产物。
 - **接线归主 agent**：本 skill **不代改** `workspace/verification.yaml` / CI、**不代建**机检脚本、**不代跑** index / regen / ADR 定稿——skill 教用户怎么标、教 reviewer 怎么审，接线由主 agent 串行做。
-- **收尾不假完成**：`make verify` 绿 + 登记好要有**真实证据**（rule-0002 / rule-0003）；交棒时提醒第一个需求包按 rule-0001 立。
+- **收尾不假完成**：`make verify` 绿 + 登记好要有**真实证据**（rule-0002 / rule-0003）；交棒时提示第一份需求建议先走 `hc-prd`（提示、非门禁，ADR-0023）。
 - **对抗评审到过**：派 `hc-onboard-reviewer` 回改到零缺陷。
 
 ## ⑧ 演进（rule-0007）

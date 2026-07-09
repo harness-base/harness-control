@@ -1,7 +1,7 @@
 ---
 name: hc-dev
-description: 写代码的统一入口，开发总监编排式（写功能 / 工程代码 / 重构 / 改 bug / 迁移 都走它）：总监（主 agent）吃上游（需求包 + 设计方案 design.md + 接口契约 api-contract.md）→ 按改动面定编制——单层小活 / 改 bug 直做或派 1 个 worker、跨层大活按项目真实分层并行派 hc-dev-worker（前端 / 后端 / 客户端是常见例，源驱动不硬编层种）、契约为接缝 → hc-code-reviewer 对抗 review 到零（含 实现↔契约对账 + UI 视觉还原证据）→ 提醒你测 + 指路 hc-test。纪律全程常开：不假设 / 决策点问你 / 需求包门禁 / TDD 优先 / 验证如实。用户说「写 / 实现 / 改 / 重构 / 迁移 / 修 bug / 做个功能 / 开发」时用。
-version: 3
+description: 写代码的统一入口，开发总监编排式（写功能 / 工程代码 / 重构 / 改 bug / 迁移 都走它）：总监（主 agent）吃上游（需求产出 docs/prds + 设计方案 design.md + 接口契约 api-contract.md，有则必吃、无则可独立干）→ 按改动面定编制——单层小活 / 改 bug 直做或派 1 个 worker、跨层大活按项目真实分层并行派 hc-dev-worker（前端 / 后端 / 客户端是常见例，源驱动不硬编层种）、契约为接缝 → hc-code-reviewer 对抗 review 到零（含 实现↔契约对账 + UI 视觉还原证据）→ 提醒你测 + 指路 hc-test。纪律全程常开：不假设 / 决策点问你 / TDD 优先 / 验证如实。用户说「写 / 实现 / 改 / 重构 / 迁移 / 修 bug / 做个功能 / 开发」时用。
+version: 4
 last_reviewed: 2026-07-08
 ---
 
@@ -13,10 +13,10 @@ last_reviewed: 2026-07-08
 - 用：写 / 实现 / 改 / 重构代码；改 bug；迁移；做个功能。
 - 不用（上下游边界）：**产出**需求走 `hc-prd`；**产出**研发方案 / 接口契约走 `hc-tech-design`；**产出**测试用例走 `hc-test`；纯文档 / 规则 / git 操作（各自 skill）。
 
-## ② 吃上游（输入优先级，有则必吃）
-1. **需求包** `docs/features/`——用户可见的需求 / 行为变化，需求包未就绪 **MUST STOP**（rule-0001，门禁不变）。
+## ② 吃上游（输入优先级，有则必吃、无则可独立干）
+1. **需求产出** `docs/prds/<id>/`（用户故事+AC / PRD）——有就照它对齐"做什么、怎么算做对"；没有则提示用户"要不要先走 `hc-prd` 理需求"（**提示、非门禁**——skill 间松耦合、可独立工作，ADR-0023），用户口述清楚也能直接干。
 2. **设计方案** `docs/designs/<id>/design.md` + `api-contract.md`——**有方案就照方案拆任务、不重新设计；方案定死的接口 / 数据模型写码时不许擅改**。
-3. PRD / 用户口述（无方案的小活）。
+3. 用户口述（无上游产物的小活）——hc-dev 自身仍走 superpowers 先 plan（brainstorming → writing-plans），那是本 skill 的内部纪律。
 
 - **写码中发现方案有问题 → 停**，回 `hc-tech-design` 改方案（用户参与），改完再继续——**不许绕过契约自行其是**（防实现与设计漂移）。
 - **硬门**：涉及对外接口 / 数据模型**设计**而无契约 → 先走 `hc-tech-design` 产出技术设计 + 接口契约，再按契约落码（接口 / schema 怎么定是设计阶段的事，hc-dev 只按既定契约实现）。
@@ -64,11 +64,10 @@ last_reviewed: 2026-07-08
 
 ## ⑧ 硬规则汇总
 - 动手前 plan（拆任务 + 编制）经你确认；**不假设、决策点必问**（worker 上报总监问你）。
-- 用户可见功能改动：先立需求包并就绪才动业务代码（rule-0001，MUST STOP）。
 - **有方案照方案**：契约定死的接口 / 数据不许擅改；发现方案问题回 `hc-tech-design`，不许绕；涉接口 / 数据设计而无契约 → 先走 `hc-tech-design`（硬门）。
 - 修复 / 关键保证必须有**能复现 + load-bearing 的守护测试**（rule-0009），不许为通过牵强；视觉还原以**渲染证据**为准（同 rule-0009）。
 - 验证如实分类，无证据不声称完成（rule-0002 / 0003）；深度活收尾过 eval（rule-0005）。
-- 大改（写了 ADR / 立了 feature）回顾相关 skill（rule-0007）。
+- 大改（写了 ADR）回顾相关 skill（rule-0007）。
 
 ## ⑨ 演进（rule-0007）
 编排形态 / 编制口径 / 吃上游优先级 / 挑刺判据变化时回顾本 skill（连同 `hc-dev-worker` 双栈：`.claude/agents/hc-dev-worker.md` + `.codex/agents/hc-dev-worker.toml`，以及 `hc-code-reviewer` 双栈：`.claude/agents/hc-code-reviewer.md` + `.codex/agents/hc-code-reviewer.toml`）；改完同步 `version` / `last_reviewed`，跑 `bash scripts/skills-index.sh`。

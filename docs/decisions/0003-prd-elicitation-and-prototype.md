@@ -5,12 +5,15 @@ date: 2026-06-24
 last_updated: 2026-06-24
 source_files: []
 related_docs:
+  - 0023-features-retirement.md
   - ../../.agents/skills/hc-prd/SKILL.md
   - ../../templates/prd.md
   - ../prds/README.md
 ---
 
 # ADR-0003：需求产出（PRD + 交互原型）作为 feature-delivery 的上游
+
+> **更新（2026-07-08）**：本 ADR 所述 `feature-delivery` / feature 包 / "一份 PRD 可派生 1..N 个 feature 包"的衔接关系已随 [ADR-0023](0023-features-retirement.md) 退役——需求产出（`docs/prds/`）现由 `hc-dev` 直接消费（有则吃、无则可独立干）。"产物独立存放、松耦合"的精神保留并在 ADR-0023 延续。下方叙述保留历史原样。
 
 ## 背景
 

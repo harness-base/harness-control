@@ -27,7 +27,7 @@ last_reviewed: 2026-07-08
 ### 第 2 步：写下来 + 登记 —— 让它会被读到
 - 在选定的 `AGENTS.md` 加 / 改一条 bullet：一句"必须 / 禁止"（必要时带一行为什么 / 怎么做）。
 - **带隐形标记**供索引扫描：`<!-- rule: <id> | sev: blocker|warn | eval: <考题号，可空> -->`。id 有**两种口径**，`scripts/rules-index.sh` 全仓扫 `AGENTS.md`、两种都收进 catalog：
-  - **全局数字 `rule-00NN`**：harness 全局规则（根 `AGENTS.md`）。编号取现有最大 +1（查 `docs/rules/index.yaml`），全仓唯一、稳定引用键，被 eval / ADR / feature 按号引用。
+  - **全局数字 `rule-00NN`**：harness 全局规则（根 `AGENTS.md`）。编号取现有最大 +1（查 `docs/rules/index.yaml`），全仓唯一、稳定引用键，被 eval 考题 / ADR 按号引用。
   - **工程命名 id `<工程>/<主题>`**（如 `backend-service/db-eager-load-fail-fast`，中性占位）：被管工程 / 目录级规则。命名空间 = 工程短名，主题 slug 说人话、见名知义。
 - **重生成 catalog**：`bash scripts/rules-index.sh`（生成 `docs/rules/index.yaml`，**禁手改**）。加 / 改 / 删都要 regen。
 - 自检：`make verify` 绿（rules 索引无漂移 + 该 `AGENTS.md` 有 `CLAUDE.md` shim）= 已收录、就近可加载。
@@ -56,7 +56,7 @@ last_reviewed: 2026-07-08
 按操作类型走表：
 - **加**：1→5 全做；来自 lessons 的做 7；想一下 8。
 - **改**（语义 / severity / 位置 / 挂钩）：第 6 行是要害——先 `grep -rn '<规则id>'` 全仓列引用点，逐个跟改；再 regen 索引（第 2 行）、核挂钩与 eval 指针（4 / 5）。
-- **删**：本体删 bullet + 标记 → regen 索引 → 挂钩同步撤（hook 条目 + 测试用例、eval 考题改注或下架）→ 第 6 行引用点全清；编号**不复用**（历史 eval / ADR 按号引用过）。
+- **删**：本体删 bullet + 标记 → regen 索引 → 挂钩同步撤（hook 条目 + 测试用例、eval 考题改注或下架，**连带扫其它考题对被下架考题的互引**）→ 第 6 行引用点全清（活文档零残留）→ **历史文档两件事**：正文不改写（历史是真的）+ **决策被实质推翻的旧 ADR 头部加"更新"前向指针块**（related_docs 补新 ADR，照 ADR-0009→0021 先例；顺带提及的不加，防稀释）——"以新 ADR 为准"必须给旧文档读者到达新 ADR 的路径；编号**不复用**（历史 eval / ADR 按号引用过）。
 
 ## 从 lessons 晋升
 

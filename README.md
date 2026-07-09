@@ -36,7 +36,7 @@
 | `docs/rules/` | 带编号的规则库（eval / ADR 按号引用） |
 | `docs/decisions/` | ADR 架构决策记录 |
 | `docs/eval/` | 评分体系：考题、rubric、评委、评审产出 |
-| `docs/features/` · `docs/prds/` · `docs/test-cases/` | 需求工作包 / 需求产出 / 测试用例账本 |
+| `docs/prds/` · `docs/designs/` · `docs/test-cases/` | 需求产出 / 研发方案 / 测试用例账本 |
 | `docs/harness/` | 验证路由、CI、hooks、工程接入指南 |
 | `.agents/skills/` | 自包含技能（流程即技能） |
 | `.claude/` + `.codex/` | 双运行时 agent 配置：子 agent + hooks 接线 |

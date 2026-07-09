@@ -1,7 +1,7 @@
 ---
 name: hc-tech-design
 description: 交互式产出研发方案 / 技术设计（而非需求、而非实现）：主 agent 当设计者，读项目现状 → 提方案 → 不确定就查/问 → 决策点让用户拍 → 全明确 + 用户审核才落稿 → 派 hc-tech-design-reviewer 对抗评审到过。产出 项目专属 的 研发方案；有对外接口才附 接口契约（被 api 用例消费），纯内部无接口标 N/A。它填 hc-prd(需求) 与 hc-dev(实现) 之间的设计空档：hc-prd → hc-tech-design →（api 用例 / hc-dev）。用户说「出研发方案 / 技术设计 / 设计接口 / 接口契约 / 怎么实现这块 / 把需求落成方案」时用。
-version: 4
+version: 5
 last_reviewed: 2026-07-08
 ---
 
@@ -70,7 +70,7 @@ last_reviewed: 2026-07-08
 - **错误响应约定 / 未约定口径**：契约只列约定内错误（业务码 / 校验码 / 401·403 鉴权 / 约定服务态如 503），**未约定的裸 500 / panic 不进契约；别按状态码段一刀切**。
 - **对抗评审到过**：派 `hc-tech-design-reviewer` 回改到零缺陷。
 - **通用 / 项目隔离**：守 rule-0015（控制面不掺项目内容）；方案项目专属落 `docs/designs/<id>/`。
-- 用户可见的需求 / 行为 / 验收目标变化属 `hc-prd` 上游，不在本 skill 重立需求（rule-0001 的需求包仍由动业务码的 `hc-dev` 兜）。
+- 用户可见的需求 / 行为 / 验收目标变化属 `hc-prd` 上游，不在本 skill 重立需求（需求怎么理归 hc-prd；skill 间松耦合、无硬门禁，ADR-0023）。
 
 ## ⑨ 演进（rule-0007）
 设计流程 / 产物结构 / 评审机制 / 模板字段变化时回顾本 skill（连同 `.claude/agents/hc-tech-design-reviewer.md`、`.codex/agents/hc-tech-design-reviewer.toml`、`templates/design.md`、`templates/api-contract.md`）；改完同步 `version` / `last_reviewed`，跑 `bash scripts/skills-index.sh`（模板动了再跑 `bash scripts/dir-index.sh templates`）。

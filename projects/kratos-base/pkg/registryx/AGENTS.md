@@ -12,5 +12,4 @@
 ## 指针
 - 弹性模型（注册非致命）：`../../../../docs/decisions/0002-kratos-base-architecture-and-resilience.md` §4
 - 单测：`./registryx_test.go`、`./backoff_internal_test.go`
-- 验收：`../../../../docs/features/0004-kratos-base-conf-registry.md`、`../../../../docs/features/0005-kratos-base-nacos-runtime-resilience.md`
 - backoff 同型实现：`../mq/supervisor.go`

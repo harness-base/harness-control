@@ -4,8 +4,8 @@
 
 ## 规范（健康长什么样 / 不变量）
 
-- **每个资产区都有索引。** 一个区（skills / rules / decisions / eval / features / prds / 各 docs 子目录 / templates / agents）必须有一份「区内有什么」的清单，否则自检没地图。
-- **能自动生成的必须自动生成。** 手维护的索引一定漂——本仓三个生成器：`rules-index.sh`（扫 AGENTS.md 的 `<!-- rule: -->` 标记）、`skills-index.sh`（扫 SKILL.md frontmatter）、`dir-index.sh`（扫目录下 `*.md` 标题）。结构化账本型 index.yaml（decisions / features / prds / designs / test-cases——字段不止标题，没法从源文件全量生成）允许手维护，但**必须配机检校验器兜双向一致**：通用 `index-audit.sh`（正向 `file:` 存在 + 反向 `NNNN-*.md` 已登记）或专用 audit（`prds-audit` / `designs-audit` / `test-cases-audit`）。新增「区」要么复用 `dir-index.sh`，要么配校验器，**不许新增无机检的纯手维护索引**。
+- **每个资产区都有索引。** 一个区（skills / rules / decisions / eval / prds / 各 docs 子目录 / templates / agents）必须有一份「区内有什么」的清单，否则自检没地图。
+- **能自动生成的必须自动生成。** 手维护的索引一定漂——本仓三个生成器：`rules-index.sh`（扫 AGENTS.md 的 `<!-- rule: -->` 标记）、`skills-index.sh`（扫 SKILL.md frontmatter）、`dir-index.sh`（扫目录下 `*.md` 标题）。结构化账本型 index.yaml（decisions / prds / designs / test-cases——字段不止标题，没法从源文件全量生成）允许手维护，但**必须配机检校验器兜双向一致**：通用 `index-audit.sh`（正向 `file:` 存在 + 反向 `NNNN-*.md` 已登记）或专用 audit（`prds-audit` / `designs-audit` / `test-cases-audit`）。新增「区」要么复用 `dir-index.sh`，要么配校验器，**不许新增无机检的纯手维护索引**。
 - **每份生成的索引都有 `--check` 且进 `make verify`。** 生成器和校验是一对：`--check` 只比对、漂移则非零退出，挂进 `verify-control-plane.sh`。没进 verify 的索引 = 没人替你发现漂移。
 - **生成的索引头部写明「自动生成、禁手改」**，并标注「默认不加载；自检 / 自进化时当地图查」——索引是按需的地图，不是常驻上下文。
 - **引用不悬空。** 索引里的指针（eval id → prompt 文件、index.yaml 的 `file:`/`dir:` → 真实文件/目录）必须落到真实存在物；反向（目录存在却没登记）也要拦。
@@ -24,7 +24,7 @@ find . -name README.md -not -path './.git/*' -not -path '*/node_modules/*' | sor
 cat scripts/rules-index.sh      # rules → docs/rules/index.yaml（扫 AGENTS.md 标记）+ eval 指针校验
 cat scripts/skills-index.sh     # skills → .agents/skills/README.md（扫 SKILL.md frontmatter）
 cat scripts/dir-index.sh        # 通用：<dir>/*.md → <dir>/README.md（context/harness/templates/.claude/agents）
-cat scripts/index-audit.sh      # 通用账本校验：<dir>/index.yaml 的 file: 都存在 + NNNN-*.md 都登记（decisions/features）
+cat scripts/index-audit.sh      # 通用账本校验：<dir>/index.yaml 的 file: 都存在 + NNNN-*.md 都登记（decisions）
 cat scripts/designs-audit.sh    # designs 账本：登记双向 + design.md 必在 + 零 TBD
 cat scripts/test-cases-audit.sh # test-cases 账本：登记双向 + AC/FP/EP/EX covers 闭合 + 覆盖矩阵
 
@@ -32,25 +32,25 @@ cat scripts/test-cases-audit.sh # test-cases 账本：登记双向 + AC/FP/EP/EX
 grep -nE 'index|--check|audit' scripts/verify-control-plane.sh
 
 # 4. 跑一遍全量自检，看索引部分是否绿
-make verify   # 含「skills / rules / 目录索引无漂移、decisions/features 索引一致、PRD/研发方案/测试用例账本」
+make verify   # 含「skills / rules / 目录索引无漂移、decisions 索引一致、PRD/研发方案/测试用例账本」
 
 # 5. 单点验漂移（不写、只比对）
 bash scripts/skills-index.sh --check
 bash scripts/rules-index.sh  --check
 for d in docs/context docs/harness templates .claude/agents; do bash scripts/dir-index.sh "$d" --check; done
-for d in docs/decisions docs/features; do bash scripts/index-audit.sh "$d"; done
+bash scripts/index-audit.sh docs/decisions
 bash scripts/prds-audit.sh
 bash scripts/designs-audit.sh
 bash scripts/test-cases-audit.sh
 bash scripts/verify-eval-materials.sh
 
 # 6. 判某个区的索引是「自动」还是「手维护」：有没有脚本引用它（注意有的脚本用变量拼路径，按目录名 grep 才不漏）
-for idx in rules eval decisions features prds designs test-cases; do
+for idx in rules eval decisions prds designs test-cases; do
   echo -n "docs/$idx <- "; grep -rlE "docs/$idx" scripts/ | tr '\n' ' '; echo
 done
 ```
 
-现状速查（盘点结果，核到 2026-07-03）：
+现状速查（盘点结果，核到 2026-07-03；features 区已整体退役——ADR-0023，已从表中移除）：
 
 | 区 | 索引文件 | 生成器 / 校验器 | 进 verify? |
 |---|---|---|---|
@@ -61,7 +61,6 @@ done
 | designs | `docs/designs/index.yaml` | 手维护 + `designs-audit.sh`（双向 + design.md + 零 TBD） | ✅ |
 | test-cases | `docs/test-cases/index.yaml` | 手维护 + `test-cases-audit.sh`（双向 + covers 闭合 + 矩阵） | ✅ |
 | decisions | `docs/decisions/index.yaml` | 手维护 + `index-audit.sh` 双向校验（原「仅查存在」缺口已补） | ✅ |
-| features | `docs/features/index.yaml` | 手维护 + `index-audit.sh` 双向校验 | ✅ |
 | eval | `docs/eval/index.yaml` | 手维护 + `verify-eval-materials.sh`（核心文件在 + prompts ↔ index 双向登记）；规则→考题指针另由 `rules-index.sh` 的 `check_eval_pointers` 兜 | ✅（非 prompts 字段仍无机检） |
 | docs/eval/* 子目录 README（fix-proposals / results） | 多份 | 手写散文，非清单 | ❌ |
 | projects/kratos-base/** README | 多份 | 手写 | ❌（被管工程域，另算） |
@@ -71,7 +70,7 @@ done
 ## 怎么判（逐条可判定）
 
 - **区无索引** → 缺口。`find` 出的资产区没有对应 index.yaml/README 清单，自检对该区没有地图。
-- **手维护漂移** → 漏洞（blocker 级别看影响）。判据：该区索引**既无生成器也无校验器**（第 6 步 grep 为空或仅指向 verify 自身的存在检查），且内容是人手敲的 → 一定会漂。历史上 **decisions / eval / features 三区 index.yaml 命中**（现均已配机检：`index-audit.sh` / `verify-eval-materials.sh`）；当前残余：eval index 的非 prompts 字段、docs/eval 子目录 README、`scripts/README.md` 一类自承"手写勿忘同步"的清单。
+- **手维护漂移** → 漏洞（blocker 级别看影响）。判据：该区索引**既无生成器也无校验器**（第 6 步 grep 为空或仅指向 verify 自身的存在检查），且内容是人手敲的 → 一定会漂。历史上 **decisions / eval / features 三区 index.yaml 命中**（decisions / eval 现已配机检：`index-audit.sh` / `verify-eval-materials.sh`；features 区已随 ADR-0023 整体退役）；当前残余：eval index 的非 prompts 字段、docs/eval 子目录 README、`scripts/README.md` 一类自承"手写勿忘同步"的清单。
 - **有索引但没进 verify** → 漏洞。生成器存在但 `--check` 没挂进 `verify-control-plane.sh` → 漂了也无人知。判据：第 3 步 grep 不到该索引的 `--check`。
 - **引用悬空** → 漏洞。索引里的指针落空：eval id 指向不存在的 prompt、index.yaml 的 `file:`/`dir:` 指向不存在的文件/目录、related_docs/source_files 悬空。判据：跑 `rules-index.sh --check`（含 `check_eval_pointers`）、`prds-audit.sh`、`docs-audit.sh`。
 - **生成器忠实但源错** → 索引「无漂移」却内容错。判据：`--check` EXIT=0 **不代表内容对**——还要核源头标记/源文件本身是否正确（见下方真实案例）。`--check` 绿 ≠ 收敛。
@@ -85,7 +84,7 @@ done
 
 ## 修复用哪个操作 skill / 脚本
 
-- **补一个目录的自动索引**（最省事）：`bash scripts/dir-index.sh <dir>` 生成，把 `<dir> --check` 加进 `scripts/verify-control-plane.sh` 的目录索引循环。结构化 index.yaml 不适合 `dir-index`（它扫 `*.md` 标题）——`NNNN-*.md` 账本型（decisions/features 式）直接复用通用 `scripts/index-audit.sh <dir>` 加进 verify 的循环；带质量硬闸的产物账本仿 `designs-audit.sh` / `test-cases-audit.sh`（双向一致 + 内容机检 + `.test.sh` 自测）另写。
+- **补一个目录的自动索引**（最省事）：`bash scripts/dir-index.sh <dir>` 生成，把 `<dir> --check` 加进 `scripts/verify-control-plane.sh` 的目录索引循环。结构化 index.yaml 不适合 `dir-index`（它扫 `*.md` 标题）——`NNNN-*.md` 账本型（decisions 式）直接复用通用 `scripts/index-audit.sh <dir>` 加进 verify 的循环；带质量硬闸的产物账本仿 `designs-audit.sh` / `test-cases-audit.sh`（双向一致 + 内容机检 + `.test.sh` 自测）另写。
 - **补/改规则索引**：改 `AGENTS.md` 的 `<!-- rule: -->` 标记后 `bash scripts/rules-index.sh` 重生成；走 `hc-add-rule` skill 保证「写下来 + 登记 + 挂执行」三步齐。
 - **补/改技能索引**：改 SKILL.md frontmatter 后 `bash scripts/skills-index.sh` 重生成。
 - **写新生成器/校验器的范式**：照 `scripts/rules-index.sh`（gen + `--check` 非零退出 + 指针校验 + 变异自证）或 `scripts/prds-audit.sh`（正向：目录必登记+必备章节；反向：登记必存在）；内容硬闸再叠一层的照 `scripts/designs-audit.sh`（零 TBD 词表）/ `scripts/verification-audit.sh`（显式三态 fail-closed）。都要把 `--check`/audit 挂进 `verify-control-plane.sh`，并配 `.test.sh` 自测。

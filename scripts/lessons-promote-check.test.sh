@@ -24,7 +24,7 @@ n="$(LESSONS_FILE="$f" bash scripts/lessons-promote-check.sh 2>/dev/null)"
 # 2) 全标记 → 0
 cat > "$f" <<'EOF'
 ## 2026-01-01：a <!-- opt: skip -->
-## 2026-01-02：b <!-- opt: rule-0001 -->
+## 2026-01-02：b <!-- opt: rule-0999 -->
 EOF
 n="$(LESSONS_FILE="$f" bash scripts/lessons-promote-check.sh 2>/dev/null)"
 [ "$n" = "0" ] && ok || no "全标记应 0，得 '$n'"

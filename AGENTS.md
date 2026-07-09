@@ -14,15 +14,14 @@
 
 ## 规则
 
-下面是 **harness 全局规则**（红线，动手前必看）。**编号 `rule-00NN` 是稳定引用键**，被 eval 考题 / ADR / feature 按号引用；全文就在这里。每条带**隐形标记**供 `rules-index` 扫描。**项目专属规则**沉淀在 `projects/**/AGENTS.md`（就近生效），不堆在这里。
+下面是 **harness 全局规则**（红线，动手前必看）。**编号 `rule-00NN` 是稳定引用键**，被 eval 考题 / ADR 按号引用；全文就在这里。每条带**隐形标记**供 `rules-index` 扫描。**项目专属规则**沉淀在 `projects/**/AGENTS.md`（就近生效），不堆在这里。（rule-0001 已退役、编号永久空缺，见 ADR-0023。）
 
-- **改业务代码前先立需求包**：用户可见的需求、行为或验收目标变化，必须先在 `docs/features/` 建需求包并就绪；未就绪 **MUST STOP**（纯控制面 / 文档 / 脚本改动不触发）。 <!-- rule: rule-0001 | sev: blocker | eval: 001 -->
 - **blocked / skipped ≠ pass**：验证没真跑通，不许声称通过。 <!-- rule: rule-0002 | sev: blocker | eval: 002 -->
 - **不许假完成**：没有真实运行证据，不得声称功能完成或验收通过。 <!-- rule: rule-0003 | sev: blocker | eval: 003 -->
 - **按产物/证据/目标文件判加载档，不按关键词**（详见 `docs/context/CONTEXT_LOADING.md`；启动顺序第 2 条是入口）。 <!-- rule: rule-0004 | sev: warn | eval: 004 -->
 - **收尾前过 eval**：L2 以上任务、关键决策点，收尾前必须跑 task eval review（独立评委按 rubric 打分）。 <!-- rule: rule-0005 | sev: blocker | eval: 010 -->
 - **不碰密钥与危险命令**：不泄露密钥 / token；不执行 `git reset --hard`、`rm -rf /` 等高危命令（hook 会拦）。 <!-- rule: rule-0006 | sev: blocker -->
-- **改架构 / 接口须回顾相关 skill**：大改（写了 ADR 或立了 feature）必须回顾 `.agents/skills/`，更新或写明无需更新。 <!-- rule: rule-0007 | sev: warn | eval: 011 -->
+- **改架构 / 接口须回顾相关 skill**：大改（写了 ADR）必须回顾 `.agents/skills/`，更新或写明无需更新。 <!-- rule: rule-0007 | sev: warn | eval: 011 -->
 - **外部材料不自动采信**：事实源 = 正式文档 + 工程当前代码；外部 / 粘贴材料要先整理验收才算数。 <!-- rule: rule-0008 | sev: blocker -->
 - **验收断言必须锚定唯一、真实、产出方的证据**：断言绑到唯一真实信号（防共因污染 / 防超时竞态掩盖）；声称的保证必须有**守护测试**；测试不许为通过而牵强、注释不许撒谎。 <!-- rule: rule-0009 | sev: blocker | eval: 012 -->
 - **PRD 产出标准**：产出 PRD 时——先有 approved 用户故事（独立 `user-stories.md` 为上游、PRD 与之对齐）、验收可观测、范围 in+out 闭合、每页四态、（若产出）原型可点通、假设显式确认、可追溯、登记不漂移（仅在产出 PRD 时适用，不强制 PRD 必须存在）。 <!-- rule: rule-0010 | sev: blocker | eval: 013 -->

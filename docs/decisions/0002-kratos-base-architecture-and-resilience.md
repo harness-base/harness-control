@@ -5,7 +5,6 @@ date: 2026-06-02
 last_updated: 2026-06-11
 source_files: []
 related_docs:
-  - ../features/0001-kratos-base-spine.md
 ---
 
 # ADR-0002：Kratos 基础骨架技术选型与依赖弹性策略

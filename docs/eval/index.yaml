@@ -1,10 +1,7 @@
 # eval 考题登记表。多数考题对应一条 rule（按 id 关联）。
 version: 1
 prompts:
-  - id: "001"
-    rule: rule-0001
-    title: 改业务代码前先立需求包
-    file: prompts/001-feature-package-before-code.md
+  # "001"（rule-0001 改业务代码前先立需求包）已下架——features 体系退役（ADR-0023），编号不复用
   - id: "002"
     rule: rule-0002
     title: blocked / skipped 不等于 pass

@@ -6,7 +6,7 @@
 ## 规范（健康长什么样 / 不变量）
 
 - 每类**反复发生**的任务类型都有可走的流程：要么一支 skill（`.agents/skills/<name>/SKILL.md`），要么 AGENTS.md 里明文的既定步骤。盘点口径（种子，按开发全链路）：**接入工程（新/老）/ 产出需求 / 技术设计 / 实现（含 bugfix·重构·迁移）/ 产出测试用例（e2e·api）/ 测试环境 sandbox / 测试脚本 / 统一回归 / 规则加改删 / git 写操作 / 评审收尾 / loop-engineering**。
-- 流程**挡在临场之前**：高返工 / 高风险的任务（动业务代码、改架构、做迁移）必须先进流程门禁，不允许"先做了再补"。`hc-dev`（编排式总监，含需求包门禁，ADR-0021）就是这条不变量的样板（rule-0001：未就绪 MUST STOP）。
+- 流程**挡在临场之前**：高返工 / 高风险的任务（动业务代码、改架构、做迁移）先进流程再动手——如 `hc-dev` 走 superpowers 先 plan（brainstorming → writing-plans → 实现）、`hc-tech-design` 全明确 + 用户审核才落稿。这是各 skill 的**内部纪律**；跨 skill 硬门禁已随 ADR-0023 退役（skill 间松耦合，关联处只留指路提示）。
 - 流程**不淘汰旧的**就是债：一个流程被更好的范式取代后，旧 skill / 旧步骤必须改造或退场，不能两套并存让 agent 选错。
 - 流程之间**接力关系明确**：上下游写在 description / 正文里，不靠 agent 猜。主链现状：`hc-onboard`（接入）→ `hc-prd`（需求）→ `hc-tech-design`（design.md + 接口契约）→ `hc-dev`（实现）∥ `hc-test`（e2e/api 用例）→ `hc-create-sandbox`（环境）→ 脚本 / 回归（占位）。测试段的接力与各线实现状态**唯一真相源 = `docs/harness/testing-flow.md`**，skill/ADR 引用不复制。
 - 覆盖盘点本身可复核：技能索引 `.agents/skills/README.md`（`skills-index` 自动生成、`--check` 防漂移）+ 子 agent 索引 `.claude/agents/README.md`（`dir-index` 自动生成）——「索引里有没有这支 skill」机器能查，「这类任务该不该有 skill」要人判。
@@ -57,7 +57,7 @@ bash "$ROOT/scripts/skills-index.sh" --check
     - `git 写操作` = hc-git-workflow✓（ADR-0020：三档分级表 + 发布前起手式）
     - `评审收尾` = rule-0005 + hc-eval 子 agent（成文，非 skill，可接受）
     - `loop-engineering` = **缺口**（仓内无 loop skill）
-- **门禁挡在临场之前吗**：高返工任务的流程是不是 STOP-before-do（先立项/先有证据再动手）？只有事后清单、没有事前闸 → **缺口**。
+- **流程挡在临场之前吗**：高返工任务的流程是不是先想清再动手（先 plan / 先有证据再动手，skill 内部纪律）？只有事后清单、没有事前步骤 → **缺口**。
 - **旧流程过时吗**：某流程的范式被更好的取代却没退场 → **漏洞**。已处理一例：`context-loading` 作为 skill 已降级为政策（ADR-0011——advisory 壳、不占触发/产物/闸，入口落 `AGENTS.md`）。仍开放的更大候选：L0-L6 通用档位 → 是否该演进成"按任务场景直接进对应 workflow-skill 并带好该场景的固定上下文"——场景 skill 链（接入/需求/设计/实现/测试/环境）已建成，这个候选比当初更近了一步；判据：若 agent 经常"定了档却仍漏读场景专属规则"，说明通用档位粒度太粗。
 - **接力清晰吗**：上下游 skill 的衔接写明了没有（description + 正文都点到；测试段以 testing-flow 为准）→ 符合；要 agent 猜先走哪支 → 缺口。
 - **是真缺口还是"故意不做 skill"**：评审/收尾刻意用 rule + 子 agent 而非 skill（避免污染常驻技能列表，见 `tasks/self-evolution-plan.md`「结构」一节）——这是设计选择，**不算漏洞**；判缺口前先确认不是这种有意成文。testing-flow 里标 🔒 的占位同理：是"已留位未实现"的显式债，不是无意识缺口，但**该催实现**。

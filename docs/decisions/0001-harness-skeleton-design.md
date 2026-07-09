@@ -5,10 +5,13 @@ date: 2026-05-29
 last_updated: 2026-05-29
 source_files: []
 related_docs:
+  - 0023-features-retirement.md
   - ../context/PROJECT_BRIEF.md
 ---
 
 # ADR-0001：Agent Harness 骨架设计
+
+> **更新（2026-07-08）**：本 ADR 治理深度清单中的"改业务代码前的需求包闸门"（rule-0001）与 `docs/features/` 需求包区已随 [ADR-0023](0023-features-retirement.md) 退役（无硬门槛、skill 间松耦合）。下方叙述保留历史原样。
 
 ## 背景
 

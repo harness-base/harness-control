@@ -8,6 +8,7 @@ source_files:
   - ../../.claude/agents/hc-code-reviewer.md
   - ../../.codex/agents/hc-code-reviewer.toml
 related_docs:
+  - 0023-features-retirement.md
   - 0021-hc-dev-orchestration.md
   - 0003-prd-elicitation-and-prototype.md
   - 0007-prd-workflow-redesign.md
@@ -17,6 +18,8 @@ related_docs:
 # ADR-0009：dev skill——写代码统一入口，替代 feature-delivery / bugfix
 
 > **更新（2026-07-03）**：hc-dev 形态已由 [ADR-0021](0021-hc-dev-orchestration.md) 演进为**开发总监编排式**（源驱动分层 worker、契约为接缝、吃设计方案、实现↔契约对账、UI 视觉还原纪律）——本 ADR 的"统一入口 + 纪律 + 挑刺 + 子模式"精神保留，"单 agent 两级"的编制方式被演进。下方决策叙述保留历史原样。
+
+> **更新（2026-07-08）**：本 ADR 替代对象 `feature-delivery` 所属的 features 体系（`docs/features/` 需求包 + rule-0001 门禁）已随 [ADR-0023](0023-features-retirement.md) 整体退役——"用户可见功能先立需求包"的门禁不再存在。
 
 ## 背景
 
