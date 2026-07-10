@@ -25,7 +25,7 @@ related_docs:
 | `docs/decisions/*.md` 新建或大改（ADR）| 相关 skill 是否要更新（rule-0007，必填"受影响 skill"栏）+ `docs/decisions/index.yaml` 登记 | 🔴手（skill 回顾要判断；index 那半机检） |
 | `docs/harness/SANDBOX_CONTRACT.md` 改（sandbox 契约） | `hc-create-sandbox` skill + `hc-sandbox-reviewer` 双栈里复述的入口/约束口径要跟改；`verification.yaml` 字段约定、`verification-audit` 字段清单 | 🔴手 |
 | `docs/harness/adversarial-review.md` 改（review 编排 pattern，ADR-0022） | 引用它的 7 skill review 步（`hc-dev`/`hc-prd`/`hc-tech-design`/`hc-onboard`/`hc-test`/`hc-create-sandbox`/`hc-add-rule`）+ 8 reviewer 双栈的"并行对抗编排"定性口径要跟改；**可执行编排模板也要跟**（现有 `hc-prd/references/orchestration-workflow.js` 的 review 段——skill 指它当模板，措辞改了模板没跟=执行者照旧跑单线程） | 🔴手 |
-| `docs/harness/testing-flow.md`（总纲）或 `testing-flow-{e2e,api,script}.md`（分线）改（ADR-0024） | 两层互指要自洽（总纲场景表/骨架 ↔ 分线细节口径一致）；引用方跟改——`hc-test` SKILL、6 个测试 worker/reviewer 双栈（e2e-qa/api-qa/script-impl 及其 reviewer）上下文里复述的口径、`templates/{e2e,api}-test-case.md` 头注指针、`SANDBOX_CONTRACT` 卡门衔接 | 🔴手 |
+| `docs/harness/testing-flow.md`（总纲）或 `testing-flow-{e2e,api,script,contract-check,regression}.md`（分线）改（ADR-0024/0026/0027） | 两层互指要自洽（总纲场景表/骨架 ↔ 分线细节口径一致）；引用方跟改——`hc-test` SKILL、6 个测试 worker/reviewer 双栈（e2e-qa/api-qa/script-impl 及其 reviewer）上下文里复述的口径、`templates/{e2e,api}-test-case.md` 头注指针、`SANDBOX_CONTRACT` 卡门衔接 | 🔴手 |
 | `AGENTS.md` 加 / 改 `<!-- rule: -->` 标记 | `docs/eval/prompts/` 是否要新增 / 更新考题；跑 `bash scripts/rules-index.sh` 重生成 catalog | 🔴手（考题要判断；catalog 机检） |
 | `.claude/agents/*.md` 新建 / 改**子 agent** | `.codex/agents/*.toml` 对等是否要同步（**仅子 agent**；skill 走 `.agents/skills/` 双栈共享，Codex 侧**无** skill 对等目录，别把 skill 当子 agent 报） | 🔴手 |
 | harness 模块状态变更（done / planned / skeleton）| `docs/context/CURRENT_STATUS.md` 控制面表 | 🔴手 |

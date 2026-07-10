@@ -169,6 +169,18 @@ one "$tmp/f23" "$HEAD
     sandbox_seed: \"\""
 [ "$(run "$tmp/f23")" != "0" ] && ok || no "sandbox_seed 静默空未判红（字段没被正则认=假绿）"
 
+# 24) routelist 静默空 → 红（ADR-0026 新字段也吃三态 fail-closed，锁 routelist 分支）。
+one "$tmp/f24" "$HEAD
+    verify: \"make x\"
+    routelist: \"\""
+[ "$(run "$tmp/f24")" != "0" ] && ok || no "routelist 静默空未判红（字段没被正则认=假绿）"
+
+# 25) routelist 合法 PENDING → 绿（warn 不阻断）。
+one "$tmp/f25" "$HEAD
+    verify: \"make x\"
+    routelist: \"PENDING: 待写导出脚本\""
+[ "$(run "$tmp/f25")" = "0" ] && ok || no "routelist 合法 PENDING 被误判红"
+
 rm -rf "$tmp"
 echo "verification-audit.test: pass=$pass fail=$fail"
 [ "$fail" -eq 0 ]

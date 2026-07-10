@@ -28,11 +28,11 @@ related_docs:
 | `.agents/skills/` | done | 技能集**以 `.agents/skills/README.md` 为准**（`skills-index` 从各 `SKILL.md` 自动生成、`--check` 进 `make verify` 防漂移，故此处不再硬编码枚举）；含 hc-prd（编排式，ADR-0010：产品总监 + 6 worker 双栈 subagent + 外部调研走 deep-research skill）、hc-self-evolution（带 references 审查手册）等。**所有产出型 skill 的 review 步统一走「多视角并行对抗」**（单一真相源 `docs/harness/adversarial-review.md`，ADR-0022；Claude 用 Workflow、Codex 用原生多 agent，不再单 reviewer 一遍过） |
 | `.claude/` | done | settings（PreToolUse + Stop hook）+ 子 agent（**以 `.claude/agents/README.md` 为准**，自动索引；如 hc-eval / hc-code-reviewer）+ skills 软链 |
 | `.codex/` | done(部分) | 子 agent 与 `.claude/agents/` **一一双栈对齐**（各有 `.toml` + `config.toml` 注册，行为一致）+ config；其余按需 |
-| `workspace/verification.yaml` | done | kratos-base 路由已填（verify/unit/e2e + sandbox 三字段：up/down 真命令、status PENDING 待走 hc-create-sandbox 补），含三字段示例模板；接入点三态由 `verification-audit` 机检 |
+| `workspace/verification.yaml` | done | kratos-base 路由已填（verify/unit/e2e + sandbox 三字段：up/down 真命令、status PENDING 待走 hc-create-sandbox 补 + routelist PENDING 待写 proto 解析脚本[ADR-0026]），含示例模板；接入点三态由 `verification-audit` 机检 |
 | `projects/` | done | 挂载点，已挂 kratos-base（详见被管工程表）；接工程（新 / 老）走 `hc-onboard` skill（ADR-0017 新项目 / ADR-0018 老项目） |
 | `docs/prds/` | done | 需求产出账本（hc-prd skill 产物 + prds-audit）；architecture 暂未建（drift 区已弃，见 ADR-0006） |
 | `docs/designs/` | done | 研发方案产出账本（hc-tech-design skill 产物（ADR-0015）：design.md + 可选 api-contract + `designs-audit` 硬闸校登记一致 / design.md 在 / 零 TBD，进 make verify；判断层归 hc-tech-design-reviewer）；空账本待实战 |
-| `docs/test-cases/` | done | 测试用例账本（hc-test skill 产物（ADR-0014） + `test-cases-audit` 硬闸校 AC/FP 覆盖闭合，ADR-0008）；空账本待实战。**测试脚本线已实现**（ADR-0024，写跑一体：case 镜像用例 + sandbox 调通 + 入回归资产池，脚本落工程内 `test/<需求id>/`；`hc-script-impl`→`hc-script-reviewer`）；testing-flow 已拆 总纲+分线（做哪线读哪份）；契约对照 / 统一回归仍占位，状态以 `docs/harness/testing-flow.md` 场景表为准 |
+| `docs/test-cases/` | done | 测试用例账本（hc-test skill 产物（ADR-0014） + `test-cases-audit` 硬闸校 AC/FP 覆盖闭合，ADR-0008）；空账本待实战。**测试脚本线已实现**（ADR-0024，写跑一体：case 镜像用例 + sandbox 调通 + 入回归资产池，脚本落工程内 `test/<需求id>/`；`hc-script-impl`→`hc-script-reviewer`）；testing-flow 已拆 总纲+分线（做哪线读哪份）；**契约对照已实现**（ADR-0026：routelist 接入点脚本取数 + agent 对比判断）；**统一回归已实现**（ADR-0027：跑存量池 + 归因两分[脚本过时/实现回归]）——**五场景全实现**，状态以 `docs/harness/testing-flow.md` 场景表为准 |
 | 自进化（① 落文档提醒 + ② hc-self-evolution） | done | `turn-backstop.sh`（机械触发落文档提醒，写 `- [ ]` 状态）+ `correction-nudge` 下一轮反馈待处理 + 文档漂移判据 `docs/harness/doc-sync-checklist.md` + `hc-doc-sync-reviewer` 子 agent（ADR-0012）+ `hc-self-evolution` skill/references + `hc-self-optimize` 子 agent |
 | sandbox / E2E 环境 | done(契约已立) | **契约 = `docs/harness/SANDBOX_CONTRACT.md`**（起/停/查三入口 + 基线态 + 幂等，ADR-0019），接实走 `hc-create-sandbox` skill；kratos-base up/down 真命令在路由、`sandbox_status` PENDING 待走 skill 补（首个实战） |
 

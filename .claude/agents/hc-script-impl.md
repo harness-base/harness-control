@@ -33,7 +33,7 @@ tools: Read, Glob, Grep, Write, Edit, Bash
 ### ② 跑 + 修（sandbox 内调通）
 
 1. **跑前卡门**：`sandbox`（up）→ `sandbox_status`（**exit 0 才跑**）→ 跑 → `sandbox_down`——命令取自 `workspace/verification.yaml`，契约见 `docs/harness/SANDBOX_CONTRACT.md`「运行时卡门」。**sandbox 未接实（`PENDING:`）→ 停下报告总监，指路 `hc-create-sandbox`**——不硬跑、不 mock 混过。
-2. 跑**本需求**的 case（不带过往全量——那是回归场景的事）。
+2. 跑**本需求**的 case（不带过往全量——那是回归场景（已实现，ADR-0027）的事）。
 3. **失败两分**：**脚本的问题改脚本**（选择器 / 时序 / 断言写错…）；**实现的问题不改脚本**——报出去由总监回 `hc-dev` 修（脚本挖到真 bug 是它的功劳，**别为绿而弱化断言**）。
 4. **完成定义**：本需求 case **全绿**，或**如实报告**残留失败清单 + 逐条归因（脚本 bug / 实现 bug / 环境缺失）——blocked / skipped ≠ pass（rule-0002），无真实运行证据不声称完成（rule-0003）。
 
@@ -41,7 +41,7 @@ tools: Read, Glob, Grep, Write, Edit, Bash
 
 1. **落工程内** `projects/<工程>/test/<需求id>/`，**每需求独立目录**（不和过往混）；入口命令可挂 `workspace/verification.yaml` 的 `e2e` / `api` 接入点（按工程路由约定）。
 2. **用例 ↔ 脚本双向登记**：用例文档（`docs/test-cases/<id>/`）记脚本目录路径；脚本 case 名锚用例编号——两边互查。
-3. 存量池供**回归场景**（总纲第 6 步，独立、当前占位）统一跑。
+3. 存量池供**回归场景**（总纲第 6 步，已实现 ADR-0027，独立场景）统一跑。
 
 ## 纪律
 

@@ -39,7 +39,7 @@
 | `prds-audit.sh` | （只校验）| `docs/prds/index.yaml` 与 `docs/prds/*/prd.md` 一致 + `prd.md` 含必备章节。质量（验收可观测 / 原型可点通等）由 eval 考题 013 / rule-0010 判，不在这里。 |
 | `designs-audit.sh` | （只校验）| `docs/designs/<id>/` 与 `docs/designs/index.yaml` 双向一致 + 每个 design 目录有 `design.md`（必需）+ 定稿零 TBD 机检（`design.md` / `api-contract.md`）。空账本平凡通过。零 TBD 是 hc-tech-design 产出门槛（rule-0008 / ADR-0015）的机检兜底；判断层归 `hc-tech-design-reviewer`。 |
 | `test-cases-audit.sh` | （只校验）| `docs/test-cases/<id>/test-cases.md` 的覆盖闭合（每条 AC/FP 都被 ≥1 用例 `covers:` 覆盖 + 无悬空 + 目录↔`index.yaml` 一致）。质量（用例真覆盖语义 / 边界异常齐）由 eval 考题 015 / rule-0014 判，不在这里。 |
-| `verification-audit.sh` | （只校验）| `workspace/verification.yaml` 里每个接入点（`verify` / `unit` / `api` / `e2e` / `sandbox` + `sandbox_down` / `sandbox_status` / `sandbox_reset` / `sandbox_seed`）值必须是**显式三态**之一：真命令 / `PENDING: <理由>` / `N/A: <理由>`。静默空占位 = 红（ADR-0017 / ADR-0019）。 |
+| `verification-audit.sh` | （只校验）| `workspace/verification.yaml` 里每个接入点（`verify` / `unit` / `api` / `e2e` / `sandbox` + `sandbox_down` / `sandbox_status` / `sandbox_reset` / `sandbox_seed` + `routelist`[ADR-0026]）值必须是**显式三态**之一：真命令 / `PENDING: <理由>` / `N/A: <理由>`。静默空占位 = 红（ADR-0017 / ADR-0019）。 |
 
 ## 4. 脚本自测
 

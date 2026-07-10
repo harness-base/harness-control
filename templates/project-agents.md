@@ -36,7 +36,7 @@
 ## 验证
 
 > 执行口登记在控制面 `workspace/verification.yaml`（`make verify` 和 CI 据此路由，见 `docs/harness/VERIFICATION_ROUTING.md`）。
-> 每个接入点（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status，sandbox 拆三字段见 `SANDBOX_CONTRACT.md`）的值必须是三态之一——**不许静默空 / 留白 / 裸 TODO**：
+> 每个接入点（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status / routelist[导出接口清单，ADR-0026]，sandbox 拆三字段见 `SANDBOX_CONTRACT.md`）的值必须是三态之一——**不许静默空 / 留白 / 裸 TODO**：
 > - 真命令（已接实）；
 > - `PENDING: <为啥现在空 / 补的条件>`（待接实，`make verify` 会 warn 提醒，此处也留一条"待补"记录）；
 > - `N/A: <理由>`（本工程不需要这个接入点）。

@@ -1,26 +1,22 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：level: L2 ｜ eval: 要 ｜ task: mechanism-checkup
+> 元：eval: 要 ｜ task: contract-check-line
 
-## 当前：机制体检批（用户拍：合一起）——档位退役 + hooks 补齐
-- **用户拍的口径（2026-07-09）**：① **加载档位退役**——"读多少"已被渐进式引用结构整体承载（启动顺序/就近 AGENTS/README 规则/skill 分线与 references），AI 自己判断读什么，不再判档；**只留一个标准判断要不要 eval**。② CONTEXT_LOADING.md **改写不删**（档位表删、改成半页"渐进式引用怎么走"）。③ todo 标注改 **`eval: 要|不要`** 直接声明。④ 与 hooks 补齐**合一批**。
-- **A. 档位退役**：
-- [x] ADR-0025（档位退役 + eval 门槛直接化 + hooks 补齐，衔接 ADR-0011 前向指针）
-- [x] AGENTS.md：删 rule-0004（编号空缺注记）；rule-0005 改直接判据（多步改产物/写 ADR/动业务代码/关键决策点 → 收尾 eval）；rule-0013 的 level 标注改 eval 标注；rules-index regen
-- [x] CONTEXT_LOADING.md 改写（渐进式引用链半页）+ AGENTS 启动顺序第 2 条措辞跟改
-- [x] stop-check.sh 判 `eval: 要` 替代 `level>=2` + stop-check.test.sh 用例跟改（mutation 红得起来）
-- [x] eval 004 下架 + index 注释；引用面 9 文件跟改（self-evolution refs×3 / PROJECT_ONBOARDING / context README / project-agents / eval）
-- **B. hooks 补齐**：
-- [x] hook-policy.sh 加：裸 `git push --force`（非 --force-with-lease）+ 直推 main 拦截；hook-policy.test.sh 正反用例
-- [x] Codex 原生 hooks 接线（.codex/config.toml [hooks] 按官方 schema：PreToolUse→hook-policy 等）——本机 codex 二进制损坏无法真跑，验证状态照三态诚实标 PENDING，不声称接好
-- [x] Build 全落：ADR-0025 登记；AGENTS.md（rule-0004 删+0005 直接判据+0013 eval 标注+启动顺序 2/4 条）；CONTEXT_LOADING 改写 29 行；stop-check 判元行 eval:（16/16+mutation）；hook-policy 两拦+冷门形态（17/17+mutation）；codex [hooks] 接线（PENDING 四项风险 checklist）；eval 004 下架；~20 处引用面；ADR-0011 前向指针
-- **收尾**：
-- [x] 对抗验证（3 视角：引用点/挂钩 eval 指针/hooks 质量含 35 命令实测）：**8 major+9 minor 全修**——最重 stop-check 归档残留误拦 bug（实跑复现）→ 改判当前节「> 元：」行+3 混合用例；AGENTS eval 段/启动顺序 4/README×3/scripts README/hc-eval 派单四件套的档位残留；git-workflow 分级表跟两拦；gates-hooks Codex 裸奔断言改三态；010 引已删 004；冷门形态 +main/:refs/heads/main/--mirror 补拦
-- [x] 收尾 eval：**yellow → 修平**（`docs/eval/task-reviews/20260709T163847Z-mechanism-checkup/`；002/003/010/014 pass——评委双 mutation 亲手复现、6 形态绕 harness 直调实测、活文档档位零残留终核；011 warn=ADR-0025 受影响栏没随对抗修复轮刷新[同型第二次，lessons 记]→ hc-git-workflow 改"是"+连带清单补 6 文件+顺手项 gates-hooks 括号修复）
-- [ ] commit → PR（等 #18 合后开）
+## 当前：接口契约对照线 + 统一回归线做实（用户拍，2026-07-10；测试链五场景收官）
+- **用户拍的口径**：偏**脚本验证**场景——路由导出由脚本实现（routelist 接入点，onboard 时创建）、**agent 只做对比判断**（读契约端点索引 ↔ 脚本输出清单，语义对齐；不做机械 diff——两边格式不同，agent 对比这个量级不重且能容忍写法差异）；agent 临场读代码提取被砍（取数用脚本、判断用 agent）。
+- [x] `routelist` 接入点进 verification.yaml（登记导出命令、三态占位）+ kratos 存量先 `PENDING: 待写 proto 解析脚本`（诚实占位）
+- [x] verification-audit 机检扩认 routelist 字段 + 守护测试（mutation 红得起来）
+- [x] hc-onboard 接执行口补"routelist 能力创建"（新老两分支 references + SKILL ⑤ 三态枚举 + onboard-reviewer 双栈判据④枚举 + PROJECT_ONBOARDING）+ version bump
+- [x] 契约对照场景做实：新分线 `testing-flow-contract-check.md`（门槛两查[契约在？routelist 真命令？PENDING→指路补/N/A→跳过留痕] → agent 跑脚本拿清单 → 对照契约端点索引 → 偏差三类+归因分发[补契约→hc-tech-design+api 用例线 / 补实现→hc-dev]；总监调度不新建 worker）+ 总纲场景表翻状态/骨架/小节 + hc-test SKILL 跟改 + version bump
+- [x] ADR-0026 定稿登记 + doc-sync-checklist 分线枚举跟 + CURRENT_STATUS + VERIFICATION_ROUTING（若枚举字段）+ 索引 regen
+- [x] **回归线做实**：分线 testing-flow-regression.md（卡门→逐需求顺序跑→报告→归因两分→重跑到过；目录即池子清单）+ 总纲翻 ✅（五场景全实现）+ hc-test 编排段 + hc-dev 交棒句 + ADR-0027 登记 + checklist/CURRENT_STATUS
+- [x] 对抗验证（3 镜头）：**2 blocker + 6 major + 8 minor 全修**——B1 reviewer 双栈"头句八个、动作清单核七个"（routelist 永不被核，双栈 6 处补齐）；B2 **PROJECT_ONBOARDING 打了勾没做**（rule-0003 todo 变种，lessons 记"勾选前名单↔git status 对账"）；接入点枚举全仓 sweep 6 处补 routelist；hc-test 编排段重排 ④⑤⑥⑦⑧⑨⑩（消 ⑤′/⑤″ 编号病+编排段归属矛盾）；process-coverage 缺口清单两线全摘；ADR-0014 前向指针注补 0026/0027；kratos AGENTS 待补记录；ADR-0026 受影响栏回填（hc-dev/hc-self-evolution 改"是"+sweep 连带清单）
+- [x] 收尾 eval：**yellow → 修平**（`docs/eval/task-reviews/20260710T025209Z-test-chain-final/`；002/003/014/rule-0015 pass——评委 mutation 亲手复现[过程中误回退 audit 脚本后精确重建、已 diff 复查无误]、routelist 枚举全仓终核 8 处全带、零项目词；010/011 warn=回归"占位"旧口径 5 处漏扫[回归线同批后加、扫残留时只扫了契约对照]+ADR-0027 连带漏 2 项→ 全修+回填，占位零残留终核过）
+- [x] commit（PR 等 #19 合后开）
 
-## Review（mechanism-checkup）
-- **做了什么**：加载档位整体退役（ADR-0025，用户拍：读什么由渐进式引用结构承载、AI 自主判断不判档；只留一个 eval 判据）——rule-0004 删、rule-0005 直接判据、rule-0013 改 `eval: 要|不要` 标注、CONTEXT_LOADING 改写 29 行引用链指南、stop-check 判元行 eval:（防归档残留误拦）、eval 004 下架、~20 处引用面清、ADR-0011 前向指针；hooks 补齐——hook-policy 拦裸强推/直推 main（含 refspec/--mirror 冷门形态，17 用例+mutation）、Codex [hooks] 按官方 schema 接线（PENDING+四项真机 checklist，诚实三态）。
-- **对抗+eval 的价值**：对抗 3 视角逮 8 major+9 minor——最重 stop-check 归档残留误拦 bug（reviewer 实跑复现，改判当前节「> 元：」行根治）+ hc-eval 派单四件套/README×3 等档位暗残留；eval 双 mutation 亲手验证测试 load-bearing、又逮"受影响栏不回填"同型第二次。
-- **质量**：stop-check 16/16 + hook-policy 17/17（各 mutation 翻红自证）；活文档档位/L2+/level: 零残留（评委独立终核）；机检独立重跑全绿；Codex 接线四处一致 PENDING 无假完成。
+## Review（test-chain-final）
+- **做了什么**：测试链收官——契约对照线（ADR-0026：routelist 接入点[脚本取数]+agent 语义对比判断，onboard 补能力创建、必须接入点 7→8、audit 机检 25/25+mutation）+ 统一回归线（ADR-0027：目录即池子清单、卡门、逐需求顺序跑、归因两分[脚本过时→hc-script-impl/实现回归→hc-dev]、复用不新建 worker）。**testing-flow 五场景全实现**，脚本池生产（脚本线）→消费（回归线）闭环成型。
+- **用户塑形的设计**："取数用脚本、判断用 agent"（砍掉 agent 临场读代码提取与机械 diff 两个我提的坏方案）——首次成文，后续同类场景（依赖清单/schema 清单）可复用。
+- **对抗+eval 的价值**：对抗逮 2 blocker（reviewer 双栈"头句八个动作清单核七个"=routelist 永不被核；**PROJECT_ONBOARDING 打了勾没做**=rule-0003 todo 变种，lessons 记"勾选前名单↔git status 对账"）+6 major+8 minor；eval 又逮同型"状态翻转扫残留不全"第 N 次（回归占位 5 处）——收尾自检该固化"改状态口径时 grep 旧口径词全仓"。
+- **质量**：机检独立重跑全绿；mutation 双向自证；routelist 枚举 8 处全仓一致；两新分线零项目词；hc-test 编排段重排 ④-⑩ 内部引用全解析。

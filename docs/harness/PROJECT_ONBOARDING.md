@@ -22,7 +22,7 @@ related_docs:
 |---|---|
 | 代码 | `projects/<name>/`（kebab-case）；控制面只管、不持有其测试本体（测试跟代码同处） |
 | 工程规范 / 红线 | 工程根 `projects/<name>/AGENTS.md`（精简）+ 就近下沉各层 `<dir>/AGENTS.md`（`CONTEXT_LOADING.md`）；套 `templates/project-agents.md`；规则走 `hc-add-rule` |
-| 验证命令 | `workspace/verification.yaml` 登记 `verify`/`unit`/`api`/`e2e` + **sandbox 三字段**（`sandbox`·`sandbox_down`·`sandbox_status`，见 `SANDBOX_CONTRACT.md`），**每项守三态**（真命令 / `PENDING:理由` / `N/A:理由`，静默空=红，`verification-audit` 机检）；详见 `VERIFICATION_ROUTING.md` |
+| 验证命令 | `workspace/verification.yaml` 登记 `verify`/`unit`/`api`/`e2e` + **sandbox 三字段**（`sandbox`·`sandbox_down`·`sandbox_status`，见 `SANDBOX_CONTRACT.md`）+ `routelist`（导出接口清单，契约对照用，ADR-0026），**每项守三态**（真命令 / `PENDING:理由` / `N/A:理由`，静默空=红，`verification-audit` 机检）；详见 `VERIFICATION_ROUTING.md` |
 | sandbox / E2E 环境 | 形式无关（docker / 虚拟机 / 本地 / 远程，工程实现、控制面只调）；契约=起/停/查三入口（`SANDBOX_CONTRACT.md`），接实走 `hc-create-sandbox`（ADR-0019）；没接实先 `PENDING` 占位 + 工程 `AGENTS.md` 留待补 |
 | 需求 / 开发 / 测试 | 走 `hc-prd` → `hc-tech-design` →（`hc-dev` / `hc-test`）；建议先走 hc-prd 理需求（提示、非门禁，ADR-0023） |
 | 文档同步 | `hc-doc-sync` 机制（ADR-0012：`hc-doc-sync-reviewer` + `doc-sync-checklist.md`） |

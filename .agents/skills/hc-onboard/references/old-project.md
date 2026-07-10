@@ -26,9 +26,9 @@
 
 ## 第 4 步 · 接执行口（发现 + 对齐，非占位起步）
 老项目多半"**已有一套**"验证——本步是**发现 + 对齐现有的**，不是从空占位起步：
-- **问什么**：扫出项目现有 verify / build / 测试 / CI / sandbox 配置，出"我看到的"清单。
+- **问什么**：扫出项目现有 verify / build / 测试 / CI / sandbox 配置、**接口清单导出方式**（routelist：有现成命令 / proto / OpenAPI 就着它，确认后落导出脚本），出"我看到的"清单。
 - **确认什么**：清单跟用户逐条确认；CI 跟用户定「接进 harness affected-verify（**推荐**，口径统一）还是保留项目那套」。
-- **落什么**：确认后接进来——verify / 单测 / api / e2e 现有命令**确认后填真命令**进 `workspace/verification.yaml`（仍守三态：有则真、无则 `PENDING:` / `N/A:`，见 SKILL.md ⑤）；sandbox 有现成就接真命令、没有填 `PENDING:` + 以后走 `hc-create-sandbox` 补。**接线纪律同新项目第 4 步**：skill 只教怎么标 / 怎么审，实际写 verification.yaml / 接 CI 由主 agent 串行做。
+- **落什么**：确认后接进来——verify / 单测 / api / e2e / routelist 现有命令**确认后填真命令**进 `workspace/verification.yaml`（仍守三态：有则真、无则 `PENDING:` / `N/A:`，见 SKILL.md ⑤）；routelist **输出须一行一个接口**——现成命令不满足就包一层导出脚本；sandbox 有现成就接真命令、没有填 `PENDING:` + 以后走 `hc-create-sandbox` 补。**接线纪律同新项目第 4 步**：skill 只教怎么标 / 怎么审，实际写 verification.yaml / 接 CI 由主 agent 串行做。
 
 ## 第 5 步 · 引入关联进主目录（最后一公里，五项，新老共用）
 项目内落了东西**不等于**挂进了治理网——五项检查逐项过（新项目收尾也按这五项对，见 `references/new-project.md` 第 6 步）：

@@ -1,8 +1,8 @@
 ---
 name: hc-onboard
 description: 引导式把一个工程接进 harness 控制面（新 / 老两分支均已实现）：主 agent 当接入向导，先问 新/老 分流 → 新项目走 7 步（收信息 / 搭最小骨架 / 记第一个 ADR / 接执行口 / 对抗评审 / make verify 收尾 / 交棒），每步先摆选项 + 讲取舍让用户拍再落；老项目走 8 步（定位接管 / 拆模块引导对话 / 按模块滚 扫→确认→搬进规范 / 接执行口发现+对齐现有的 / 引入关联进主目录 / 对抗评审 / 收尾 / 交棒），倒着对齐：扫出来的先经用户逐条确认才落、只收规范不改业务代码 → 派 hc-onboard-reviewer 对抗评审到过。接入点占位守「三态」（真命令 / PENDING: / N/A:，静默空=红）。产出的项目骨架 / 规范（AGENTS.md / ADR / verification 条目）本就项目专属。用户说「接入项目 / 新建项目 / 挂个工程 / onboard / 接入老项目 / 存量项目 / 对齐现有项目」时用。
-version: 6
-last_reviewed: 2026-07-08
+version: 7
+last_reviewed: 2026-07-10
 ---
 
 # 引导式把工程接进 harness（hc-onboard）
@@ -33,7 +33,7 @@ last_reviewed: 2026-07-08
 1. **收基本信息**——项目名（kebab、不撞现有工程）/ 目标 / 概述 / 栈；复述确认，先不落文件。
 2. **搭最小骨架**——`projects/<名>/` + 精简 `AGENTS.md` + `CLAUDE.md` shim。**红线：只搭壳、不搭代码结构 / 分层 / 脚手架**（那是 hc-tech-design/hc-dev 的活）。
 3. **记第一个决策 ADR**——把选型 / 结构的决策 / 备选 / 理由跟用户对齐，落项目自己的决策记录（背景→决策→备选+为何排除→影响）。
-4. **接执行口**——verify/unit/api/e2e/sandbox 三字段按**三态**（见 ⑤）逐条与用户确认后占进 `workspace/verification.yaml`；sandbox 只占位、由 `hc-create-sandbox` 单独接实。**接线本体归主 agent 串行做**。
+4. **接执行口**——verify/unit/api/e2e/sandbox 三字段/routelist 按**三态**（见 ⑤）逐条与用户确认后占进 `workspace/verification.yaml`；sandbox 只占位、由 `hc-create-sandbox` 单独接实。**接线本体归主 agent 串行做**。
 5. **对抗评审**——派 `hc-onboard-reviewer` 挑刺骨架，回改到过（判据见 ⑥）。
 6. **收尾**——`make verify` 绿 + 登记好（按 ④ 第 5 步五项对一遍）；真实证据摆给用户，不假完成（rule-0002/0003）。
 7. **交棒**——指路下游 `hc-prd`→`hc-tech-design`→`hc-dev`；提示用户"第一份需求建议先走 `hc-prd` 理清"（提示、非门禁——skill 间松耦合，ADR-0023）。
@@ -51,7 +51,7 @@ last_reviewed: 2026-07-08
 8. **交棒**——下游 `hc-prd`→`hc-tech-design`→`hc-dev`；提示"第一份需求建议先走 `hc-prd`"（提示、非门禁，ADR-0023）。
 
 ## ⑤ 占位三态规矩（关键：占位不许静默空）
-第 4 步每个接入点（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status，+可选 sandbox_reset / sandbox_seed——sandbox 拆三字段见 `docs/harness/SANDBOX_CONTRACT.md`）的值**必是三态之一**——**目标：占位看得见 + 绕不过去，防"开发过了没补"**（同 `test-cases-audit` 的「无 · 理由」逃生口思路）：
+第 4 步每个接入点（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status / routelist，+可选 sandbox_reset / sandbox_seed——sandbox 拆三字段见 `docs/harness/SANDBOX_CONTRACT.md`、routelist 见 ADR-0026）的值**必是三态之一**——**目标：占位看得见 + 绕不过去，防"开发过了没补"**（同 `test-cases-audit` 的「无 · 理由」逃生口思路）：
 
 1. **真命令**（已接实）——直接写将来能跑的命令。
 2. **`PENDING: <为啥现在空 / 补的条件>`**（待接实）——例：`PENDING: 首个接口落地后补 api 冒烟`。**`make verify` 会 warn 提醒**（机检脚本主 agent 另建），同时**项目 `AGENTS.md` 里留一条"待补"记录**，让 agent 以后进来看得见、绕不过去。
