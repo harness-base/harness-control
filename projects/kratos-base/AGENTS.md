@@ -29,3 +29,4 @@ Kratos v2 微服务 monorepo。本文件**精简**：只列工程红线 + 指针
 见 `README.md` 与控制面 `workspace/verification.yaml` 路由。最小收口：`make verify`（build+vet+lint+test）。
 
 - 待补：`sandbox_status`（查环境就绪的入口，exit 0=就绪；按 `docs/harness/SANDBOX_CONTRACT.md` 走 `hc-create-sandbox` 补，ADR-0019——现路由里标 `PENDING`，接实后删本条）。
+- 待补：`routelist`（proto 解析导出接口清单脚本，输出一行一个接口；契约对照场景用，ADR-0026——走 hc-onboard 老项目第 4 步接执行口补或专项直落脚本，现路由里标 `PENDING`，接实后删本条）。

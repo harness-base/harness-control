@@ -26,10 +26,10 @@
 ## 第 4 步 · 接执行口（接线、不接假内容）
 把项目的执行口**接上线**（不接假内容、不静默空）：
 
-- **问什么**：这项目将来怎么验证——verify（项目自检）/ unit（单测）/ api（接口测）/ e2e（端到端）/ **sandbox 三字段**（`sandbox` 起 / `sandbox_down` 停 / `sandbox_status` 查，契约见 `SANDBOX_CONTRACT.md`；可选 `sandbox_reset` / `sandbox_seed`）**这几条接入点，每条现在能接实吗**？将来脚本放哪、叫什么命令？
+- **问什么**：这项目将来怎么验证——verify（项目自检）/ unit（单测）/ api（接口测）/ e2e（端到端）/ **sandbox 三字段**（`sandbox` 起 / `sandbox_down` 停 / `sandbox_status` 查，契约见 `SANDBOX_CONTRACT.md`；可选 `sandbox_reset` / `sandbox_seed`）/ **routelist**（导出实现侧接口清单的命令，输出一行一个接口——契约对照场景消费，ADR-0026；接口定义在哪[proto / OpenAPI / 路由注册]、怎么导最稳，跟用户聊定）**这几条接入点，每条现在能接实吗**？将来脚本放哪、叫什么命令？
 - **确认什么**：每条接入点的**三态取值**（见 SKILL.md ⑤）跟用户逐条确认——现在有真命令就填真命令；接不了就填 `PENDING:` 并写清楚为什么现在空 / 补的条件；这项目压根不需要就填 `N/A:` 并写理由。
 - **落什么**：
-  - 在 `workspace/verification.yaml` 给项目**占一条**（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status 各按三态取值）——**注意隔离纪律**：本 skill **只教用户怎么标、教 reviewer 怎么审**，实际写 `workspace/verification.yaml`、接 CI、建机检脚本是**主 agent 串行接线**做（本 skill 不代跑 index/regen、不代改 workspace / CI）；
+  - 在 `workspace/verification.yaml` 给项目**占一条**（verify / unit / api / e2e / sandbox·sandbox_down·sandbox_status / routelist 各按三态取值）——**注意隔离纪律**：本 skill **只教用户怎么标、教 reviewer 怎么审**，实际写 `workspace/verification.yaml`、接 CI、建机检脚本是**主 agent 串行接线**做（本 skill 不代跑 index/regen、不代改 workspace / CI）；
   - 约定 **CI 认得它**（口子留好）；
   - 约定**将来脚本放哪、叫什么命令**（命令名先约定，**脚本本体先占位**）。
 - **sandbox 特别说明**：sandbox 复杂、**由 `hc-create-sandbox` skill 单独接实**（契约见 `docs/harness/SANDBOX_CONTRACT.md`，ADR-0019）；本 skill 里 sandbox **只留占位**（三态里多半是 `PENDING:` 或 `N/A:`），不在这里搭沙箱。**verify / ci 是本 skill 内部小步骤**、不单独成 skill。

@@ -5,7 +5,7 @@
 ## 规范（健康长什么样 / 不变量）
 
 - 接入有**成文流程**：走 `hc-onboard` skill（引导式，新项目 7 步 / 老项目 8 步，ADR-0017 / 0018）；`docs/harness/PROJECT_ONBOARDING.md` 是**口子速查 + 校验清单**（不复刻流程，rule-0012），不是口头约定。
-- 每个被管工程在 `workspace/verification.yaml` 有**一条路由**：`name` / `path` / `verify`（最小收口）/ `unit`·`api`·`e2e` + **sandbox 三字段**（`sandbox`·`sandbox_down`·`sandbox_status`，契约 `docs/harness/SANDBOX_CONTRACT.md`）——每项守**三态**（真命令 / `PENDING:理由` / `N/A:理由`，`verification-audit` 机检登记形态）。
+- 每个被管工程在 `workspace/verification.yaml` 有**一条路由**：`name` / `path` / `verify`（最小收口）/ `unit`·`api`·`e2e` / `routelist`（导出接口清单，ADR-0026） + **sandbox 三字段**（`sandbox`·`sandbox_down`·`sandbox_status`，契约 `docs/harness/SANDBOX_CONTRACT.md`）——每项守**三态**（真命令 / `PENDING:理由` / `N/A:理由`，`verification-audit` 机检登记形态）。
 - 路由登记的命令**从 harness 根原样跑得通**：脚本 CWD 无关，`path` 真存在，`make -C` 的 target 真存在。
 - 规则**随工程进 `projects/`**：工程红线在 `projects/<name>/AGENTS.md`（精简 + 指针），细规则下沉到各层 `projects/<name>/<dir>/AGENTS.md`，就近生效——不堆进根 `AGENTS.md`。
 - 每个 `AGENTS.md` 有同级 `CLAUDE.md` shim（`@AGENTS.md`），否则 Claude Code 加载不到该层规则。

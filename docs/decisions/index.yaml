@@ -126,3 +126,13 @@ decisions:
     status: accepted
     date: 2026-07-09
     file: 0025-mechanism-checkup.md
+  - id: ADR-0026
+    title: 接口契约对照线做实——routelist 接入点（脚本取数）+ agent 对比判断
+    status: accepted
+    date: 2026-07-10
+    file: 0026-contract-check-line.md
+  - id: ADR-0027
+    title: 统一回归线做实——跑存量脚本池、失败归因两分、复用 hc-script-impl
+    status: accepted
+    date: 2026-07-10
+    file: 0027-regression-line.md

@@ -37,10 +37,10 @@ tools: Read, Glob, Grep, Bash
 - **引用不悬空（rule-0009）**：ADR 里引的备选 / 现状 / 指针（链接 / 路径 / 版本 / 依赖）是否**真实可追溯**，可 Bash 核路径真在、引用的东西真存在——引用了编造的 / 不存在的 = 悬空（major）。
 
 ### ④ verification.yaml 条目对、每个接入点值是三态之一、无静默空占位（接入口硬闸）
-第 4 步给项目在 `workspace/verification.yaml` 占一条，**七个必须接入点**（`verify` / `unit` / `api` / `e2e` + **sandbox 三字段** `sandbox`·`sandbox_down`·`sandbox_status`，契约见 `docs/harness/SANDBOX_CONTRACT.md`；`sandbox_reset` / `sandbox_seed` 可选、声明了才核）**每个值必须是三态之一**——这是本 skill 相对普通 reviewer 的**命门维度**，逐接入点硬核、别抽样：
-- **条目结构对**：`workspace/verification.yaml` 里有该项目一条，`name`（= `projects/<名>/` 的名，kebab）、`path`（= `projects/<名>`，可 Bash 核路径真在）填对，**七个必须键都在**（机检只查已声明字段、整条缺键归你抓——缺 `sandbox_down` / `sandbox_status` 键 = major，占位期标 `PENDING:` 也得有键）。
+第 4 步给项目在 `workspace/verification.yaml` 占一条，**八个必须接入点**（`verify` / `unit` / `api` / `e2e` + **sandbox 三字段** `sandbox`·`sandbox_down`·`sandbox_status` + `routelist`[导出接口清单，ADR-0026]，sandbox 契约见 `docs/harness/SANDBOX_CONTRACT.md`；`sandbox_reset` / `sandbox_seed` 可选、声明了才核）**每个值必须是三态之一**——这是本 skill 相对普通 reviewer 的**命门维度**，逐接入点硬核、别抽样：
+- **条目结构对**：`workspace/verification.yaml` 里有该项目一条，`name`（= `projects/<名>/` 的名，kebab）、`path`（= `projects/<名>`，可 Bash 核路径真在）填对，**八个必须键都在**（缺 `routelist` 键同 major）（机检只查已声明字段、整条缺键归你抓——缺 `sandbox_down` / `sandbox_status` 键 = major，占位期标 `PENDING:` 也得有键）。
 - **多工程隔离（硬动作）**：`projects/` 是**多工程**目录——核**项目名 / path 不与现有工程撞**（Bash 比对 `projects/` 现有目录 + `verification.yaml` 现有 `name`），且本次接入**只 append 了自己那条、没改动别的工程**的 verification 条目 / `projects/<其它>/AGENTS.md` / 决策记录。撞名、覆盖或动了别的工程 = **major**（污染 / 覆盖他人工程）。
-- **每个接入点值是三态之一（硬动作，逐个核）**：`verify` / `unit` / `api` / `e2e` / `sandbox` / `sandbox_down` / `sandbox_status`（+已声明的 `sandbox_reset` / `sandbox_seed`）每一项的值必须是且只是下面三态之一——
+- **每个接入点值是三态之一（硬动作，逐个核）**：`verify` / `unit` / `api` / `e2e` / `sandbox` / `sandbox_down` / `sandbox_status` / `routelist`（+已声明的 `sandbox_reset` / `sandbox_seed`）每一项的值必须是且只是下面三态之一——
   - **真命令**（已接实的可执行命令，如 `make -C projects/<名> verify`）；
   - **`PENDING: <为啥现在空 / 补的条件>`**（待接实：注明为啥现在空、什么条件下补，如 `PENDING: e2e 需 sandbox 就位后接，见 ADR-xxxx`）；
   - **`N/A: <理由>`**（这项目不需要这个接入点，如 `N/A: 纯库无 e2e`）。
@@ -95,7 +95,7 @@ tools: Read, Glob, Grep, Bash
 2. **对抗式**逐维度过 ①–⑥（**老分支叠加 a–d**）——默认怀疑"已 OK"，主动证伪。**能跑就跑**：
    - Bash 核 `projects/<名>/` 目录 + `AGENTS.md` + `CLAUDE.md` shim 真实存在，`CLAUDE.md` 内容是 `@AGENTS.md`；
    - Bash 核选型 ADR 文件真在、ADR 里引的路径 / 备选 / 现状引用不悬空；
-   - **逐接入点核 verification.yaml 三态**：`verify` / `unit` / `api` / `e2e` / `sandbox` / `sandbox_down` / `sandbox_status`（+已声明可选字段）每个值是不是「真命令 / `PENDING:<理由>` / `N/A:<理由>`」三态之一，抓静默空 / 裸 TODO / 不带理由的占位；
+   - **逐接入点核 verification.yaml 三态**：`verify` / `unit` / `api` / `e2e` / `sandbox` / `sandbox_down` / `sandbox_status` / `routelist`（+已声明可选字段）每个值是不是「真命令 / `PENDING:<理由>` / `N/A:<理由>`」三态之一，抓静默空 / 裸 TODO / 不带理由的占位；
    - **grep 项目 AGENTS.md 找 `PENDING` 对应的"待补"记录**：每个标 `PENDING` 的接入点在 AGENTS.md 有没有对应待补记录闭环；
    - **grep `projects/<名>/` 下有没有越界代码结构**（分层目录 / 成型源码 / 脚手架），区分"壳"（占位空文件 / shim / 指针）与"代码结构"（该判越界）；
    - **grep 项目 AGENTS.md / ADR 有没有混进控制面术语**（`rule-00`、eval 考题号、skill 名当项目红线）——反向越界；

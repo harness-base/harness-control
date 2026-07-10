@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 被管工程接入点占位自检（ADR-0017；sandbox 契约字段 ADR-0019）：workspace/verification.yaml 里每个接入点
-#   (verify/unit/api/e2e/sandbox + sandbox_down/sandbox_status/sandbox_reset/sandbox_seed) 的值必须是**显式三态**之一——
+#   (verify/unit/api/e2e/sandbox + sandbox_down/sandbox_status/sandbox_reset/sandbox_seed + routelist[ADR-0026]) 的值必须是**显式三态**之一——
 #     · 真命令（已接实）                        → pass
 #     · "PENDING: <为啥空/补的条件>"（待接实）   → ⚠ warn 提醒（不阻断），记得补
 #     · "N/A: <理由>"（这项目不需要这个接入点）  → pass
@@ -15,7 +15,7 @@ cd "$ROOT"
 YAML="${VERIFY_YAML:-workspace/verification.yaml}"   # 可被自测以环境变量覆盖，隔离真实文件
 [ -f "$YAML" ] || { echo "  ✗ 缺 $YAML"; exit 1; }
 
-# 逐行：track 当前工程(name:)；对 verify/unit/api/e2e/sandbox(+sandbox_down/status/reset/seed) 行取值、剥尾注释与引号、判态。
+# 逐行：track 当前工程(name:)；对 verify/unit/api/e2e/sandbox(+sandbox_down/status/reset/seed)/routelist 行取值、剥尾注释与引号、判态。
 out="$(awk '
   # 剥值：trim → 整值即注释判空 → 剥行尾注释 → trim → 剥双引号再剥单引号(\047) → 再 trim（堵双/单引号包的纯空格）
   function clean(s){
@@ -29,7 +29,7 @@ out="$(awk '
     return s
   }
   /^[[:space:]]*-[[:space:]]*name:/ { p=$0; sub(/^.*name:[[:space:]]*/, "", p); p=clean(p); next }
-  /^[[:space:]]*(verify|unit|api|e2e|sandbox|sandbox_down|sandbox_status|sandbox_reset|sandbox_seed):/ {
+  /^[[:space:]]*(verify|unit|api|e2e|sandbox|sandbox_down|sandbox_status|sandbox_reset|sandbox_seed|routelist):/ {
     f=$0; sub(/:.*/, "", f); gsub(/[[:space:]]/, "", f)
     v=$0; sub(/^[^:]*:[[:space:]]*/, "", v); v=clean(v)
     U=toupper(v)                                                                            # 前缀/占位词大小写不敏感

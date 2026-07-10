@@ -27,6 +27,7 @@ related_docs:
 - `verify`：最小收口检查命令。
 - `unit` / `api` / `e2e`：各层测试命令与工作目录。
 - `sandbox` / `sandbox_down` / `sandbox_status`（+ 可选 `sandbox_reset` / `sandbox_seed`）：E2E 需要的环境，按 **sandbox 契约**拆显式字段（起 / 停 / 查，形式无关：docker / 虚拟机 / 本地 / 远程，由工程实现、控制面只调）——契约见 `SANDBOX_CONTRACT.md`，接实走 `hc-create-sandbox` skill（ADR-0019）。
+- `routelist`：导出**实现侧接口清单**的命令（输出一行一个接口）——接口契约对照场景消费（`testing-flow-contract-check.md`，ADR-0026）；onboard 接执行口时建（接口定义在 proto / OpenAPI / 路由注册里就写个导出脚本）。
 
 每个接入点值守**三态**（ADR-0017，`scripts/verification-audit.sh` 机检，进 `make verify`）：**真命令**（已接实）/ **`PENDING: <理由>`**（待接实，⚠ 提醒 + 工程 `AGENTS.md` 留一条待补记录）/ **`N/A: <理由>`**（这项目不需要）；静默空 / 无理由 / 裸 `TODO` / `<占位>` = ✗ 红。目的：占位**看得见 + 绕不过去**，防"开发过了却没补"。
 

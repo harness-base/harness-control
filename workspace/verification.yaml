@@ -7,7 +7,8 @@
 #   · "N/A: <理由>"（这项目不需要这个接入点）
 #   静默空 / 无理由 / 裸 TODO / <占位> = ✗ 红。
 # sandbox 按契约拆三字段：sandbox（起）/ sandbox_down（停）/ sandbox_status（查，exit 0=就绪）
-#   （+可选 sandbox_reset / sandbox_seed）；接实走 hc-create-sandbox skill，契约见 docs/harness/SANDBOX_CONTRACT.md。
+#   （+可选 sandbox_reset / sandbox_seed）；接实走 hc-onboard / hc-create-sandbox skill，契约见 docs/harness/SANDBOX_CONTRACT.md。
+# routelist：导出实现侧接口清单的命令（输出一行一个接口），契约对照场景消费（ADR-0026）；onboard 接执行口时建。
 version: 1
 projects:
   - name: kratos-base
@@ -21,6 +22,7 @@ projects:
     sandbox: "make -C projects/kratos-base sandbox-up"        # 起（E2E 所需环境；契约见 docs/harness/SANDBOX_CONTRACT.md）
     sandbox_down: "make -C projects/kratos-base sandbox-down"  # 停
     sandbox_status: "PENDING: 按 SANDBOX_CONTRACT 补 status 入口（走 hc-create-sandbox，ADR-0019 follow-up）"
+    routelist: "PENDING: 待写 proto 解析脚本导出接口清单（走 hc-onboard 老项目第4步接执行口补或专项直落；契约对照场景用，ADR-0026）"  # 导出实现侧接口清单（一行一个接口）
 
 # 示例（新项目接入后，hc-onboard 按「三态」填；真内容后补，见 ADR-0017 / 0019）：
 # projects:
@@ -33,3 +35,4 @@ projects:
 #     sandbox:        "PENDING: 要跑 e2e 时走 hc-create-sandbox 接实"   # 起（三字段见 SANDBOX_CONTRACT.md）
 #     sandbox_down:   "PENDING: 同上，随 sandbox 一起接"                # 停
 #     sandbox_status: "PENDING: 同上，随 sandbox 一起接"                # 查（exit 0=就绪）
+#     routelist:      "PENDING: 首个接口落地后补导出脚本"                # 导出接口清单（契约对照用）
