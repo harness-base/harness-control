@@ -9,4 +9,7 @@
 - `VERIFICATION_ROUTING.md` — 验证路由
 - `adversarial-review.md` — 对抗评审 pattern（多视角并行 review）
 - `doc-sync-checklist.md` — 文档同步对照表（doc-sync checklist）
+- `testing-flow-api.md` — 测试流程分线：api 用例线
+- `testing-flow-e2e.md` — 测试流程分线：e2e 用例线
+- `testing-flow-script.md` — 测试流程分线：测试脚本线（写跑一体）
 - `testing-flow.md` — 测试流程总纲（testing flow）

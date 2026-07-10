@@ -1,7 +1,7 @@
 # e2e 测试用例：<主题>
 
 > e2e 用例对需求（验收点 AC + 功能点 FP）的覆盖。本表只管"用例齐不齐、覆盖全不全"，**不管"过没过"**（执行结果另起一段机制）。
-> 流程总纲见 `docs/harness/testing-flow.md` 的「e2e 用例线」；由 `hc-e2e-qa` 写、`hc-e2e-reviewer` 审。产物落 `docs/test-cases/<id>/test-cases.md`，登记 `docs/test-cases/index.yaml`。
+> 流程见 `docs/harness/testing-flow-e2e.md`（testing-flow 总纲的 e2e 分线）；由 `hc-e2e-qa` 写、`hc-e2e-reviewer` 审。产物落 `docs/test-cases/<id>/test-cases.md`，登记 `docs/test-cases/index.yaml`。
 >
 > **e2e 特性**：走完整业务闭环（开页 → 点按钮 → 填表 → 提交 → 看状态），playwright / 浏览器插件级模拟点击。每个 UX 交互点 × {成功, 失败, 边界} 都要有用例（见顶部覆盖矩阵）；预期锚唯一真实信号（rule-0009），不靠脆弱 toast 文案；失败必须**受控**（不崩、不白屏、不 5xx）。
 >

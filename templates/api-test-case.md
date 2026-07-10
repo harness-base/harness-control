@@ -1,7 +1,7 @@
 # api 测试用例：<主题>
 
 > api 用例对接口来源（契约 / 指定源）的**一一对应**覆盖。本表只管"用例齐不齐、覆盖全不全"，**不管"过没过"**（执行结果另起一段机制）。
-> 流程总纲见 `docs/harness/testing-flow.md` 的「api 用例线」；由 `hc-api-qa` 写、`hc-api-reviewer` 审。产物落 `docs/test-cases/<id>/test-cases.md`，登记 `docs/test-cases/index.yaml`。
+> 流程见 `docs/harness/testing-flow-api.md`（testing-flow 总纲的 api 分线）；由 `hc-api-qa` 写、`hc-api-reviewer` 审。产物落 `docs/test-cases/<id>/test-cases.md`，登记 `docs/test-cases/index.yaml`。
 >
 > **接口来源（硬地板，与 e2e「缺则略」不同——api 无源即停）**：优先级 ① `docs/designs/<id>/api-contract.md`（`hc-tech-design` 产的接口契约）＞ ② 用户指定源（proto / OpenAPI / 路由表 / 现有接口代码）＞ ③ 都没有 → **MUST STOP**：由 `hc-api-qa` 交回总监提醒用户"没接口来源、无法确定测什么"，绝不凭空臆造接口（rule-0008）。
 >

@@ -5,12 +5,15 @@ date: 2026-07-01
 last_updated: 2026-07-01
 source_files: []
 related_docs:
+  - 0024-test-script-line.md
   - 0014-hc-test-orchestration.md
   - 0015-hc-tech-design.md
   - ../harness/testing-flow.md
 ---
 
 # ADR-0016：hc-test api 用例线
+
+> **更新（2026-07-08）**：api 用例线明细已随 [ADR-0024](0024-test-script-line.md) 从 testing-flow.md 拆至 `../harness/testing-flow-api.md`（分线文件）——下文所指「testing-flow.md『api 用例线』小节」以该分线文件为准。下方叙述保留历史原样。
 
 ## 背景
 

@@ -1,21 +1,23 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：level: L2 ｜ task: features-retirement
+> 元：level: L3 ｜ task: test-script-line
 
-## 当前：features 体系退役（用户拍：无门槛、松耦合、目录整删）
-- **用户拍的方向（2026-07-08）**：① rule-0001 **退役而非换锚**——动业务代码**没有任何硬门槛**；各 skill 松耦合、不强依赖其他 skill 产物、可独立工作；关联 skill 只加**提示**（指路 hc-prd 等上游）不硬耦合；hc-dev 自身走 superpowers 先 plan（这是 dev 内部纪律、非跨 skill 耦合）。② `docs/features/` **目录整体删掉**（含 6 存量包/README/index.yaml）+ `templates/feature-package.md`。③ 先退役、后 AGENTS.md 瘦身，分两批。
-- **流程**：删规则走 hc-add-rule（ADR-0020 后首次实战"删"分支：引用点全仓 grep 要害 + eval 指针闭合 + hc-rule-reviewer 多视角巡查）。
-- [x] 摸清全部引用点（行级 grep：~20 活文档 + 历史文档不改写清单）
-- [x] ADR-0023 定稿登记（决策 4 条：rule-0001 删除编号不复用 / 目录整删 / eval 001 下架 / 历史不改写以本 ADR 为准；受影响 skill 栏如实）
-- [x] 执行：AGENTS.md 删 rule-0001（规则段加编号空缺说明）+ rules-index regen；`git rm` docs/features/（8 文件）+ templates/feature-package.md + eval prompts/001 + 三索引 regen；eval index 注释下架；verify-control-plane 摘 features audit；hc-dev（description/② 吃上游软提示/⑧ 删条，v4）+ worker 双栈"需求切片"；hc-onboard（3 处交棒话术 + refs 2 处，v6）；hc-tech-design（:73，v5）；doc-sync-checklist / CURRENT_STATUS / 根 README / PROJECT_ONBOARDING（frontmatter+2 处）/ project-agents / prds README+index / kratos AGENTS×3（死链删）/ ADR-0002 frontmatter
-- [x] hc-self-evolution references 7 份口径刷新（agent 做，含 gates-hooks 等 8 处清单外残留；历史案例按纪律保留）
-- [x] hc-rule-reviewer 3 视角并行巡查（对照表 6/4+5/7+8 行分组）：逮出 5 major+5 minor 全修——CONTEXT_LOADING L3 档 / templates/prd.md 头注 / eval 010 引已删 001+闸门项 / docs/README 路由 / **rule-0007 本体"立了 feature"死触发**（顺带改措辞+考题 011 跟+regen）+ minors（test-case 模板 / eval 015 / hc-add-rule :30 / 夹具编号）；self-evolution-plan 按 reviewer 推荐留历史
-- [x] 收尾 eval：**yellow → 4 项 warn 全修平**（`docs/eval/task-reviews/20260708T080252Z-features-retirement/`；014/rule-0002/0003 pass；010/011 的 findings：prds README 正文"派生 feature 包"+index schema feature 字段 / hc-dev:70"立了 feature"全仓最后一处 / ADR 连带清单未回填——已全修+回填，活文档零残留终核过）
-- [x] make verify + docs-audit（57 篇）+ prds-audit + lessons-promote-check.test 全绿
-- [ ] 提交（独立 PR）
+## 当前：hc-test 脚本线做实 + testing-flow 拆分（用户逐点拍，2026-07-08）
+- **用户拍的口径**：① 脚本放**工程里**（`projects/<工程>/test/<需求id>/`，每需求独立；基础动作库跨需求共享）；② **写和跑（调通）一体、回归独立**——三步：写脚本 → sandbox 里跑本需求 case + 修（脚本 bug 改脚本 / 实现 bug 报 hc-dev，全绿或如实归因才算完）→ 回归关联项（存量脚本池，独立场景、本批只留位不实现）；③ **case 镜像用例格式**（一条用例一个 case、case 名锚 TC-NN）+ 抽象共享基础动作层；④ worker 写（hc-script-impl）、reviewer 审**对齐 + 明显 bug**（hc-script-reviewer）；⑤ **testing-flow 拆分**：总纲 + 3 分线平铺 docs/harness/（testing-flow-{e2e,api,script}.md），收纳原则（私有→references / 共享→docs/harness）成文进 docs/README。
+- [x] ADR-0024 定稿登记（index-audit 绿）
+- [x] testing-flow 拆分：总纲 150→70 行 + testing-flow-{e2e,api}.md 原文搬移 + testing-flow-script.md 新写（三步/判据/卡门/双向锚/rule-0014 边界）
+- [x] hc-script-impl + hc-script-reviewer 双栈 4 文件（workflow 建，TOML 校验过、约束主体进上下文、分工界线清）+ config 注册 + 三索引 regen
+- [x] hc-test SKILL v4（⑤ 脚本线编排段/场景触发/两层防线/门禁口径/description）+ hc-dev v5 交棒口径
+- [x] 指针跟改：8 文件（4 agent 双栈）改指分线（workflow 首轮漏 e2e-reviewer 双栈 2 处残留，对抗验证逮出已补）；doc-sync-checklist 加 testing-flow 拆分行；CURRENT_STATUS
+- [x] docs/README 收纳原则成文（私有→references / 共享→docs/harness，判据=消费方范围）
+- [x] make verify + docs-audit（61 篇）绿；optimization-log 本批 3 条捞获全销
+- [x] 对抗验证（workflow 4 镜头）：搬移零丢失 clean；挖出 4 major+5 minor——**API-NN 是凭空口径**（api 用例编号其实也是 TC-n、e2e/api 编号空间重叠，两镜头独立逮）/ e2e-reviewer 双栈残留总纲指针 / hc-create-sandbox・process-coverage 还标脚本线占位 / 模板头注・ADR-0016 指已拆走的小节 / reviewer"篡改预期"与无 Write 自相矛盾 / "分阶段实现整体发布"句移除无交代
+- [x] 修 9 findings 全链：锚改「TC-NN+线别消歧」（9 文件）；残留指针补；两 skill 状态翻转+version bump；模板头注指分线；ADR-0016 前向指针；reviewer 改不落盘反向验证；ADR-0024 受影响栏回填（create-sandbox/self-evolution 改"是"）+ 影响段交代定位句移除；checklist 引用方名单补 templates。make verify + docs-audit(61) + TOML 复验绿
+- [x] 收尾 eval：**yellow → 1 warn 修平**（`docs/eval/task-reviews/20260709T103753Z-test-script-line/`；010/011/014/rule-0015 全 pass、搬移全段机械 diff 逐字节一致、9 项修复逐条核真、机检独立重跑绿；warn=ADR-0014 更新注"脚本线仍占位"同型第三处漏网 → 已加 0024 前向指针注 + related_docs）
+- [ ] 提交独立 PR
 
-## Review（features-retirement）
-- **做了什么**：features 体系退役（ADR-0023，用户拍三点：无门槛/目录整删/先退役后瘦身）——rule-0001 删除（编号永久空缺）、docs/features/ 8 文件 + feature-package 模板 + eval 001 考题整删、verify 摘机检；hc-dev 吃上游改"prds 有则吃、无则提示走 hc-prd、可独立干"（提示非门禁）；~35 个活文档跟改；顺带清了 rule-0007 的"立了 feature"死触发。
-- **三层防线各逮到谁**：hc-rule-reviewer 巡查逮 10 处我终核 grep 漏的（字面不带路径的"立了 feature"、eval 考题互引 001）；eval 又逮 4 处巡查也漏的（prds README 正文语义句、hc-dev:70 最后一处、ADR 清单未回填）——grep 口径盲区靠语义审补，两层不可互替再次实证。
-- **哲学落地**：skill 间松耦合（各自可独立工作、上游产物有则吃、关联处只提示不硬卡）首次成文进 ADR；硬门禁只留真红线。
+## Review（test-script-line）
+- **做了什么**：hc-test 脚本线做实（ADR-0024，用户拍：写跑一体三步——写[case 镜像用例锚 TC-NN+线别消歧、共享基础动作层]→sandbox 卡门跑本需求+修[脚本 bug 改脚本/实现 bug 报 hc-dev、全绿或如实归因]→入池[工程内 test/<需求id>/、回归资产]）+ testing-flow 拆分（总纲 70 行+3 分线、做哪线读哪份）+ hc-script-impl/hc-script-reviewer 双栈 + 收纳原则成文（私有→references/共享→docs/harness）。
+- **对抗+eval 的价值**：对抗 4 镜头逮出 **API-NN 是凭空口径**（api 用例编号其实也是 TC-n、e2e/api 编号空间重叠——两镜头独立逮到，photo 上线第一天锚就会全断）+ 8 项漂移；eval 又逮同型第三处漏网（ADR-0014 更新注）——"状态翻转要扫全部复述点"这坑本批扫了三网（skill→references→旧 ADR 注）才净。
+- **质量**：搬移经评委全段机械 diff 逐字节一致；机检（verify/docs-audit 61/skills-index/22 份 TOML）独立重跑绿；四层口径（SKILL↔总纲↔分线↔agent）一致。

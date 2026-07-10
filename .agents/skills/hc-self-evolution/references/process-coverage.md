@@ -8,7 +8,7 @@
 - 每类**反复发生**的任务类型都有可走的流程：要么一支 skill（`.agents/skills/<name>/SKILL.md`），要么 AGENTS.md 里明文的既定步骤。盘点口径（种子，按开发全链路）：**接入工程（新/老）/ 产出需求 / 技术设计 / 实现（含 bugfix·重构·迁移）/ 产出测试用例（e2e·api）/ 测试环境 sandbox / 测试脚本 / 统一回归 / 规则加改删 / git 写操作 / 评审收尾 / loop-engineering**。
 - 流程**挡在临场之前**：高返工 / 高风险的任务（动业务代码、改架构、做迁移）先进流程再动手——如 `hc-dev` 走 superpowers 先 plan（brainstorming → writing-plans → 实现）、`hc-tech-design` 全明确 + 用户审核才落稿。这是各 skill 的**内部纪律**；跨 skill 硬门禁已随 ADR-0023 退役（skill 间松耦合，关联处只留指路提示）。
 - 流程**不淘汰旧的**就是债：一个流程被更好的范式取代后，旧 skill / 旧步骤必须改造或退场，不能两套并存让 agent 选错。
-- 流程之间**接力关系明确**：上下游写在 description / 正文里，不靠 agent 猜。主链现状：`hc-onboard`（接入）→ `hc-prd`（需求）→ `hc-tech-design`（design.md + 接口契约）→ `hc-dev`（实现）∥ `hc-test`（e2e/api 用例）→ `hc-create-sandbox`（环境）→ 脚本 / 回归（占位）。测试段的接力与各线实现状态**唯一真相源 = `docs/harness/testing-flow.md`**，skill/ADR 引用不复制。
+- 流程之间**接力关系明确**：上下游写在 description / 正文里，不靠 agent 猜。主链现状：`hc-onboard`（接入）→ `hc-prd`（需求）→ `hc-tech-design`（design.md + 接口契约）→ `hc-dev`（实现）∥ `hc-test`（e2e/api 用例）→ `hc-create-sandbox`（环境）→ 脚本（`hc-script-impl`→`hc-script-reviewer`，写跑一体 ADR-0024）→ 回归（占位）。测试段的接力与各线实现状态**唯一真相源 = `docs/harness/testing-flow.md`**，skill/ADR 引用不复制。
 - 覆盖盘点本身可复核：技能索引 `.agents/skills/README.md`（`skills-index` 自动生成、`--check` 防漂移）+ 子 agent 索引 `.claude/agents/README.md`（`dir-index` 自动生成）——「索引里有没有这支 skill」机器能查，「这类任务该不该有 skill」要人判。
 
 ## 怎么检索现状（索引 / 文件 / 机器检查入口）
@@ -52,7 +52,7 @@ bash "$ROOT/scripts/skills-index.sh" --check
     - `实现 / bugfix / 重构 / 迁移` = hc-dev✓（写代码统一入口→开发总监编排式，ADR-0009→0021：吃设计方案[有方案照方案拆、契约定死不擅改]、源驱动分层 worker 并行[契约为接缝]、实现↔契约对账、UI 视觉还原纪律；迁移子模式逐条核源 / 禁凭记忆）
     - `产出用例` = hc-test✓（e2e 线 ✅ ADR-0014 + api 线 ✅ ADR-0016）
     - `测试环境 sandbox` = hc-create-sandbox✓ + `SANDBOX_CONTRACT.md` 契约（ADR-0019）
-    - `测试脚本` / `接口契约对照` / `统一回归` = **缺口**（testing-flow 🔒 占位，全量设计已留位、加时填空不重构）
+    - `接口契约对照` / `统一回归` = **缺口**（testing-flow 🔒 占位，全量设计已留位、加时填空不重构；`测试脚本` 已实现 ADR-0024——各线实况以 testing-flow.md 场景表为准，别在这复刻）
     - `规则加改删` = hc-add-rule✓（ADR-0020 扩成统一入口，带关联对照表 + hc-rule-reviewer）
     - `git 写操作` = hc-git-workflow✓（ADR-0020：三档分级表 + 发布前起手式）
     - `评审收尾` = rule-0005 + hc-eval 子 agent（成文，非 skill，可接受）
@@ -71,7 +71,7 @@ bash "$ROOT/scripts/skills-index.sh" --check
 
 ## 修复用哪个操作 skill / 脚本
 
-- **某任务类型无流程 → 新建 skill**：用 `skill-creator`（写 `.agents/skills/<name>/SKILL.md`），按 `tasks/self-evolution-plan.md`「构建步骤」grounded 写，写完跑 `bash scripts/skills-index.sh`（重生成 `README.md`）→ `make verify` 收口（含 `skills-index --check`）。优先补（按主链缺口）：**测试脚本线 + 统一回归**（testing-flow 🔒 占位——填空、不重构 skill 形态）（hc-dev 吃设计方案已由 ADR-0021 落成流程步骤）、loop-engineering 流程。
+- **某任务类型无流程 → 新建 skill**：用 `skill-creator`（写 `.agents/skills/<name>/SKILL.md`），按 `tasks/self-evolution-plan.md`「构建步骤」grounded 写，写完跑 `bash scripts/skills-index.sh`（重生成 `README.md`）→ `make verify` 收口（含 `skills-index --check`）。优先补（按主链缺口，实况以 testing-flow.md 场景表为准）：**接口契约对照 + 统一回归**（testing-flow 🔒 占位——填空、不重构 skill 形态；测试脚本线已实现 ADR-0024）、loop-engineering 流程。
 - **旧流程该换 → 改造而非并存**：改对应 `SKILL.md` 正文 + 更新 frontmatter `version` / `last_reviewed`；范式级改动写 ADR（`templates/adr.md`，必填"受影响 skill"栏，rule-0007）并回顾连带 skill。测试段流程变更只改 `docs/harness/testing-flow.md`（唯一真相源），引用方不复制。
 - **流程成文但不必成 skill（如收尾评审）→ 写进 AGENTS.md**：用 `hc-add-rule`（规则加/改/删统一入口，ADR-0020）把步骤落成就近规则 + 登记 catalog，避免污染常驻技能列表。
 - **改完一律**：`make verify`（结构 + skills/rules 索引 + shim 全过）→ 把这次"补了哪类流程 / 退了哪个旧流程"记进 `tasks/lessons.md`（rule-0011），反复出现的晋升成规则。

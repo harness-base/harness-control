@@ -1,7 +1,7 @@
 ---
 name: hc-create-sandbox
 description: 引导式给被管工程把 sandbox 从 PENDING 接实：按 SANDBOX_CONTRACT 建 起/停/查(+可选 reset/seed)，聊形式源驱动不预设、真跑验收[双 up 验幂等+status 翻转]、接线 verification.yaml 三字段、派 hc-sandbox-reviewer 对抗评审；用户说「接 sandbox / 建沙箱 / 补 sandbox_status / 测试环境接实」时用。
-version: 2
+version: 3
 last_reviewed: 2026-07-08
 ---
 
@@ -18,7 +18,7 @@ last_reviewed: 2026-07-08
 ## ① 何时用 / 何时不用
 - **用**：给**已接入的工程**把 sandbox 接实——`verification.yaml` 里 `sandbox` / `sandbox_down` / `sandbox_status` 还是 `PENDING:`（或缺 status 这类不全），要按契约建齐 起 / 停 / 查（+按需 reset / seed）并接线。用户说「接 sandbox / 建沙箱 / 补 sandbox_status / 测试环境接实 / 把沙箱接起来」时用。
 - **不用**：
-  - **跑测试 / 用例转脚本** → `hc-test` 脚本线（**占位中**；sandbox 是它的硬前置，脚本线跑前的运行时卡门 `up → status` 归脚本线，不归本 skill）；
+  - **跑测试 / 用例转脚本** → `hc-test` 脚本线（**已实现**，ADR-0024 写跑一体；sandbox 是它的硬前置，脚本线跑前的运行时卡门 `up → status` 归脚本线，不归本 skill）；
   - **把工程接进 harness** → `hc-onboard`（那里 sandbox 只留三态占位，接实来这）；
   - **写功能 / 改业务代码** → `hc-dev`。
 - 一句话边界：本 skill 只建"**环境的 起 / 停 / 查**"这层测试基础设施并接线，**不写测试、不跑测试、不动业务代码**。
