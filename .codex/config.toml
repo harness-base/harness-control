@@ -97,3 +97,27 @@ config_file = "agents/hc-script-impl.toml"
 [agents.hc-script-reviewer]
 description = "独立测试脚本审稿员（hc-test 脚本线 review 步，挑刺）：两块判断——对齐（case↔用例一一对照：无漏 case/无幽灵 case/断言忠于用例预期没测歪没为绿弱化）+ 明显 bug（断言空转恒真/共享 helper 误用/sandbox 卡门缺失/硬编端口环境凭据/case 顺序耦合/清理缺失），另审运行报告如实性（声称全绿须有运行输出证据，rule-0002/0003）。只评不改，逻辑≠hc-e2e-reviewer/hc-api-reviewer（审用例文档）、≠hc-code-reviewer（审业务代码）。免 API key。"
 config_file = "agents/hc-script-reviewer.toml"
+
+# ── hooks（ADR-0025 接线；官方 schema：HooksToml——事件数组 × MatcherGroup{matcher?, hooks[]} × command handler）──
+# 验证状态：PENDING——本机 codex 二进制损坏（悬空软链）无法真跑；接线按 developers.openai.com/codex/config-schema.json。
+# 真机验证 checklist（四项已知风险，HOOKS.md 同记）：
+#   ① stdin JSON 字段名可能与 Claude 不同（Claude 侧用 jq .tool_input.command）——字段不同改下面 jq 路径即可，脚本两侧共用；
+#   ② matcher="shell" 是按 Codex 常见工具名猜的（schema 里 matcher 是自由 string 无枚举）——若实际 tool 名不同（如 local_shell），PreToolUse 会静默永不触发，真机先核工具名；
+#   ③ timeout 单位按毫秒填（schema 未定义单位）——若实际是秒需除以 1000；
+#   ④ hook 执行 cwd 未定义——脚本内已用仓根定位，但真机核相对路径 scripts/*.sh 能否解析。
+[hooks]
+PreToolUse = [
+  { matcher = "shell", hooks = [
+    { type = "command", command = "jq -r '.tool_input.command // .command // empty' | bash scripts/hook-policy.sh", timeout = 10000 }
+  ] }
+]
+Stop = [
+  { hooks = [
+    { type = "command", command = "bash scripts/stop-check.sh", timeout = 60000 }
+  ] }
+]
+UserPromptSubmit = [
+  { hooks = [
+    { type = "command", command = "bash scripts/correction-nudge.sh", timeout = 15000 }
+  ] }
+]

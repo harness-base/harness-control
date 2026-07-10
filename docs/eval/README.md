@@ -18,12 +18,12 @@ related_docs:
 
 ## 何时触发（rule-0005）
 
-- **L2 以上任务** + **关键决策点**（能不能开工 / 测试够不够 / 验证结论分类对不对）收尾前必须过。
-- L0 / L1 轻量任务不触发。
+- **命中判据的任务**（多步改产物 / 写了 ADR / 动业务代码）+ **关键决策点**（能不能开工 / 测试够不够 / 验证结论分类对不对）收尾前必须过（ADR-0025：判据直接化，todo 标 `eval: 要`）。
+- 轻量问答 / 琐碎修补不触发（todo 标 `eval: 不要`）。
 
 ## 怎么跑
 
-**默认（免 key，推荐）**：让 **hc-eval 子 agent** 跑——它用当前会话的模型打分，无需任何 API key / curl。**两个运行时都配好了**：Claude Code 用 `.claude/agents/hc-eval.md`，Codex 用 `.codex/agents/hc-eval.toml`（在 `.codex/config.toml` 注册）。主 agent 通过子 agent 机制调它，传：任务档位、candidate、要套用的 prompts。
+**默认（免 key，推荐）**：让 **hc-eval 子 agent** 跑——它用当前会话的模型打分，无需任何 API key / curl。**两个运行时都配好了**：Claude Code 用 `.claude/agents/hc-eval.md`，Codex 用 `.codex/agents/hc-eval.toml`（在 `.codex/config.toml` 注册）。主 agent 通过子 agent 机制调它，传：任务上下文（做了什么 / 命中哪条 rule-0005 判据）、candidate、要套用的 prompts。
 
 **可选（CI / headless，需 key）**：
 

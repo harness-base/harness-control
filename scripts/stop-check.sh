@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Stop hook：agent 收尾时——若 todo 声明 L2+，必须有对应 eval 评审产出（rule-0005）；并提醒记 lessons。
+# Stop hook：agent 收尾时——若 todo 声明 eval: 要（或旧 L2+ 标注），必须有对应 eval 评审产出（rule-0005）；并提醒记 lessons。
 # Claude Code 在 Stop 事件调用本脚本；exit 2 = 拦住收尾并把 stderr 反馈给 agent，exit 0 = 放行。
 set -uo pipefail
 # 递归保险：headless 兜底(turn-backstop)自触发的钩子带 HARNESS_TRIAGE=1，直接放行
@@ -15,26 +15,32 @@ transcript="$(printf '%s' "$payload" | sed -nE 's/.*"transcript_path"[[:space:]]
 
 [ -f "$TODO" ] || exit 0
 
-# 从 todo 读声明的档位与 task
-level="$(grep -oE 'level:[[:space:]]*L[0-9]' "$TODO" | grep -oE 'L[0-9]' | head -1)"
-task="$(grep -oE 'task:[[:space:]]*[A-Za-z0-9._-]+' "$TODO" | sed -E 's/task:[[:space:]]*//' | head -1)"
+# 从 todo 读声明的 eval 标注与 task（ADR-0025：加载档位退役，标注改 eval: 要|不要 直接声明；
+#   兼容旧 level: L2+ 标注）。只认【当前任务节】里的「> 元：」声明行——
+#   ① 归档/暂挂块残留的旧标注不误触发（同 finishing_now 的边界，防归档残留误拦）；
+#   ② 正文里引用 "eval: 要" 字样（如格式说明）不误匹配（只有元行算声明）。
+cur_meta="$(awk '/^##[[:space:]]*(暂挂|归档|已闭|完成|[Aa]rchive)/{exit} {print}' "$TODO" | grep -E '^>[[:space:]]*元：' | head -1)"
+need_eval=""
+printf '%s' "$cur_meta" | grep -qE 'eval:[[:space:]]*要' && need_eval=1
+printf '%s' "$cur_meta" | grep -oE 'level:[[:space:]]*L[0-9]' | grep -qE 'L[2-9]' && need_eval=1
+task="$(printf '%s' "$cur_meta" | grep -oE 'task:[[:space:]]*[A-Za-z0-9._-]+' | sed -E 's/task:[[:space:]]*//' | head -1)"
 
-# 仅在声明 L2+ 且【当前任务节】要收尾时才强制 eval。
+# 仅在声明 eval: 要 且【当前任务节】要收尾时才强制 eval。
 # 关键：只在当前任务节（到第一个 ## 暂挂/归档 标题之前）找收尾段——否则暂挂/归档块里的旧 Review
 #       会让闸 mid-task 误拦（lessons 2026-06-27 两条）。收尾段标题认 Review/评审/复盘（大小写不限）。
-# 档位 / 收尾段声明靠 agent 诚实——见 docs/harness/HOOKS.md 的局限说明。
+# eval 标注 / 收尾段声明靠 agent 诚实——见 docs/harness/HOOKS.md 的局限说明。
 finishing_now() {
   # 归档/暂挂边界：扫到它就停（含"已闭/完成"，本仓归档段常用）。收尾段标题须以 review/评审/复盘 起头
   # 且后接非字母或行尾——锚定整词，免得 "reviewer"（review 是其子串）被误当 ## Review 段（lessons 2026-06-29）。
   awk '/^##[[:space:]]*(暂挂|归档|已闭|完成|[Aa]rchive)/{exit} {print}' "$TODO" \
     | grep -qiE '^##[[:space:]]+(review|评审|复盘)([^[:alpha:]]|$)'
 }
-if [ -n "$level" ] && [ "${level#L}" -ge 2 ] 2>/dev/null && finishing_now; then
+if [ -n "$need_eval" ] && finishing_now; then
   found=""
   [ -n "$task" ] && found="$(ls -d "$REVIEWS_DIR/"*"-$task" 2>/dev/null | head -1)"
   if [ -z "$found" ]; then
-    echo "⛔ 收尾拦截（rule-0005）：todo 声明 $level 且已补 Review（=收尾），但没找到 task「${task:-未声明}」的 eval 评审产出。" >&2
-    echo "   请先跑 eval 再收尾（交互：用 hc-eval 子 agent，免 key；CI：make eval）；确属轻量就把 todo 的 level 降到 L1。" >&2
+    echo "⛔ 收尾拦截（rule-0005）：todo 声明 eval: 要 且已补 Review（=收尾），但没找到 task「${task:-未声明}」的 eval 评审产出。" >&2
+    echo "   请先跑 eval 再收尾（交互：用 hc-eval 子 agent，免 key；CI：make eval）；确属轻量（判据一条没中）就把 todo 标 eval: 不要。" >&2
     exit 2
   fi
 fi

@@ -30,6 +30,9 @@ make hooks   # git config core.hooksPath .githooks
 
 - 疑似密钥 / token / Authorization header。
 - 高危命令痕迹（`git reset --hard`、`rm -rf /` 等）。
+- 裸强推（`git push --force` / `-f`，非 `--force-with-lease`）与直推 main（含 `HEAD:main` / `+main` / `:main` / `refs/heads/main` / `--mirror` 形态，ADR-0025）。
+
+**已知误伤面（预期、可接受）**：Bash 命令里**引用**违禁串也会被拦（如 `echo "git push --force 危险"`、`sed` 修复类命令）——发生率低，agent 换写法即可；`scripts/hook-policy.test.sh` 的违禁例句会触发 pre-commit，属**预期误报**，提交该文件用 `--no-verify`（报错输出自带此提示）。
 
 `.githooks/pre-push` 跑 `make verify`。
 
@@ -41,10 +44,10 @@ make hooks   # git config core.hooksPath .githooks
 
 `.claude/settings.json` 的 Stop hook 在 agent 收尾时调 `scripts/stop-check.sh`：
 
-- 若 `tasks/todo.md` 声明 `level: L2`+ **且已补 `## Review` 段（= 在收尾，rule-0013）**，检查 `docs/eval/task-reviews/` 是否有本 task 的评审产出；没有 → 拦住收尾，提示先 `make eval`（rule-0005）。**只在收尾时拦、任务进行中（还没补 Review）不拦**——否则多轮 L2+ 任务每个 turn-end 都被误拦（lessons 2026-06-27）。由 `scripts/stop-check.test.sh` 自测。
+- 若 `tasks/todo.md` 声明 `eval: 要`（兼容旧 `level: L2`+ 标注）**且已补 `## Review` 段（= 在收尾，rule-0013）**，检查 `docs/eval/task-reviews/` 是否有本 task 的评审产出；没有 → 拦住收尾，提示先 `make eval`（rule-0005）。**只在收尾时拦、任务进行中（还没补 Review）不拦**——否则多轮 L2+ 任务每个 turn-end 都被误拦（lessons 2026-06-27）。由 `scripts/stop-check.test.sh` 自测。
 - （原"踩坑记 lessons"的 exit-0 stderr 死提醒已删——它不注入上下文、没人看见；纠错提醒改由下方 UserPromptSubmit 钩子承担。）
 
-**局限（诚实说）**：档位与 Review 都由 agent 在 `todo.md` 里自己声明，所以是"半强制"——声明了 L2+ 且补了 Review 却漏 eval 会被抓，但故意低报档位、或不补 `## Review` 段，仍能绕过。比纯靠自觉强很多，不是 100% 自动。
+**局限（诚实说）**：`eval:` 标注与 Review 都由 agent 在 `todo.md` 里自己声明，所以是"半强制"——声明了 `eval: 要` 且补了 Review 却漏 eval 会被抓，但故意标 `eval: 不要`、或不补 `## Review` 段，仍能绕过。比纯靠自觉强很多，不是 100% 自动。
 
 ## 自进化兜底（Stop hook 第二段，ADR-0005）
 
@@ -67,4 +70,4 @@ make hooks   # git config core.hooksPath .githooks
 - **顺带整理提醒（step 4）**：同一钩子还跑 `scripts/lessons-promote-check.sh` 数 `tasks/lessons.md` 里"没 `<!-- opt: -->` 标记"的 lesson，超阈值（默认 10）就**多注入一句**，提示整理——走 `hc-self-evolution` 挑、`hc-add-rule` 升、不值得标 `skip`、提醒过未决定标 `seen`（标记约定见 `tasks/lessons.md` 头部）。计数由 `scripts/lessons-promote-check.test.sh` 自测。
 - **best-effort**：消费 stdin、永远 exit 0，**绝不阻断 prompt**（不用 exit 2）。由 `scripts/correction-nudge.test.sh` 自测（进 `make verify`）。
 - **局限（诚实说）**：每轮注入同一句，仍有"被 tune out"的 wallpaper 风险——比死提醒强（真注入 + 贴着用户消息新鲜出现），但仍是软提醒；若实测仍漏记，再加检测让它**只在疑似纠正时**响（soft→hard）。
-- **codex 对等**：settings.json 钩子仅 Claude Code 吃；但规则本体 rule-0011 在根 `AGENTS.md`（Codex 原生读），软提醒 claude-only 可接受（gates-hooks.md：软 hook 只是早提醒、非对等机制）。
+- **codex 对等**：`.codex/config.toml` 已按官方 schema 接 `[hooks]`（PreToolUse→hook-policy / Stop→stop-check / UserPromptSubmit→correction-nudge，ADR-0025）——**验证状态 PENDING：本机 codex 二进制损坏无法真跑**；已知风险=各事件给 command 的 stdin JSON 字段名可能与 Claude 不同（真机验证时改 config 里的 jq 路径即可，脚本本体两侧共用）。规则本体在根 `AGENTS.md`（Codex 原生读）兜语义层。

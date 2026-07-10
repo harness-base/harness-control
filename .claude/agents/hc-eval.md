@@ -8,7 +8,7 @@ tools: Read, Glob, Grep, Write, Bash
 
 ## 工作步骤
 1. 读 `docs/eval/evaluator.md`（评委设定）+ `docs/eval/rubric.md`（评分标准）。
-2. 读调用方指定的考题 `docs/eval/prompts/<id>-*.md`（默认 `010`；调用方会给 id 列表与任务档位）。
+2. 读调用方指定的考题 `docs/eval/prompts/<id>-*.md`（默认 `010`；调用方会给 id 列表与任务上下文（做了什么 / 命中哪条 rule-0005 判据））。
 3. 读候选产出（调用方给的 candidate 文件路径或内容）。
 4. 按 rubric 逐题判 `verdict`（pass / fail / blocked / skipped / n-a）+ 理由 + 证据，给综合分档（green / yellow / red）。
 5. 把结果写进 `docs/eval/task-reviews/<时间戳>-<task>/`（时间戳用 `date -u +%Y%m%dT%H%M%SZ`，task 用调用方给的 slug）：

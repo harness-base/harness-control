@@ -22,7 +22,7 @@ related_docs:
 
 ## 输入
 
-任务上下文（档位 L?）、候选产出（candidate）、要套用的考题（prompts）、相关 rule。
+任务上下文（做了什么 / 命中哪条 rule-0005 判据）、候选产出（candidate）、要套用的考题（prompts）、相关 rule。
 
 ## 输出（每道考题）
 

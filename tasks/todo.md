@@ -1,23 +1,26 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：level: L3 ｜ task: test-script-line
+> 元：level: L2 ｜ eval: 要 ｜ task: mechanism-checkup
 
-## 当前：hc-test 脚本线做实 + testing-flow 拆分（用户逐点拍，2026-07-08）
-- **用户拍的口径**：① 脚本放**工程里**（`projects/<工程>/test/<需求id>/`，每需求独立；基础动作库跨需求共享）；② **写和跑（调通）一体、回归独立**——三步：写脚本 → sandbox 里跑本需求 case + 修（脚本 bug 改脚本 / 实现 bug 报 hc-dev，全绿或如实归因才算完）→ 回归关联项（存量脚本池，独立场景、本批只留位不实现）；③ **case 镜像用例格式**（一条用例一个 case、case 名锚 TC-NN）+ 抽象共享基础动作层；④ worker 写（hc-script-impl）、reviewer 审**对齐 + 明显 bug**（hc-script-reviewer）；⑤ **testing-flow 拆分**：总纲 + 3 分线平铺 docs/harness/（testing-flow-{e2e,api,script}.md），收纳原则（私有→references / 共享→docs/harness）成文进 docs/README。
-- [x] ADR-0024 定稿登记（index-audit 绿）
-- [x] testing-flow 拆分：总纲 150→70 行 + testing-flow-{e2e,api}.md 原文搬移 + testing-flow-script.md 新写（三步/判据/卡门/双向锚/rule-0014 边界）
-- [x] hc-script-impl + hc-script-reviewer 双栈 4 文件（workflow 建，TOML 校验过、约束主体进上下文、分工界线清）+ config 注册 + 三索引 regen
-- [x] hc-test SKILL v4（⑤ 脚本线编排段/场景触发/两层防线/门禁口径/description）+ hc-dev v5 交棒口径
-- [x] 指针跟改：8 文件（4 agent 双栈）改指分线（workflow 首轮漏 e2e-reviewer 双栈 2 处残留，对抗验证逮出已补）；doc-sync-checklist 加 testing-flow 拆分行；CURRENT_STATUS
-- [x] docs/README 收纳原则成文（私有→references / 共享→docs/harness，判据=消费方范围）
-- [x] make verify + docs-audit（61 篇）绿；optimization-log 本批 3 条捞获全销
-- [x] 对抗验证（workflow 4 镜头）：搬移零丢失 clean；挖出 4 major+5 minor——**API-NN 是凭空口径**（api 用例编号其实也是 TC-n、e2e/api 编号空间重叠，两镜头独立逮）/ e2e-reviewer 双栈残留总纲指针 / hc-create-sandbox・process-coverage 还标脚本线占位 / 模板头注・ADR-0016 指已拆走的小节 / reviewer"篡改预期"与无 Write 自相矛盾 / "分阶段实现整体发布"句移除无交代
-- [x] 修 9 findings 全链：锚改「TC-NN+线别消歧」（9 文件）；残留指针补；两 skill 状态翻转+version bump；模板头注指分线；ADR-0016 前向指针；reviewer 改不落盘反向验证；ADR-0024 受影响栏回填（create-sandbox/self-evolution 改"是"）+ 影响段交代定位句移除；checklist 引用方名单补 templates。make verify + docs-audit(61) + TOML 复验绿
-- [x] 收尾 eval：**yellow → 1 warn 修平**（`docs/eval/task-reviews/20260709T103753Z-test-script-line/`；010/011/014/rule-0015 全 pass、搬移全段机械 diff 逐字节一致、9 项修复逐条核真、机检独立重跑绿；warn=ADR-0014 更新注"脚本线仍占位"同型第三处漏网 → 已加 0024 前向指针注 + related_docs）
-- [ ] 提交独立 PR
+## 当前：机制体检批（用户拍：合一起）——档位退役 + hooks 补齐
+- **用户拍的口径（2026-07-09）**：① **加载档位退役**——"读多少"已被渐进式引用结构整体承载（启动顺序/就近 AGENTS/README 规则/skill 分线与 references），AI 自己判断读什么，不再判档；**只留一个标准判断要不要 eval**。② CONTEXT_LOADING.md **改写不删**（档位表删、改成半页"渐进式引用怎么走"）。③ todo 标注改 **`eval: 要|不要`** 直接声明。④ 与 hooks 补齐**合一批**。
+- **A. 档位退役**：
+- [x] ADR-0025（档位退役 + eval 门槛直接化 + hooks 补齐，衔接 ADR-0011 前向指针）
+- [x] AGENTS.md：删 rule-0004（编号空缺注记）；rule-0005 改直接判据（多步改产物/写 ADR/动业务代码/关键决策点 → 收尾 eval）；rule-0013 的 level 标注改 eval 标注；rules-index regen
+- [x] CONTEXT_LOADING.md 改写（渐进式引用链半页）+ AGENTS 启动顺序第 2 条措辞跟改
+- [x] stop-check.sh 判 `eval: 要` 替代 `level>=2` + stop-check.test.sh 用例跟改（mutation 红得起来）
+- [x] eval 004 下架 + index 注释；引用面 9 文件跟改（self-evolution refs×3 / PROJECT_ONBOARDING / context README / project-agents / eval）
+- **B. hooks 补齐**：
+- [x] hook-policy.sh 加：裸 `git push --force`（非 --force-with-lease）+ 直推 main 拦截；hook-policy.test.sh 正反用例
+- [x] Codex 原生 hooks 接线（.codex/config.toml [hooks] 按官方 schema：PreToolUse→hook-policy 等）——本机 codex 二进制损坏无法真跑，验证状态照三态诚实标 PENDING，不声称接好
+- [x] Build 全落：ADR-0025 登记；AGENTS.md（rule-0004 删+0005 直接判据+0013 eval 标注+启动顺序 2/4 条）；CONTEXT_LOADING 改写 29 行；stop-check 判元行 eval:（16/16+mutation）；hook-policy 两拦+冷门形态（17/17+mutation）；codex [hooks] 接线（PENDING 四项风险 checklist）；eval 004 下架；~20 处引用面；ADR-0011 前向指针
+- **收尾**：
+- [x] 对抗验证（3 视角：引用点/挂钩 eval 指针/hooks 质量含 35 命令实测）：**8 major+9 minor 全修**——最重 stop-check 归档残留误拦 bug（实跑复现）→ 改判当前节「> 元：」行+3 混合用例；AGENTS eval 段/启动顺序 4/README×3/scripts README/hc-eval 派单四件套的档位残留；git-workflow 分级表跟两拦；gates-hooks Codex 裸奔断言改三态；010 引已删 004；冷门形态 +main/:refs/heads/main/--mirror 补拦
+- [x] 收尾 eval：**yellow → 修平**（`docs/eval/task-reviews/20260709T163847Z-mechanism-checkup/`；002/003/010/014 pass——评委双 mutation 亲手复现、6 形态绕 harness 直调实测、活文档档位零残留终核；011 warn=ADR-0025 受影响栏没随对抗修复轮刷新[同型第二次，lessons 记]→ hc-git-workflow 改"是"+连带清单补 6 文件+顺手项 gates-hooks 括号修复）
+- [ ] commit → PR（等 #18 合后开）
 
-## Review（test-script-line）
-- **做了什么**：hc-test 脚本线做实（ADR-0024，用户拍：写跑一体三步——写[case 镜像用例锚 TC-NN+线别消歧、共享基础动作层]→sandbox 卡门跑本需求+修[脚本 bug 改脚本/实现 bug 报 hc-dev、全绿或如实归因]→入池[工程内 test/<需求id>/、回归资产]）+ testing-flow 拆分（总纲 70 行+3 分线、做哪线读哪份）+ hc-script-impl/hc-script-reviewer 双栈 + 收纳原则成文（私有→references/共享→docs/harness）。
-- **对抗+eval 的价值**：对抗 4 镜头逮出 **API-NN 是凭空口径**（api 用例编号其实也是 TC-n、e2e/api 编号空间重叠——两镜头独立逮到，photo 上线第一天锚就会全断）+ 8 项漂移；eval 又逮同型第三处漏网（ADR-0014 更新注）——"状态翻转要扫全部复述点"这坑本批扫了三网（skill→references→旧 ADR 注）才净。
-- **质量**：搬移经评委全段机械 diff 逐字节一致；机检（verify/docs-audit 61/skills-index/22 份 TOML）独立重跑绿；四层口径（SKILL↔总纲↔分线↔agent）一致。
+## Review（mechanism-checkup）
+- **做了什么**：加载档位整体退役（ADR-0025，用户拍：读什么由渐进式引用结构承载、AI 自主判断不判档；只留一个 eval 判据）——rule-0004 删、rule-0005 直接判据、rule-0013 改 `eval: 要|不要` 标注、CONTEXT_LOADING 改写 29 行引用链指南、stop-check 判元行 eval:（防归档残留误拦）、eval 004 下架、~20 处引用面清、ADR-0011 前向指针；hooks 补齐——hook-policy 拦裸强推/直推 main（含 refspec/--mirror 冷门形态，17 用例+mutation）、Codex [hooks] 按官方 schema 接线（PENDING+四项真机 checklist，诚实三态）。
+- **对抗+eval 的价值**：对抗 3 视角逮 8 major+9 minor——最重 stop-check 归档残留误拦 bug（reviewer 实跑复现，改判当前节「> 元：」行根治）+ hc-eval 派单四件套/README×3 等档位暗残留；eval 双 mutation 亲手验证测试 load-bearing、又逮"受影响栏不回填"同型第二次。
+- **质量**：stop-check 16/16 + hook-policy 17/17（各 mutation 翻红自证）；活文档档位/L2+/level: 零残留（评委独立终核）；机检独立重跑全绿；Codex 接线四处一致 PENDING 无假完成。

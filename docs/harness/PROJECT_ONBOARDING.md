@@ -27,7 +27,7 @@ related_docs:
 | 需求 / 开发 / 测试 | 走 `hc-prd` → `hc-tech-design` →（`hc-dev` / `hc-test`）；建议先走 hc-prd 理需求（提示、非门禁，ADR-0023） |
 | 文档同步 | `hc-doc-sync` 机制（ADR-0012：`hc-doc-sync-reviewer` + `doc-sync-checklist.md`） |
 | CI | `.github/workflows` 加 affected verify（按 `verification.yaml` 路由、只跑改动相关工程） |
-| 收尾 | `make verify` 绿 + L2+ 过 eval（`hc-eval`）+ Stop hook 兜底 |
+| 收尾 | `make verify` 绿 + 命中判据的任务过 eval（`hc-eval`，rule-0005）+ Stop hook 兜底 |
 
 ## 接入校验清单（速查；详细流程见 `hc-onboard` skill）
 

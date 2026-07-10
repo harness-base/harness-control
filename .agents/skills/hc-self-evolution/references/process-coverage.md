@@ -58,7 +58,7 @@ bash "$ROOT/scripts/skills-index.sh" --check
     - `评审收尾` = rule-0005 + hc-eval 子 agent（成文，非 skill，可接受）
     - `loop-engineering` = **缺口**（仓内无 loop skill）
 - **流程挡在临场之前吗**：高返工任务的流程是不是先想清再动手（先 plan / 先有证据再动手，skill 内部纪律）？只有事后清单、没有事前步骤 → **缺口**。
-- **旧流程过时吗**：某流程的范式被更好的取代却没退场 → **漏洞**。已处理一例：`context-loading` 作为 skill 已降级为政策（ADR-0011——advisory 壳、不占触发/产物/闸，入口落 `AGENTS.md`）。仍开放的更大候选：L0-L6 通用档位 → 是否该演进成"按任务场景直接进对应 workflow-skill 并带好该场景的固定上下文"——场景 skill 链（接入/需求/设计/实现/测试/环境）已建成，这个候选比当初更近了一步；判据：若 agent 经常"定了档却仍漏读场景专属规则"，说明通用档位粒度太粗。
+- **旧流程过时吗**：某流程的范式被更好的取代却没退场 → **漏洞**。已处理一例：`context-loading` 作为 skill 已降级为政策（ADR-0011——advisory 壳、不占触发/产物/闸，入口落 `AGENTS.md`）。该候选已落地：L0-L6 通用档位随 ADR-0025 退役——"读什么"由渐进式引用结构承载（场景 skill 链 + 分线/references 分档 + 就近 AGENTS.md），不再判档。
 - **接力清晰吗**：上下游 skill 的衔接写明了没有（description + 正文都点到；测试段以 testing-flow 为准）→ 符合；要 agent 猜先走哪支 → 缺口。
 - **是真缺口还是"故意不做 skill"**：评审/收尾刻意用 rule + 子 agent 而非 skill（避免污染常驻技能列表，见 `tasks/self-evolution-plan.md`「结构」一节）——这是设计选择，**不算漏洞**；判缺口前先确认不是这种有意成文。testing-flow 里标 🔒 的占位同理：是"已留位未实现"的显式债，不是无意识缺口，但**该催实现**。
 
@@ -67,7 +67,7 @@ bash "$ROOT/scripts/skills-index.sh" --check
 - **无流程的任务类型靠临场，错法五花八门**：`迁移`无 skill 时，`harness-rules-distribution` 迁移凭记忆做，ADR 宣称"severity / eval 映射全保留"实则偷改 rule-0007 severity（warn→blocker）、给 rule-0005/0006/0008 编了不存在的 eval 指针，被独立 eval 判 **yellow**。证据：`tasks/lessons.md` 2026-06-26「声称'无损迁移/全保留'却实际偷改」+ `docs/eval/task-reviews/20260626T014408Z-harness-rules-distribution/decision.md`。→ 该控制点（逐条对 `git show HEAD:<file>` 核源、禁凭记忆）现已并入 `hc-dev` 迁移子模式（ADR-0009）。
 - **bugfix 曾无专属流程，验收质量全靠人盯**：kratos-base 的 bug 修复（DLQ 假修、metrics 空转测试、backoff 溢出）反复需要"多轮对抗评审"才收敛，没有把"补测试必 mutation 自证 load-bearing""复查自身刚做的修复"固化成流程步骤。证据：`tasks/lessons.md` 2026-06-24「多轮对抗评审…」。→ 当初 bugfix 流程缺口的代价（已由 `hc-dev` 改 bug 子模式填，ADR-0009）。
 - **流程隐含 CWD 假设 = 登记的验证命令实际是坏的**：脚本假设 CWD=工程根，从 harness 根亲跑即挂；子代理在工程目录跑全过掩盖了它。证据：`tasks/lessons.md` 2026-06-02「e2e 脚本隐含 CWD 假设」。→ 根因是"接入/验证流程"没强制 CWD 无关，属流程覆盖薄；现在 sandbox 契约（`SANDBOX_CONTRACT.md`，ADR-0019）+ 接入点三态机检（`verification-audit`）兜住一部分，命令真能跑仍靠真跑验收。
-- **旧流程粒度太粗导致漏读**：L0-L6 通用档位（现为 `CONTEXT_LOADING.md` 政策；context-loading 已降 skill→政策 ADR-0011）只给通用档、不绑场景专属规则，agent "定了档仍可能漏场景规则"——粒度是否太粗仍作演进候选盯（尚无独立 eval 案例）。
+- ~~旧流程粒度太粗导致漏读~~：L0-L6 档位已随 ADR-0025 退役（"读什么"由结构承载），此漏洞模式随之关闭——审查时改盯"渐进式引用链是否有断环"（该指的没指、分档文件没被读）。
 
 ## 修复用哪个操作 skill / 脚本
 

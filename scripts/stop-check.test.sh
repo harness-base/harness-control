@@ -58,6 +58,30 @@ printf '> 元：level: L3 ｜ task: foo2\n## 当前：搞 doc-sync reviewer\n- [
 printf '> 元：level: L3 ｜ task: foo2\n## 当前\n- [ ] 实现中\n\n## 已闭\n旧任务\n## Review\n- 旧小结\n' > "$tmp/t10.md"
 [ "$(run "$tmp/t10.md")" = "0" ] && ok || no "已闭归档块旧 Review 让闸 mid-task 误拦（已闭该是归档边界）"
 
+# 11) 新标注 eval: 要 + 有 Review + 无 eval 产出 → 拦（exit 2）。守 ADR-0025 新判据（杀"只认旧 level"变异）。
+printf '> 元：eval: 要 ｜ task: newmark\n## Review\n- 小结\n' > "$tmp/t11.md"
+[ "$(run "$tmp/t11.md")" = "2" ] && ok || no "eval:要 +Review 无产出未拦（新标注判据没生效）"
+
+# 12) 新标注 eval: 不要 + 有 Review → 放行（exit 0）。轻量任务自判不触发。
+printf '> 元：eval: 不要 ｜ task: lite\n## Review\n' > "$tmp/t12.md"
+[ "$(run "$tmp/t12.md")" = "0" ] && ok || no "eval:不要 被拦（轻量不该要 eval）"
+
+# 13) 新标注 eval: 要 + 有 Review + 有 eval 产出 → 放行（exit 0）。
+mkdir -p "$rev/20990101T000000Z-newmark"
+[ "$(run "$tmp/t11.md")" = "0" ] && ok || no "eval:要 +Review 有产出仍拦（不该）"
+
+# 14) 当前节 eval: 不要 + Review + 归档块残留 eval: 要 → 放行（标注只认当前节元行，防归档残留误拦）
+printf '> 元：eval: 不要 ｜ task: lite2\n## Review\n- 小结\n\n## 已闭：旧任务\n> 元：eval: 要 ｜ task: old1\n' > "$tmp/t14.md"
+[ "$(run "$tmp/t14.md")" = "0" ] && ok || no "归档块残留 eval:要 误拦当前 eval:不要 任务"
+
+# 15) 当前节 eval: 不要 + Review + 归档块残留 level: L3 → 放行（旧标注兼容也只认当前节）
+printf '> 元：eval: 不要 ｜ task: lite3\n## Review\n- 小结\n\n## 归档\n> 元：level: L3 ｜ task: old2\n' > "$tmp/t15.md"
+[ "$(run "$tmp/t15.md")" = "0" ] && ok || no "归档块残留 level:L3 误拦当前 eval:不要 任务"
+
+# 16) 正文 bullet 提及 "eval: 要" 字样（非元行）+ 元行 eval: 不要 + Review → 放行（只有「> 元：」行算声明）
+printf '> 元：eval: 不要 ｜ task: lite4\n## Review\n- 规则说要标 eval: 要 或 eval: 不要\n' > "$tmp/t16.md"
+[ "$(run "$tmp/t16.md")" = "0" ] && ok || no "正文引用 eval:要 字样被误当声明"
+
 rm -rf "$tmp"
 echo "stop-check.test: pass=$pass fail=$fail"
 [ "$fail" -eq 0 ]

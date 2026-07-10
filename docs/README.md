@@ -27,7 +27,7 @@ related_docs:
 
 | 目录 | 职责 |
 |---|---|
-| `context/` | 项目简报、真实状态、按需加载档位 |
+| `context/` | 项目简报、真实状态、渐进式引用指南 |
 | `rules/` | 带编号的规则库；可被 eval 考题 / ADR 按号引用 |
 | `decisions/` | ADR 架构决策记录 |
 | `eval/` | 评分体系：考题、rubric、评委、评审产出 |
