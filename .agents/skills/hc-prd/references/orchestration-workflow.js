@@ -123,6 +123,7 @@ for (let r = 0; r < MAX_ROUNDS && !converged; r++) {
   await parallel(Object.keys(byWorker).map(w => () =>       // 回原 worker 角色重跑，只跑有问题的
     agent('你是 ' + w + '。按审稿发现修你产出的部分(' + dir + ')：\n' + JSON.stringify(byWorker[w]),
       { agentType: w, label: 'fix:' + w })))
+  // 每轮 fix 收尾：总监做"声称清单 ↔ 实改文件"对账（pattern 第 4 步）——修复改了清单外的新文件，登记/受影响栏当轮回填再复审
 }
 if (!converged) { log('⚠ 重审到 ' + MAX_ROUNDS + ' 轮仍未收敛 → 交总监人工裁') }
 log('整套 PRD 重审收敛(含换视角末轮) → 收尾确认：总监把整套交用户最终确认')

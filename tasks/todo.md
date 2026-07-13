@@ -1,22 +1,21 @@
 # 当前任务
 
 > 只记手头这一件事；干完清空、旧的 roll 进 `archive/`。保持轻。
-> 元：eval: 要 ｜ task: test-chain-final
+> 元：eval: 要 ｜ task: agents-slim-lessons
 
-## 当前：接口契约对照线 + 统一回归线做实（用户拍，2026-07-10；测试链五场景收官）
-- **用户拍的口径**：偏**脚本验证**场景——路由导出由脚本实现（routelist 接入点，onboard 时创建）、**agent 只做对比判断**（读契约端点索引 ↔ 脚本输出清单，语义对齐；不做机械 diff——两边格式不同，agent 对比这个量级不重且能容忍写法差异）；agent 临场读代码提取被砍（取数用脚本、判断用 agent）。
-- [x] `routelist` 接入点进 verification.yaml（登记导出命令、三态占位）+ kratos 存量先 `PENDING: 待写 proto 解析脚本`（诚实占位）
-- [x] verification-audit 机检扩认 routelist 字段 + 守护测试（mutation 红得起来）
-- [x] hc-onboard 接执行口补"routelist 能力创建"（新老两分支 references + SKILL ⑤ 三态枚举 + onboard-reviewer 双栈判据④枚举 + PROJECT_ONBOARDING）+ version bump
-- [x] 契约对照场景做实：新分线 `testing-flow-contract-check.md`（门槛两查[契约在？routelist 真命令？PENDING→指路补/N/A→跳过留痕] → agent 跑脚本拿清单 → 对照契约端点索引 → 偏差三类+归因分发[补契约→hc-tech-design+api 用例线 / 补实现→hc-dev]；总监调度不新建 worker）+ 总纲场景表翻状态/骨架/小节 + hc-test SKILL 跟改 + version bump
-- [x] ADR-0026 定稿登记 + doc-sync-checklist 分线枚举跟 + CURRENT_STATUS + VERIFICATION_ROUTING（若枚举字段）+ 索引 regen
-- [x] **回归线做实**：分线 testing-flow-regression.md（卡门→逐需求顺序跑→报告→归因两分→重跑到过；目录即池子清单）+ 总纲翻 ✅（五场景全实现）+ hc-test 编排段 + hc-dev 交棒句 + ADR-0027 登记 + checklist/CURRENT_STATUS
-- [x] 对抗验证（3 镜头）：**2 blocker + 6 major + 8 minor 全修**——B1 reviewer 双栈"头句八个、动作清单核七个"（routelist 永不被核，双栈 6 处补齐）；B2 **PROJECT_ONBOARDING 打了勾没做**（rule-0003 todo 变种，lessons 记"勾选前名单↔git status 对账"）；接入点枚举全仓 sweep 6 处补 routelist；hc-test 编排段重排 ④⑤⑥⑦⑧⑨⑩（消 ⑤′/⑤″ 编号病+编排段归属矛盾）；process-coverage 缺口清单两线全摘；ADR-0014 前向指针注补 0026/0027；kratos AGENTS 待补记录；ADR-0026 受影响栏回填（hc-dev/hc-self-evolution 改"是"+sweep 连带清单）
-- [x] 收尾 eval：**yellow → 修平**（`docs/eval/task-reviews/20260710T025209Z-test-chain-final/`；002/003/014/rule-0015 pass——评委 mutation 亲手复现[过程中误回退 audit 脚本后精确重建、已 diff 复查无误]、routelist 枚举全仓终核 8 处全带、零项目词；010/011 warn=回归"占位"旧口径 5 处漏扫[回归线同批后加、扫残留时只扫了契约对照]+ADR-0027 连带漏 2 项→ 全修+回填，占位零残留终核过）
-- [x] commit（PR 等 #19 合后开）
+## 当前：AGENTS.md 瘦身执行 + lessons 批量处置（用户拍，2026-07-10）
+- **口径**：瘦身 = 之前审计过的三处修剪（语义不变、只去冗余）；lessons 处置 = 11 条 `opt: seen` 按词表裁决（覆盖型标 rule-00NN / 不升标 skip），可沉淀的落对应机制文档、**不新增全局规则**（与瘦身方向一致）。
+- [x] AGENTS.md 三处修剪：rule-0011 机制尾巴 → HOOKS.md 指针（HOOKS.md L54-61 已承载机制细节，核过）；rule-0012 删轶事括号；eval 节去重（hc-eval 双栈路径/prompts/index.yaml 全在 eval README，核过）——7591→7325 字节
+- [x] lessons 11 条裁决落标记：L18→rule-0003（正文明说 todo 变种）、L33→rule-0007（受影响栏回填=其执行纪律，补处置注）、其余 9 条 skip（L28/L58/L63 补"已沉淀"处置注）；误伤文件头模板示例已修回
+- [x] 沉淀两条进 adversarial-review.md：①「按对象类型伸缩」文档/控制面资产审 2–3 视角封顶（L63）②核心 pattern 第 4 步"声称清单↔git status"对账（L18+L33 同型三次）
+- [x] memory 更新：ask-with-recommendation 补"决策请求四件套"（L58，仓外 ~/.claude memory）
+- [x] 索引 regen（rules-index 只存编号不存正文、剪正文无索引 diff）+ make verify ✓ + docs-audit 66 ✓ + lessons-promote-check 归 0
+- [x] 对抗验证（2 视角：doc-sync 漂移 + 语义等价）：**2 major（同根）+ 3 minor 全修**——「按对象类型伸缩」段判据过宽（字面罩住 PRD/用例等有专属 reviewer 的领域产物审，与第 1 步矛盾）→ 收窄为"harness 控制面资产且无对口领域 rubric"+ 补两条边界（领域产物不适用 / 视角用尽的收敛口径）；HOOKS.md 小节旧名"自进化兜底"与 rule-0011 指针词对不上 → 标题正名"落文档提醒（①）"+ 全仓扫旧词 4 处活引用跟改（gates-hooks.md / verify-control-plane.sh / stop-check.sh 注释 / scripts/README）；orchestration-workflow.js 按 doc-sync-checklist L27 跟补对账注释行。**修复轮对账**（本口径首次自用）：新触文件 = HOOKS.md、orchestration-workflow.js、gates-hooks.md、verify-control-plane.sh、stop-check.sh、scripts/README.md、hc-prd/hc-self-evolution SKILL last_reviewed——全在 git status（skills README regen 无 diff 属预期：索引不含 last_reviewed），闸重跑全绿（verify/docs-audit/stop-check 16）
+- [x] 末轮换新视角（指针有效性）：1 finding（HOOKS.md 新指针日期 06-26→06-29 指错）→ 修 + grep 机核目标在 lessons.md:277；被删短语反向核无外部依赖、"自进化兜底"活引用零残留
+- [x] 收尾 eval：**green**（`docs/eval/task-reviews/20260710T051923Z-agents-slim-lessons/`；003/010/014/rule-0015 pass、011 判"无 ADR 定性站得住"——评委逐行核 .sh diff 零行为变更；2 minor[HOOKS frontmatter 日期未 bump / todo 对账措辞混入无 diff 项] 已修平）
+- [x] commit/push/PR（新分支 feat/agents-slim-lessons 从 main 切；用户授权 2026-07-13"提交pr吧"；optimization-log 2 条钩子发现核为已做/误报、销号折入）
 
-## Review（test-chain-final）
-- **做了什么**：测试链收官——契约对照线（ADR-0026：routelist 接入点[脚本取数]+agent 语义对比判断，onboard 补能力创建、必须接入点 7→8、audit 机检 25/25+mutation）+ 统一回归线（ADR-0027：目录即池子清单、卡门、逐需求顺序跑、归因两分[脚本过时→hc-script-impl/实现回归→hc-dev]、复用不新建 worker）。**testing-flow 五场景全实现**，脚本池生产（脚本线）→消费（回归线）闭环成型。
-- **用户塑形的设计**："取数用脚本、判断用 agent"（砍掉 agent 临场读代码提取与机械 diff 两个我提的坏方案）——首次成文，后续同类场景（依赖清单/schema 清单）可复用。
-- **对抗+eval 的价值**：对抗逮 2 blocker（reviewer 双栈"头句八个动作清单核七个"=routelist 永不被核；**PROJECT_ONBOARDING 打了勾没做**=rule-0003 todo 变种，lessons 记"勾选前名单↔git status 对账"）+6 major+8 minor；eval 又逮同型"状态翻转扫残留不全"第 N 次（回归占位 5 处）——收尾自检该固化"改状态口径时 grep 旧口径词全仓"。
-- **质量**：机检独立重跑全绿；mutation 双向自证；routelist 枚举 8 处全仓一致；两新分线零项目词；hc-test 编排段重排 ④-⑩ 内部引用全解析。
+## Review（agents-slim-lessons）
+- **做了什么**：AGENTS.md 瘦身三处执行（7591→7325 字节、语义等价逐项核过：机制细节归 HOOKS.md、路径明细归 eval README、轶事删除）；lessons 11 条 `opt: seen` 全裁决（2 覆盖型 + 9 skip，零新增全局规则）；4 条 lesson 干货沉淀到家（修复轮对账→adversarial-review 第 4 步、文档审编制→「按对象类型伸缩」段、决策四件套→memory、取数用脚本→ADR-0026 指针注）。
+- **对抗+eval 的价值**：首轮逮出新段判据过宽（字面罩住有专属 reviewer 的领域产物审、与第 1 步矛盾）→ 收窄 + 补边界与收敛口径；正名"落文档提醒（①）"消掉 rule-0011 指针按词不可达 + 全仓 4 处旧词跟改；末轮新视角逮指针日期错；eval 再逮 frontmatter 日期与对账措辞两处一行级——**本批新立的对账纪律首次自用**（评委原话"声称与事实无一走样"）。
+- **质量**：make verify / docs-audit 66 / stop-check 16 全绿复跑；lessons-promote-check 归 0；旧词残留零；两新段零项目词。
