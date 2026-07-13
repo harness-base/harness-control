@@ -60,7 +60,7 @@ make eval          # 跑 task eval review（可选；CI / headless 用，需 EVA
 
 ## 接入一个工程
 
-把工程放进 `projects/<name>/`、写工程级 `AGENTS.md`、在 `workspace/verification.yaml` 填验证路由，即可纳管。详见 [`docs/harness/PROJECT_ONBOARDING.md`](docs/harness/PROJECT_ONBOARDING.md)。
+接入走 **`hc-onboard` skill**（引导式，新 / 老两分支：新项目从零搭骨架；老项目"扫 → 确认 → 搬进规范"倒着对齐）——对话里说「接入项目 / 接入老项目」即可触发，每步先确认再落、收尾对抗评审。口子速查与校验清单见 [`docs/harness/PROJECT_ONBOARDING.md`](docs/harness/PROJECT_ONBOARDING.md)。
 
 ## 索引
 

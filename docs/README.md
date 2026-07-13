@@ -21,7 +21,7 @@ related_docs:
 4. `rules/index.yaml` —— 带编号规则库（按需查某条）。
 5. `harness/VERIFICATION_ROUTING.md` —— 怎么验证。
 6. `eval/README.md` —— 评分体系怎么用、何时触发。
-7. 接工程时：`harness/PROJECT_ONBOARDING.md` —— 把工程挂进来的步骤。
+7. 接工程时：走 `hc-onboard` skill（引导式，新 / 老两分支）；`harness/PROJECT_ONBOARDING.md` 是口子速查 + 校验清单。
 
 ## 目录职责
 

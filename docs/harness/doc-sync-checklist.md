@@ -2,7 +2,7 @@
 title: 文档同步对照表（doc-sync checklist）
 status: active
 owner: harness
-last_updated: 2026-07-07
+last_updated: 2026-07-13
 source_files: []
 related_docs:
   - HOOKS.md
@@ -21,6 +21,7 @@ related_docs:
 |---|---|---|
 | `scripts/*.sh` 加 / 删 / 重命名 | `scripts/README.md` 对应章节是否要更新 | 🔴手 |
 | 顶层目录加 / 删 | 根 `README.md` 的目录结构表 | 🔴手 |
+| 某流程的走法被 skill 承接 / 实质演进（接入、验证、eval 等机制换走法） | 根 `README.md` 与 `docs/README.md` 的对应**叙述节**是否还在教旧走法（门面文档不在批内连带清单里最易漏——2026-07-13 README「接入一个工程」教旧手工三步被用户逮，即此坑） | 🔴手 |
 | `docs/` 加 / 删子目录 | `docs/README.md` 路由表 | 🔴手 |
 | `docs/decisions/*.md` 新建或大改（ADR）| 相关 skill 是否要更新（rule-0007，必填"受影响 skill"栏）+ `docs/decisions/index.yaml` 登记 | 🔴手（skill 回顾要判断；index 那半机检） |
 | `docs/harness/SANDBOX_CONTRACT.md` 改（sandbox 契约） | `hc-create-sandbox` skill + `hc-sandbox-reviewer` 双栈里复述的入口/约束口径要跟改；`verification.yaml` 字段约定、`verification-audit` 字段清单 | 🔴手 |
