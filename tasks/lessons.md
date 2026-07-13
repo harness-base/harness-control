@@ -15,6 +15,11 @@
 
 ---
 
+## 2026-07-13：根 README「接入一个工程」还在教 hc-onboard 之前的手工三步——门面文档不在 sweep 名单，用户逮的
+- Mistake：ADR-0017/0018 把接入升级成 hc-onboard 引导式时，PROJECT_ONBOARDING.md 重写对了，但根 README:63"手工三步即可纳管"没跟——门面入口教旧走法一直到用户按 README 准备接老项目才发现。断环：doc-sync-checklist 只有"顶层目录变→README 目录表"行，没有"流程被 skill 承接→README 叙述节"行；对抗/eval 只盯批内连带清单，README 不在那两个 ADR 的清单里。
+- Prevention：机制换走法（手工步骤→skill 承接、旧闸→新闸）时，sweep 名单必含**门面文档的叙述节**（根 README、docs/README）——已补 doc-sync-checklist 一行兜底。
+- Earlier signal：README 里有"即可 / 只需 N 步"式手工流程叙述、而同主题已有 skill 承接——两者并存就是漂移，grep "即可" 这类词能扫出来。
+
 ## 2026-07-10：todo 项写着 PROJECT_ONBOARDING 打了 [x]，实际那文件一个字没动——打勾前没对 git status <!-- opt: rule-0003 -->
 - Mistake：契约对照批 todo 第 10 项列了"…+ onboard-reviewer 双栈判据④枚举 + PROJECT_ONBOARDING）"，我做的时候只改了 reviewer 标题句、PROJECT_ONBOARDING.md 压根没碰，却把整项勾成 [x]——对抗验证拿 git status 对账当场戳穿（该文件不在改动清单里）。rule-0003"不许假完成"的 todo 变种：勾选也是"声称"，声称就要有实改证据。同型链：上两批是"修复轮不回填 ADR"，这批升级成"首轮就没做但打了勾"。
 - Prevention：勾任何含多个子项的 todo 项之前，把项里点名的**每个文件**对一遍 `git status`——名单里有、改动里没有 = 不许勾（要么补做要么拆项标未完成）。ADR 受影响栏/连带清单同款（已有 lesson），todo 勾选从此并入同一个动作：**收尾自检 = 名单 ↔ git status 对账**。
