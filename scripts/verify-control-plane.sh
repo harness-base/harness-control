@@ -19,7 +19,7 @@ bash scripts/docs-audit.sh || fail=1
 echo "== hook policy 自测 =="
 bash scripts/hook-policy.test.sh || fail=1
 
-echo "== 自进化兜底自测 =="
+echo "== 落文档提醒（turn-backstop）自测 =="
 bash scripts/turn-backstop.test.sh || fail=1
 
 echo "== 纠错提醒钩子自测 =="

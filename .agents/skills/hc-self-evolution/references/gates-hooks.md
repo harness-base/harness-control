@@ -35,7 +35,7 @@ cat  $ROOT/.github/workflows/verify.yml           # push/PR 跑 make verify
 cat  $ROOT/scripts/hook-policy.sh                 # 密钥/危险命令扫描
 bash $ROOT/scripts/hook-policy.test.sh            # 应拦的拦/应放的放（以 fail=0 为准，别硬编码用例数）
 
-# 6) 收尾闸门 + 自进化兜底 + 纠错提醒（都带 .test.sh 自测，全进 verify）
+# 6) 收尾闸门 + 落文档提醒（①） + 纠错提醒（都带 .test.sh 自测，全进 verify）
 cat  $ROOT/scripts/stop-check.sh                  # 收尾 eval 闸：eval: 要（兼容旧 L2+）且补了 Review 段才拦，缺 eval 产出→exit 2
 cat  $ROOT/scripts/turn-backstop.sh               # 机械触发(K轮/commit/增量)→headless Haiku 落文档提醒；BUDGET 默认 0.20 + 诊断日志(dlog)
 cat  $ROOT/scripts/correction-nudge.sh            # UserPromptSubmit：rule-0011 纠错自检 + lessons 待整理阈值 + optimization-log 待处理反馈

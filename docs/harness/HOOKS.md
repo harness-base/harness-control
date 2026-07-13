@@ -2,7 +2,7 @@
 title: Git Hooks
 status: active
 owner: harness
-last_updated: 2026-06-26
+last_updated: 2026-07-10
 source_files:
   - ../../scripts/hook-policy.sh
   - ../../scripts/install-hooks.sh
@@ -49,9 +49,9 @@ make hooks   # git config core.hooksPath .githooks
 
 **局限（诚实说）**：`eval:` 标注与 Review 都由 agent 在 `todo.md` 里自己声明，所以是"半强制"——声明了 `eval: 要` 且补了 Review 却漏 eval 会被抓，但故意标 `eval: 不要`、或不补 `## Review` 段，仍能绕过。比纯靠自觉强很多，不是 100% 自动。
 
-## 自进化兜底（Stop hook 第二段，ADR-0005）
+## 落文档提醒（①，Stop hook 第二段，ADR-0005）
 
-`stop-check.sh` 在收尾闸门之后调 `scripts/turn-backstop.sh`，**机械触发**的廉价兜底（脚本管 WHEN、Haiku 管 WHAT）：
+即 rule-0011 说的**落文档提醒**（编号 ①，≠ 自进化审查 ②——② 是 hc-self-evolution 的 judgment 深审，别名混过一次、教训见 lessons 2026-06-29 那条"一词两义"）。`stop-check.sh` 在收尾闸门之后调 `scripts/turn-backstop.sh`，**机械触发**的廉价兜底（脚本管 WHEN、Haiku 管 WHAT）：
 
 - **触发**（脚本顶部常量可调）：`K` 轮到点（默认 8）/ commit 边界（HEAD 变）/ 变更文件数**增量** ≥ 阈值（默认 10，是"涨多少"非绝对值）。状态存 `tasks/.turn-count`、`tasks/.last-backstop`（gitignore）。
 - 触发后 **headless `claude -p --model haiku`** 复查最近 transcript，捞"做了决策 / 学了偏好 / 有知识却没写进文件"的遗漏；其中"改了文件没同步文档"一类，**对照 `docs/harness/doc-sync-checklist.md` 的 `🔴手` 行**判断（单一来源，不自抄子集；机器能兜的 `✅机检` 行交给 `make verify`；同判据由 `hc-doc-sync-reviewer` 子 agent 承接，ADR-0012）。

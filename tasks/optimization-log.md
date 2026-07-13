@@ -141,3 +141,7 @@
 - [x] [文档同步] testing-flow 拆分成三个分线文件（e2e/api/script）后，docs/README.md 的路由表是否已加入这三个新文件条目？ <!-- 2026-07-08 销号：docs/README 的 harness/ 行是泛述指针（不枚举文件，rule-0012），分线文件不进它；docs/harness/README.md（dir-index 自动索引）已 regen 收录三个分线文件，make verify 绿。 -->
 - [x] [技术债] ADR-0024 改动引起 hc-test SKILL v4 写入，但相关 skill 的 version/last_reviewed 元数据是否已同步更新、有无跑 `bash scripts/skills-index.sh`？ <!-- 2026-07-08 销号：hc-test v4 + hc-dev v5 均 bump、last_reviewed=2026-07-08；skills-index 已 regen、--check 进 make verify 绿。 -->
 - [x] [Codex 同步] 提到"4 个新 agent 文件"待 workflow 回来，若为子 agent，.codex/agents/*.toml 对等是否已同步？ <!-- 2026-07-08 销号：hc-script-impl / hc-script-reviewer 双栈 4 文件齐（.claude .md + .codex .toml，tomllib 校验过）+ .codex/config.toml 两个注册块 + .claude/agents/README.md regen。 -->
+
+## 2026-07-10T05:24:36Z `落文档`（触发： commit边界 变更涨=13≥10）
+- [x] [脚本执行漏] AGENTS.md 改了 rule 标记（rule-0011、rule-0012），需要跑 `bash scripts/rules-index.sh` 重生成 catalog，但未见执行记录。 <!-- 2026-07-10 销号：本批已 regen（"✓ 已生成"）且复跑无 diff——索引只存标记元数据不存正文，剪正文本就不动索引；make verify 的 --check 绿。 -->
+- [x] [记忆持久化漏] 说补写跨会话记忆「向你要决策前先讲全四件事」，但改动列表中无 `/Users/zhouhaiyin/.claude/projects/-private-tmp/memory/` 目录的 Write 或 Edit 操作。 <!-- 2026-07-10 销号：误报——memory 真实路径是 ~/.claude/projects/-Users-zhouhaiyin-project-harness-kratos/memory/（Haiku 猜错 slug），ask-with-recommendation.md 已 Edit、"四件事"grep 命中。 -->

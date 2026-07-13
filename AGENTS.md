@@ -24,8 +24,8 @@
 - **外部材料不自动采信**：事实源 = 正式文档 + 工程当前代码；外部 / 粘贴材料要先整理验收才算数。 <!-- rule: rule-0008 | sev: blocker -->
 - **验收断言必须锚定唯一、真实、产出方的证据**：断言绑到唯一真实信号（防共因污染 / 防超时竞态掩盖）；声称的保证必须有**守护测试**；测试不许为通过而牵强、注释不许撒谎。 <!-- rule: rule-0009 | sev: blocker | eval: 012 -->
 - **PRD 产出标准**：产出 PRD 时——先有 approved 用户故事（独立 `user-stories.md` 为上游、PRD 与之对齐）、验收可观测、范围 in+out 闭合、每页四态、（若产出）原型可点通、假设显式确认、可追溯、登记不漂移（仅在产出 PRD 时适用，不强制 PRD 必须存在）。 <!-- rule: rule-0010 | sev: blocker | eval: 013 -->
-- **决策与知识必须当轮落文档，落文档提醒兜住遗漏**：改了产物或做了关键决策，知识要就近写进 `AGENTS.md`/`lessons`/规则/ADR/memory；**用户纠正也算**（用户说"不是这样 / 你理解错了 / 撤回 / 你搞混了"时，当轮记一条 `tasks/lessons.md` 三段式：错在哪 / 怎么防 / 怎么更早发现）；Stop hook 机械触发（K 轮 / commit / 变更增量）的 Haiku **落文档提醒**（`scripts/turn-backstop.sh`，=①，非自进化审查）会复查遗漏并写 `tasks/optimization-log.md`，捞到的须落到对应文档、不许烂在 log 里。 <!-- rule: rule-0011 | sev: warn -->
-- **状态/索引文档不硬编码可自动生成的枚举**：凡已有 `*-index` 自动生成权威清单的（skill→`.agents/skills/README.md`、规则→`docs/rules/index.yaml` 等），`CURRENT_STATUS` 等状态文档只写"以该自动生成索引为准"的指针，**不复刻计数/清单**——硬编码枚举无 `--check` 守、每次新增就漂（本仓 CURRENT_STATUS 的 skill 清单已三次漂移）。举 1–2 例可以，整列枚举不行。 <!-- rule: rule-0012 | sev: warn | eval: 014 -->
+- **决策与知识必须当轮落文档，落文档提醒兜住遗漏**：改了产物或做了关键决策，知识要就近写进 `AGENTS.md`/`lessons`/规则/ADR/memory；**用户纠正也算**（用户说"不是这样 / 你理解错了 / 撤回 / 你搞混了"时，当轮记一条 `tasks/lessons.md` 三段式：错在哪 / 怎么防 / 怎么更早发现）；遗漏由 Stop hook 的**落文档提醒**兜底复查、写 `tasks/optimization-log.md`（机制见 `docs/harness/HOOKS.md`），捞到的须落到对应文档、不许烂在 log 里。 <!-- rule: rule-0011 | sev: warn -->
+- **状态/索引文档不硬编码可自动生成的枚举**：凡已有 `*-index` 自动生成权威清单的（skill→`.agents/skills/README.md`、规则→`docs/rules/index.yaml` 等），`CURRENT_STATUS` 等状态文档只写"以该自动生成索引为准"的指针，**不复刻计数/清单**——硬编码枚举无 `--check` 守、每次新增就漂。举 1–2 例可以，整列枚举不行。 <!-- rule: rule-0012 | sev: warn | eval: 014 -->
 - **非琐碎任务维护 `tasks/todo.md`（标 `eval` + 收尾 Review）**：多步 / 动产物 / 动业务码的任务，动手即在 `tasks/todo.md` 立当前任务并标 `eval: 要|不要 ｜ task: <名>`（按 rule-0005 判据自判；收尾闸据此判要不要 eval）；范围变即更新、收尾前补 Review 段；保持轻——旧块滚进 `tasks/archive/`，不长成流水账。 <!-- rule: rule-0013 | sev: warn -->
 - **测试用例产出标准**：产出测试用例时——每条验收点 AC 与每个功能点 FP 都被 ≥1 条用例 `covers:` 覆盖（无遗漏、无悬空引用，`test-cases-audit` 硬闸机检）、用例覆盖正常 / 边界 / 异常、`covers:` 为覆盖关系唯一真相源（不另存手维护映射表）、产物登记不漂移；只管"用例齐不齐 / 覆盖全不全"，**不碰"过没过"**（执行结果另起）；用例真覆盖语义 / 边界异常齐由 eval 考题 015 判（仅在产出测试用例时适用，不强制必须存在）。 <!-- rule: rule-0014 | sev: blocker | eval: 015 -->
 - **控制面与项目内容隔离（命根）**：harness 资产（skill / 模板 / 规则 / 子 agent / 脚本）必须**通用、项目无关**——不掺任何具体项目的领域名词 / 业务规则 / 多租户（`tenant_id`）等假设，示例用中性占位（如 `GET /v1/items`）；具体项目内容只落被管工程 `projects/<工程>/` 与产物区（`docs/prds`·`designs`·`test-cases`）。改 harness 资产时守住这条边界：通用的归资产、具体的归产物。 <!-- rule: rule-0015 | sev: warn -->
@@ -44,7 +44,7 @@ make hooks         # 安装 git hooks
 
 ## eval
 
-质量不靠 agent 自评：命中 rule-0005 判据的任务和关键决策点由 `docs/eval/` 的评委按 rubric 打分，产物写进 `docs/eval/task-reviews/`。eval 题库**独立维护**（`docs/eval/prompts/` + `index.yaml`），按编号引用规则。默认用 **hc-eval 子 agent**（`.claude/agents/hc-eval.md`，免 API key）；CI / headless 可选 `make eval`。触发口径见 `docs/eval/README.md`。
+质量不靠 agent 自评：命中 rule-0005 判据的任务由独立评委按 rubric 打分，产物写进 `docs/eval/task-reviews/`。默认用 **hc-eval 子 agent**（免 API key）、CI / headless 可选 `make eval`；题库维护与触发口径见 `docs/eval/README.md`。
 
 ## 工作方式
 

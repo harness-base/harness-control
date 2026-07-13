@@ -45,7 +45,7 @@ if [ -n "$need_eval" ] && finishing_now; then
   fi
 fi
 
-# 自进化兜底：机械触发(K轮/commit/变更数)→ headless Haiku 复查最近对话、捞遗漏的决策/知识。best-effort，从不阻断。
+# 落文档提醒（①）：机械触发(K轮/commit/变更数)→ headless Haiku 复查最近对话、捞遗漏的决策/知识。best-effort，从不阻断。
 bash "$ROOT/scripts/turn-backstop.sh" "${transcript:-}" || true
 
 # 「纠错 → 记 lesson」提醒已移到 UserPromptSubmit 钩子（scripts/correction-nudge.sh）：它注入 agent 当轮上下文、

@@ -2,7 +2,7 @@
 name: hc-self-evolution
 description: harness 规范检查层。当要改 harness 本身、或发现 harness 漏洞（如"某规则工作时没被加载"）时用——引导按 harness 结构逐维度审查"哪一环出问题 / 该怎么改"，不靠记忆漏项。区别于操作层 skill（hc-add-rule/hc-prd 等是被检查对象 + 修复工具）。
 version: 3
-last_reviewed: 2026-07-03
+last_reviewed: 2026-07-10
 ---
 
 # 自进化 / harness 规范检查（hc-self-evolution）
