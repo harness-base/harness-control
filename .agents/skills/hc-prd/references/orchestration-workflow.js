@@ -52,7 +52,8 @@ if (args && args.needResearch) {
 }
 
 // ── 必选：用户故事+AC，轻审 loop(≤2 轮，只盯地基四项) ──
-//    轻审=小活档：按 adversarial-review.md「按改动面伸缩」，1 个视角即可，收敛判据=findings 跨一轮稳定为空。
+//    视角数量不自行判：口径见 docs/harness/adversarial-review.md 第 1 步域 rubric（领域产物不走「按对象类型伸缩」）
+//    （本文件不复述内容）。收敛判据=findings 跨一轮稳定为空。
 phase('Stories')
 let stories = await agent(
   '你是用户故事+AC 员。把需求摘要写成 ' + dir + '/user-stories.md(US-NN + 可观测 AC)。\n摘要：' + reqs + (research ? '\n外部要点：' + research : ''),
@@ -110,23 +111,56 @@ const reviewRound = async (lenses, tag) => {  // fan out 多视角并行 → 合
   return findings
 }
 const MAX_ROUNDS = 4                     // 防审稿持续挑刺不收敛：到顶即停并提示总监人工裁
-let converged = false
-for (let r = 0; r < MAX_ROUNDS && !converged; r++) {
-  const findings = await reviewRound(LENSES, r)
-  const byWorker = {}
-  for (const f of findings) { if (ran.has(f.worker)) { (byWorker[f.worker] = byWorker[f.worker] || []).push(f) } }  // 只重跑真跑过的 worker(发现落在被跳过的 worker=无效)
-  if (!Object.keys(byWorker).length) {
-    const fresh = await reviewRound([FRESH_LENS], r + 'f')  // 末轮换新视角再挑一遍，仍空才真收敛
-    for (const f of fresh) { if (ran.has(f.worker)) { (byWorker[f.worker] = byWorker[f.worker] || []).push(f) } }
-    if (!Object.keys(byWorker).length) { converged = true; break }
+// review loop 抽成可重入函数——收尾确认后若产物又改了要再跑一遍(见文末回边)，
+// 「评审通过」只对被审的那一版有效，产物一改旧结论即作废(adversarial-review.md)。
+const convergeReview = async (tagPrefix = '') => {
+  let ok = false
+  for (let r = 0; r < MAX_ROUNDS && !ok; r++) {
+    const findings = await reviewRound(LENSES, tagPrefix + r)
+    const byWorker = {}
+    for (const f of findings) { if (ran.has(f.worker)) { (byWorker[f.worker] = byWorker[f.worker] || []).push(f) } }  // 只重跑真跑过的 worker(发现落在被跳过的 worker=无效)
+    if (!Object.keys(byWorker).length) {
+      const fresh = await reviewRound([FRESH_LENS], tagPrefix + r + 'f')  // 末轮换新视角再挑一遍，仍空才真收敛
+      for (const f of fresh) { if (ran.has(f.worker)) { (byWorker[f.worker] = byWorker[f.worker] || []).push(f) } }
+      if (!Object.keys(byWorker).length) { ok = true; break }
+    }
+    await parallel(Object.keys(byWorker).map(w => () =>       // 回原 worker 角色重跑，只跑有问题的
+      agent('你是 ' + w + '。按审稿发现修你产出的部分(' + dir + ')：\n' + JSON.stringify(byWorker[w]),
+        { agentType: w, label: 'fix:' + tagPrefix + w })))
+    // 每轮 fix 收尾：总监做"声称清单 ↔ 实改文件"对账（pattern 第 4 步）——修复改了清单外的新文件，登记/受影响栏当轮回填再复审
   }
-  await parallel(Object.keys(byWorker).map(w => () =>       // 回原 worker 角色重跑，只跑有问题的
-    agent('你是 ' + w + '。按审稿发现修你产出的部分(' + dir + ')：\n' + JSON.stringify(byWorker[w]),
-      { agentType: w, label: 'fix:' + w })))
-  // 每轮 fix 收尾：总监做"声称清单 ↔ 实改文件"对账（pattern 第 4 步）——修复改了清单外的新文件，登记/受影响栏当轮回填再复审
+  if (!ok) { log('⚠ 重审到 ' + MAX_ROUNDS + ' 轮仍未收敛 → 交总监人工裁') }
+  return ok
 }
-if (!converged) { log('⚠ 重审到 ' + MAX_ROUNDS + ' 轮仍未收敛 → 交总监人工裁') }
+let converged = await convergeReview()
 log('整套 PRD 重审收敛(含换视角末轮) → 收尾确认：总监把整套交用户最终确认')
 
 // ════ 收尾确认(人在环)：总监把整套交用户最终确认。 ════
-return { id, stories, prd, produced }
+// ── 回边(口径 = docs/harness/adversarial-review.md「默认重评制」，本文件不复述内容) ──
+// 走完最后一格 ≠ 流程结束：流程到【用户验收通过】才算结束。用户在收尾确认环节返回的
+// 澄清 / 补充 / 纠错仍在本流程内——不是新任务、不是"顺手改一下"，回到受影响那一步接着走，
+// 走到 review 步就照常评审。
+// 【默认重评】末次评审后产物只要有实质改动，一律 converged=false，派对应 worker 改完【必须回 review loop 重跑】；
+// 旧评审结论对新版本无效。默认重评是缺省路径；要免评就在 skipReviewReason 里写一行理由
+// （改了什么 + 为什么不改变语义），并落到 tasks/todo.md 当前任务的 Review 段。
+// 判据只有一条原则，见 adversarial-review.md「默认重评制」，本文件不复述。
+// 总监带 args.userFeedback = { note:'<用户修改意见>', workers:[<要改的 worker>], skipReviewReason?:'<免评理由>' } 重跑段二时走这条回边。
+const feedback = args && args.userFeedback
+if (feedback && feedback.note) {
+  converged = false                                     // 产物要改 → 先作废旧评审结论
+  const targets = (feedback.workers || []).filter(w => ran.has(w))
+  await parallel((targets.length ? targets : ['hc-prd-writer']).map(w => () =>
+    agent('你是 ' + w + '。按用户在收尾确认环节提的修改意见改你产出的部分(' + dir + ')：\n' + feedback.note,
+      { agentType: w, label: 'user-revise:' + w })))
+  if (feedback.skipReviewReason) {                      // 免评是例外：理由必须落产物 / 随返回值带出，不能只进 log
+    // 显式区分"真收敛"与"免评跳过"——不许隐式当 true。调用方判真收敛只认 converged === true。
+    converged = 'skipped:' + feedback.skipReviewReason
+    log('⚠ 用户确认后的改动免评（未重评）：' + feedback.skipReviewReason)
+    log('  → 免评理由须落 tasks/todo.md 当前任务的 Review 段，没写理由 = 没免评')
+  } else {
+    converged = await convergeReview('re')              // 改完回 review loop 重跑，重新收敛才算过
+    log('用户确认后的改动已重评 → 再交用户验收；仍有修改意见则再走一次本回边')
+  }
+}
+// converged: true = 真收敛；'skipped:<理由>' = 免评跳过（总监须把理由写进 tasks/todo.md Review 段）；false = 未收敛。
+return { id, stories, prd, produced, converged, reviewSkipReason: (feedback && feedback.skipReviewReason) || null }

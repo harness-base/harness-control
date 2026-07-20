@@ -2,7 +2,7 @@
 title: ADR-0022 所有 review 步统一为多视角并行对抗（双栈中性、单一真相源）
 status: accepted
 date: 2026-07-08
-last_updated: 2026-07-08
+last_updated: 2026-07-20
 source_files: []
 related_docs:
   - ../harness/adversarial-review.md
@@ -20,7 +20,7 @@ related_docs:
 
 ## 决策
 
-1. **抽单一真相源** `docs/harness/adversarial-review.md`：定"多视角并行对抗 review"pattern（fan out N 个**相异视角** reviewer 并行 → 每条独立证伪 → 汇总去重 → 回改 → 迭代到一轮干净、**末轮换新视角防假收敛**；按改动面伸缩）。
+1. **抽单一真相源** `docs/harness/adversarial-review.md`：定"多视角并行对抗 review"pattern（fan out N 个**相异视角** reviewer 并行 → 每条独立证伪 → 汇总去重 → 回改 → 迭代到一轮干净、**末轮换新视角防假收敛**；视角数量口径以该文为准）。
 2. **7 个 skill 的 review 步引用本 pattern、不复制**——`hc-dev` ⑤（已多视角）改为指针；其余 6 个从单 reviewer **升级**为引用 pattern。
 3. **双栈中性**：编排写成中性指令，Claude Code 用 Workflow 执行、Codex 用原生多 agent（`max_threads`）执行，产出同一形状；**都不许退回单 reviewer 一遍过**。
 4. **reviewer 子 agent 持 rubric = 视角菜单**：8 个产出型 skill review 步的 reviewer 双栈各加一句"可能作为 N 个并行视角之一被派"的定性，rubric 本体不动（`hc-doc-sync-reviewer` 是钩子驱动的文档漂移检查、非产出型 skill 的评审步，不在本 pattern 内）。
@@ -34,6 +34,7 @@ related_docs:
 - skill：hc-create-sandbox ／ 是否已更新：是（对抗评审步单→多视角，引用 pattern）
 - skill：hc-add-rule ／ 是否已更新：是（对抗巡查步单→多视角，引用 pattern）
 - 连带：8 个 reviewer 子 agent 双栈（`hc-code`/`prd`/`tech-design`/`onboard`/`e2e`/`api`/`sandbox`/`rule`-reviewer 的 `.claude/agents/*.md` + `.codex/agents/*.toml`）加视角定性；`doc-sync-checklist` 加行（改 pattern → 回查引用它的 skill）；`CURRENT_STATUS` 控制面表提一句。（`hc-doc-sync-reviewer` 不在内——钩子驱动、非产出型 skill 评审步。）
+- 连带（2026-07-20 补）：pattern 新增「流程什么时候算结束 · 改动后何时必须重新评审」节，规定流程到用户验收通过才结束 + 改动后重评的判据（见该文「默认重评制」，**内容以该文为准，本 ADR 不复述**）。下游各加指针（不复制）：**7 个产出型 skill**（`hc-prd` `hc-tech-design` `hc-dev` `hc-test` `hc-onboard` `hc-create-sandbox` `hc-add-rule`）各一行；（曾给 `hc-git-workflow` 发布前起手式加过一步，**同轮撤回**——评审语义塞进 git 起手式属串编制）；`hc-self-evolution` 补 review 步；`hc-prd/references/orchestration-workflow.js` 轻审档注释；**4 个域 reviewer（`hc-tech-design` / `hc-prd` / `hc-e2e` / `hc-api`）双栈 8 文件加「工作步骤 0：核派单基线」**（曾铺到 10 个 reviewer / 20 文件，同轮削减为 4 个——复制面越大越易漂），同这 4 个 reviewer 另把回源对账补成双向；`docs/eval/prompts/010-task-completion-review.md` 加「结论时效」项。缘由见 lessons 2026-07-15 / 2026-07-20（评审通过后又改三批未复评，补跑多视角挖出 7 个 major）。
 
 ## 备选方案
 
@@ -45,5 +46,5 @@ related_docs:
 
 - review 质量下限抬高：所有产出型 skill 收尾都走多视角并行 + 防假收敛，不再靠单 reviewer 一遍。
 - 双栈一致：Claude / Codex 同一套编排指令，Codex 侧用原生多 agent 落地（补齐此前"Codex 只单 reviewer"的对等短板）。
-- 成本上升：review 步并发多个 reviewer 实例（token / 时延）——按改动面伸缩（小活 1–2 视角）控本。
+- 成本上升：review 步并发多个 reviewer 实例（token / 时延）——视角数量的伸缩 / 封顶口径见 `docs/harness/adversarial-review.md`，本 ADR 不复述。
 - 单一真相源：改 review 编排只动 `adversarial-review.md`，7 skill 自动跟随、不漂。

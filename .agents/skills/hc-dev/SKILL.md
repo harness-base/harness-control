@@ -1,8 +1,8 @@
 ---
 name: hc-dev
 description: 写代码的统一入口，开发总监编排式（写功能 / 工程代码 / 重构 / 改 bug / 迁移 都走它）：总监（主 agent）吃上游（需求产出 docs/prds + 设计方案 design.md + 接口契约 api-contract.md，有则必吃、无则可独立干）→ 按改动面定编制——单层小活 / 改 bug 直做或派 1 个 worker、跨层大活按项目真实分层并行派 hc-dev-worker（前端 / 后端 / 客户端是常见例，源驱动不硬编层种）、契约为接缝 → hc-code-reviewer 对抗 review 到零（含 实现↔契约对账 + UI 视觉还原证据）→ 提醒你测 + 指路 hc-test。纪律全程常开：不假设 / 决策点问你 / TDD 优先 / 验证如实。用户说「写 / 实现 / 改 / 重构 / 迁移 / 修 bug / 做个功能 / 开发」时用。
-version: 5
-last_reviewed: 2026-07-08
+version: 9
+last_reviewed: 2026-07-20
 ---
 
 # 开发总监编排（hc-dev）
@@ -45,10 +45,11 @@ last_reviewed: 2026-07-08
   - 工具按平台现实（Claude Code 的 preview / 浏览器工具；无渲染工具则请你把它跑起来供截图）。
 
 ## ⑤ 挑刺（对抗 review）
-- 写完派 **`hc-code-reviewer` 多实例多视角对抗 review**（correctness / 安全 / 技术债 / 边界…），每条独立证伪，**审→修→再审，循环到零**；小活 1-2 个实例即可。**编排 pattern（多视角并行 / 汇总去重 / 末轮换新视角防假收敛 / 双栈中性）= `docs/harness/adversarial-review.md`（ADR-0022，唯一真相源、引用不复制）。**
+- 写完派 **`hc-code-reviewer` 多实例多视角对抗 review**（correctness / 安全 / 技术债 / 边界…），每条独立证伪，**审→修→再审，循环到零**（视角数量按 pattern 定）。**编排 pattern（多视角并行 / 汇总去重 / 末轮换新视角防假收敛 / 双栈中性）= `docs/harness/adversarial-review.md`（ADR-0022，唯一真相源、引用不复制）。**
 - **新增两块判据（总览，明细在 reviewer 上下文、本总谱不复制）**：
   - **实现↔契约对账**：有 `api-contract.md` 时**硬核**——逐端点 / 字段 / 错误码对照实现有没有漂（与 api 用例线的「用例↔契约对账」呼应，设计 / 实现 / 测试三方锚同一份契约）；无契约跳过。
   - **UI 视觉还原证据**：涉视觉的改动须有渲染证据（截图对比 + inspect 精确值），"读源码觉得像"不算（rule-0009）。
+- **派单信息带上「派单基线」**：本次是首评 / 上次评审结论 + 此后改了什么（让 reviewer 知道这次审的是第几版）。口径见 `docs/harness/adversarial-review.md`「派单基线」。
 - 怎么派：Claude Code 用 workflow（`agent(..., {agentType: 'hc-code-reviewer'})` 并行 / 循环）；Codex 派同名双栈。复用共享子 agent（`.claude/agents/` + `.codex/agents/` 双栈，免 key），不为单 skill 另造。
 - **想要云端多 agent 深审**：提醒你跑 `/code-review ultra`（云端、计费、**只能你触发**，我启不了）。
 
@@ -63,6 +64,7 @@ last_reviewed: 2026-07-08
 - **提醒你测 + 指路 `hc-test`**：明确告诉你"建议你跑 / 测哪些"，把人工测试交回给你；要测试覆盖 / 用例 / 把用例落成脚本走 `hc-test`（五场景已全实现：e2e / api 用例、契约对照[ADR-0026]、脚本[写跑一体 ADR-0024]、统一回归[ADR-0027]——状态以 `docs/harness/testing-flow.md` 场景表为准）。
 
 ## ⑧ 硬规则汇总
+- **改完重评**：流程到用户验收通过才结束；末次评审后**默认重评**，免评要写理由留痕。口径见 `docs/harness/adversarial-review.md`「默认重评制」，本 skill 不复述。
 - 动手前 plan（拆任务 + 编制）经你确认；**不假设、决策点必问**（worker 上报总监问你）。
 - **有方案照方案**：契约定死的接口 / 数据不许擅改；发现方案问题回 `hc-tech-design`，不许绕；涉接口 / 数据设计而无契约 → 先走 `hc-tech-design`（硬门）。
 - 修复 / 关键保证必须有**能复现 + load-bearing 的守护测试**（rule-0009），不许为通过牵强；视觉还原以**渲染证据**为准（同 rule-0009）。
