@@ -1,8 +1,8 @@
 ---
 name: hc-tech-design
 description: 交互式产出研发方案 / 技术设计（而非需求、而非实现）：主 agent 当设计者，读项目现状 → 提方案 → 不确定就查/问 → 决策点让用户拍 → 全明确 + 用户审核才落稿 → 派 hc-tech-design-reviewer 对抗评审到过。产出 项目专属 的 研发方案；有对外接口才附 接口契约（被 api 用例消费），纯内部无接口标 N/A。它填 hc-prd(需求) 与 hc-dev(实现) 之间的设计空档：hc-prd → hc-tech-design →（api 用例 / hc-dev）。用户说「出研发方案 / 技术设计 / 设计接口 / 接口契约 / 怎么实现这块 / 把需求落成方案」时用。
-version: 5
-last_reviewed: 2026-07-08
+version: 8
+last_reviewed: 2026-07-20
 ---
 
 # 交互式产出研发方案（hc-tech-design）
@@ -51,6 +51,7 @@ last_reviewed: 2026-07-08
 方案定稿后 / 评审环节，**派 `hc-tech-design-reviewer` 多视角并行对抗挑刺**，**回改到过**（编排 pattern = `docs/harness/adversarial-review.md`，ADR-0022，唯一真相源、引用不复制）：
 - reviewer **只评不改**（无 Write），出结构化清单（位置 / 严重度 / 问题 / 证据 / 怎么补）；
 - 主 agent（设计者）据清单回改 → 复审 → **到零缺陷**（末轮换新视角防假收敛，见 pattern）。
+- **派单信息带上「派单基线」**：本次是首评 / 上次评审结论 + 此后改了什么（reviewer 开审前核它，缺就要你补）。口径见 `docs/harness/adversarial-review.md`「派单基线」。
 - 怎么派：**Claude Code** 用 workflow / Task（`agent(..., {agentType:'hc-tech-design-reviewer'})` **多视角并行** / 循环，会话模型）；**Codex** 用原生多 agent 派**同名双栈 reviewer**（`max_threads` 并发）。设计本体是**一条连贯推演对话不可拆并行**，但**评审步走多视角并行对抗**（同各 skill，见 pattern）、无独立 `references/` 编排模板。
 
 **两层防线（机器查结构、reviewer 查判断、不重复）**：**结构层**（目录↔index 登记一致、`design.md` 在、字面残留 TBD / 待确认 / 待定 / 待补 / FIXME / TODO / 留待实现）由 `scripts/designs-audit.sh` **机检**（已进 `make verify`）；**判断层**（可执行 / 契约逐字段 / 决策有据 / 安全对账 / 忠于源 / 含糊措辞）由 **hc-tech-design-reviewer**——和 `hc-e2e-reviewer` ↔ `test-cases-audit` 一个分工。
@@ -69,6 +70,7 @@ last_reviewed: 2026-07-08
 - **接口契约可选**：**有对外接口才产 `api-contract.md`**；纯内部重构 / 数据迁移类、无对外接口的设计标 N/A、不强凑。
 - **错误响应约定 / 未约定口径**：契约只列约定内错误（业务码 / 校验码 / 401·403 鉴权 / 约定服务态如 503），**未约定的裸 500 / panic 不进契约；别按状态码段一刀切**。
 - **对抗评审到过**：派 `hc-tech-design-reviewer` 回改到零缺陷。
+- **改完重评**：流程到用户验收通过才结束；末次评审后**默认重评**，免评要写理由留痕。口径见 `docs/harness/adversarial-review.md`「默认重评制」，本 skill 不复述。
 - **通用 / 项目隔离**：守 rule-0015（控制面不掺项目内容）；方案项目专属落 `docs/designs/<id>/`。
 - 用户可见的需求 / 行为 / 验收目标变化属 `hc-prd` 上游，不在本 skill 重立需求（需求怎么理归 hc-prd；skill 间松耦合、无硬门禁，ADR-0023）。
 

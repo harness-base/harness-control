@@ -1,8 +1,8 @@
 ---
 name: hc-self-evolution
 description: harness 规范检查层。当要改 harness 本身、或发现 harness 漏洞（如"某规则工作时没被加载"）时用——引导按 harness 结构逐维度审查"哪一环出问题 / 该怎么改"，不靠记忆漏项。区别于操作层 skill（hc-add-rule/hc-prd 等是被检查对象 + 修复工具）。
-version: 3
-last_reviewed: 2026-07-10
+version: 6
+last_reviewed: 2026-07-20
 ---
 
 # 自进化 / harness 规范检查（hc-self-evolution）
@@ -53,6 +53,17 @@ harness 每个能力是一条**链路**；漏洞 = 某环断了。
 2. **每项给方法**：用对应 reference 的 检索 / 方向 / 规范边界，不空谈。
 3. **列表外**：这些维度之外，是否要**补新 harness 流程**（如 loop-engineering playbook）。
 4. **自身（别漏）**：harness 进化后，**本 skill 与 references 自己要不要改**——维度有没有漏、references 过没过期、这套审查本身该不该调。
+
+## review 步（改完 harness 必过，别自己审自己）
+
+本 skill 是**改 harness 本体的入口**——修断环的动作自己不能走在断环上。改完（新增 / 改 / 删任何 harness 资产：规则、skill、模板、机制文档、hook、子 agent、索引）**必须派 reviewer 对抗挑刺 → 回改到过**才算完。编排口径 = `docs/harness/adversarial-review.md`（**引用不复制**，含「默认重评制」+「按对象类型伸缩」）。
+
+- **视角数量**：按 `docs/harness/adversarial-review.md`「按对象类型伸缩」定，本 skill 不复述。
+- **派谁**：`hc-doc-sync-reviewer`（对照 doc-sync-checklist 抓关联项遗漏）**必派** + 对口 reviewer 一个（改规则派 `hc-rule-reviewer`、改脚本 / hook 派 `hc-script-reviewer`、改接入派 `hc-onboard-reviewer`）。
+  - **无对口 reviewer 时（改 skill 本体 / 机制文档 / 模板）**：doc-sync 只抓漂移、不审语义，单它一个不够——按「按对象类型伸缩」派 generic 文档审补足 2–3 视角（关联项遗漏 / 语义冲突 / 指针有效性）。
+  - **派单必带「派单基线」**：口径见 `docs/harness/adversarial-review.md`「派单基线」，本 skill 不复述。
+- **回改到过**：findings 回改 → 复审，收敛口径按该文（对口视角用尽时"findings 跨一轮稳定为空"，或留一个对口视角作末轮新视角）。
+- **改完重评**：流程到用户验收通过才结束；末次评审后**默认重评**，免评要写理由留痕。口径见 `docs/harness/adversarial-review.md`「默认重评制」，本 skill 不复述。
 
 ## 深审执行器
 复杂或要独立判断时，spawn `hc-self-optimize` 子 agent（`.claude/agents/hc-self-optimize.md`，免 key）按维度深审、写记录。

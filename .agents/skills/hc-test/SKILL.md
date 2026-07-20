@@ -1,8 +1,8 @@
 ---
 name: hc-test
 description: 编排式产出测试（而非实现）：测试总监（主 agent）按手上产物 + 到了哪一步自动选场景，调度专职 worker——e2e 用例 / api 用例 / 接口契约对照（脚本取数+agent 对比，ADR-0026）/ 测试脚本（写跑一体，ADR-0024）/ 统一回归（跑存量池+归因两分，ADR-0027）（各线实现状态见 testing-flow）——带 默认编排 + 用户覆盖、worker→reviewer 回改 loop、两层覆盖防线。用户说「写测试用例 / 写 e2e 用例 / 写 api 用例 / 接口用例 / 测试覆盖 / 用例覆盖率 / 把验收点转成用例 / 写测试脚本 / 把用例落成脚本 / 做测试」时用。流程唯一真相源 = docs/harness/testing-flow.md（总纲）+ 分线文件；用例落 docs/test-cases/<id>/、脚本落工程内 test/<需求id>/，与实现体系松耦合。
-version: 5
-last_reviewed: 2026-07-10
+version: 9
+last_reviewed: 2026-07-20
 ---
 
 # 编排式产出测试（hc-test）
@@ -54,6 +54,9 @@ last_reviewed: 2026-07-10
 3. **派 `hc-script-reviewer`** 审（只评不改）：**对齐**（case↔用例一一对照、断言忠于预期）+ **明显 bug**（空转断言 / 卡门缺失 / 硬编 / 顺序耦合）+ 运行报告如实性；多视角并行对抗（同 ④.4，pattern 引用不复制）→ 回改到零。
 4. **交付入池**：脚本落**工程内** `projects/<工程>/test/<需求id>/`（每需求独立、helper 共享）；用例文档登记脚本路径（双向锚）；报告用户"本需求绿了、脚本已入回归资产池"——**统一回归是另一场景**（见 ⑦，ADR-0027），本线不带过往全量。
 
+**评审纪律（④⑤ 两线通用）**：
+- **派单信息带上「派单基线」**：本次是首评 / 上次评审结论 + 此后改了什么（用例线的 `hc-e2e-reviewer` / `hc-api-reviewer` 开审前会核它、缺就要你补；脚本线的 `hc-script-reviewer` 无此步，带上只为让它知道审的是第几版）。口径见 `docs/harness/adversarial-review.md`「派单基线」。
+- **改完重评**：流程到用户验收通过才结束；末次评审后**默认重评**，免评要写理由留痕。口径见 `docs/harness/adversarial-review.md`「默认重评制」，本 skill 不复述。
 
 **④⑤ 两线怎么派 worker / reviewer**（契约对照 / 回归无专职 worker、总监调度，见 ⑥⑦）：Claude Code 用 workflow / Task（`agentType:'hc-e2e-qa'/'hc-api-qa'/'hc-script-impl'/…'` 对应 reviewer，会话模型）；Codex 用原生多 agent 派同名双栈。**宏观次序线性（写 → 审 → 回改）、审步多视角并行**（ADR-0022）；待多 worker 并行落地再补编排 `references/`，与 `hc-prd` 对齐。
 
@@ -62,7 +65,6 @@ last_reviewed: 2026-07-10
 
 ## ⑦ 回归编排（ADR-0027）—— 盘点池子 → 卡门 → 逐需求跑 → 归因分发
 主体在 `testing-flow-regression.md`（**做回归先读它**）：盘点 `test/` 需求目录（目录即池子清单）→ sandbox 卡门 → **逐需求顺序跑**（防环境互染）→ 报告（每需求 pass/fail，运行输出为证据）→ 失败归因两分（**脚本过时**→派 `hc-script-impl` 更新[锚新预期不弱化] / **实现回归**→报 `hc-dev` 修、脚本不动；分不清回用例对照、再分不清问用户）→ 重跑到过。**本需求调绿归脚本线，本线只管"统一"半边。**
-
 
 ## ⑧ 两层防线（不重叠）
 权威表见各分线文件（e2e/api 分线的「两层覆盖防线」、script 分线的「两层防线」小节）：
