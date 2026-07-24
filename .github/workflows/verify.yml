@@ -97,3 +97,25 @@ jobs:
         run: |
           echo ">> [${{ matrix.name }}] ${{ matrix.verify }}"
           ${{ matrix.verify }}
+
+  # 聚合门（稳定名 verify）：分支保护只需盯这一个 required check——它绿 = 上面全绿。
+  # 好处：project-verify 的 job 名随工程动态变（verify (<工程名>)），接工程就多一个，
+  # 若让分支保护逐个盯会永远对不上；盯这个固定的 verify 则接多少工程都零改保护规则。
+  # if: always() 确保上游有失败/取消时本 job 仍运行并据此判红（否则会被 skip、GitHub 误当"未要求"）。
+  verify:
+    needs: [control-plane, discover, project-verify]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: 汇总上游结果
+        run: |
+          echo "control-plane=${{ needs.control-plane.result }}"
+          echo "discover=${{ needs.discover.result }}"
+          echo "project-verify=${{ needs.project-verify.result }}"
+          # 任一上游非 success（failure/cancelled/skipped）即判红。
+          if [ "${{ needs.control-plane.result }}" != "success" ] \
+             || [ "${{ needs.discover.result }}" != "success" ] \
+             || [ "${{ needs.project-verify.result }}" != "success" ]; then
+            echo "有工程级检查未通过"; exit 1
+          fi
+          echo ">> 全部工程级检查通过"
