@@ -1,10 +1,17 @@
 name: Verify
 on:
   push:
-  pull_request:
+    branches: [main]   # 主干合并后跑一次
+  pull_request:        # PR 期间跑；功能分支的验证靠 PR 事件，不靠 push——避免 push+PR 双触发重复
+
+# 同一分支上新的 push / PR 更新取消尚在跑的旧 run，省 runner、结果不堆积。
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  verify:
+  # 控制面自检（保留不动）：结构 + 文档 + hook policy + 索引 + CLAUDE.md shim。
+  control-plane:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -12,3 +19,81 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq
       - name: 控制面自检
         run: make verify
+
+  # 从 workspace/verification.yaml 动态解析被管工程清单 → 生成 matrix。
+  # 新工程接进来只改 verification.yaml，本 CI 零改动即覆盖。
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.parse.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 解析工程清单为 matrix
+        id: parse
+        # 逐工程取 name/path/verify（剥引号与尾注释），发出 {include:[...]}。
+        # 只消费 verify 字段——sandbox/e2e/api（依赖 docker 起服务、属需求级重环境）不进 CI 快门。
+        # 注释掉的示例块（行首 #）天然不被 name:/verify: 规则命中，自动跳过。
+        run: |
+          matrix="$(awk '
+            function esc(s){ gsub(/\\/,"\\\\",s); gsub(/"/,"\\\"",s); return s }
+            function flush(){ if(name!=""){ if(cnt++>0) printf(","); printf("{\"name\":\"%s\",\"path\":\"%s\",\"verify\":\"%s\"}", esc(name), esc(path), esc(verify)) } name="";path="";verify="" }
+            BEGIN{ printf("{\"include\":[") }
+            /^[[:space:]]*-[[:space:]]*name:/ { flush(); v=$0; sub(/^.*name:[[:space:]]*/,"",v); gsub(/[" ]/,"",v); name=v; next }
+            /^[[:space:]]*path:/ { v=$0; sub(/^[[:space:]]*path:[[:space:]]*/,"",v); sub(/[[:space:]]*#.*/,"",v); gsub(/["]/,"",v); gsub(/[[:space:]]+$/,"",v); path=v; next }
+            /^[[:space:]]*verify:/ { line=$0; sub(/^[[:space:]]*verify:[[:space:]]*/,"",line); if(match(line,/"[^"]*"/)){ verify=substr(line,RSTART+1,RLENGTH-2) } else { sub(/[[:space:]]*#.*/,"",line); gsub(/[[:space:]]+$/,"",line); verify=line } next }
+            END{ flush(); printf("]}\n") }
+          ' workspace/verification.yaml)"
+          echo "$matrix" | jq -e '.include | length >= 1' >/dev/null || { echo "verification.yaml 解析出 0 个工程，解析异常"; exit 1; }
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "解析到的工程 matrix：$matrix"
+
+  # 逐工程跑各自的 verify（每个工程一个并行 job；某工程红不牵连其他，job 名即指向哪个工程）。
+  # 只跑 verify（纯项目级：编译/vet/lint/build/单测），不碰 sandbox。
+  project-verify:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    name: verify (${{ matrix.name }})
+    steps:
+      - uses: actions/checkout@v4
+
+      # 通用工具链：当前被管工程都是 Go / Node 栈，CI 统一提供。
+      # 将来有别的栈，届时按 verify 的工具链假设扩展这里。
+      - name: 装 Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: 装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 装 golangci-lint
+        # 版本跟被管工程 .golangci.yaml 里记录的开发版一致（v2 线）。
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
+            | sh -s -- -b "$(go env GOPATH)/bin" v2.11.4
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      # 通用前端依赖准备：verify 命令用 `npm --prefix <dir>` 指向前端时，就为这些 dir 装依赖
+      # （verify 假设 deps 已装）。只认 verify 真用到的 --prefix——不扫全路径，
+      # 避免误装 e2e/test 模块（属 sandbox 线、不进 CI 快门）的依赖。纯后端工程无 --prefix 自动跳过。
+      - name: 准备 Node 依赖（若有）
+        env:
+          VERIFY_CMD: ${{ matrix.verify }}
+        run: |
+          dirs="$(printf '%s' "$VERIFY_CMD" | grep -oE -- '--prefix +[^ ]+' | awk '{print $2}' | sort -u || true)"
+          if [ -z "$dirs" ]; then
+            echo ">> verify 无 npm --prefix，跳过 npm ci"
+          else
+            for dir in $dirs; do
+              echo ">> npm ci in $dir"
+              npm ci --prefix "$dir"
+            done
+          fi
+
+      - name: 跑工程 verify
+        run: |
+          echo ">> [${{ matrix.name }}] ${{ matrix.verify }}"
+          ${{ matrix.verify }}
